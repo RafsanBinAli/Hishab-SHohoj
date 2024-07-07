@@ -1,0 +1,51 @@
+.borrowed-container {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+}
+
+.borrowed-heading {
+  color: #007bff;
+  margin-bottom: 20px;
+}
+
+.borrowed-table {
+  width: 100%;
+  margin-top: 20px;
+  border-collapse: collapse;
+}
+
+.borrowed-table th,
+.borrowed-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+.borrowed-table th {
+  background-color: #007bff;
+  color: white;
+}
+
+.borrowed-table td {
+  background-color: #fff;
+}
+
+.borrowed-table td input {
+  width: 100%;
+  padding: 5px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.borrowed-table .action-paid {
+  color: green;
+  font-weight: bold;
+}
+
+.borrowed-table .action-due {
+  color: red;
+  font-weight: bold;
+}

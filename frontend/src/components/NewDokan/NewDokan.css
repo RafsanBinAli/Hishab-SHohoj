@@ -1,0 +1,54 @@
+.dokan-form-container {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .dokan-form-heading {
+    color: #007bff;
+    margin-bottom: 20px;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .form-group label {
+    font-weight: bold;
+  }
+  
+  .add-item-button {
+    margin-top: 10px;
+  }
+  
+  .dokan-details-container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .dokan-details-heading {
+    color: #28a745;
+    margin-bottom: 20px;
+  }
+  
+  .dokan-details p {
+    font-size: 1.1em;
+  }
+  
+  .dokan-table {
+    margin-top: 20px;
+  }
+  
+  .dokan-table th,
+  .dokan-table td {
+    text-align: center;
+    vertical-align: middle;
+  }
+  
+  .save-button {
+    margin-top: 20px;
+  }
+  

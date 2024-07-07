@@ -1,0 +1,59 @@
+/* Navbar.css */
+
+.navbar {
+    background-color: #ffffff; /* Navbar background color */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Navbar shadow */
+  }
+  
+  .navbar-brand {
+    font-size: 1.5rem; /* Navbar brand font size */
+  }
+  
+  .navbar-toggler {
+    border: none; /* Remove border from toggler button */
+  }
+  
+  .navbar-nav {
+    margin-left: auto; /* Align navigation links to the right */
+  }
+  
+  .nav-link {
+    font-size: 1rem; /* Navigation link font size */
+    color: #333333; /* Link color */
+    transition: color 0.3s ease; /* Smooth transition for link color */
+  }
+  
+  .nav-link:hover {
+    color: #007bff; /* Hover color for links (blue) */
+  }
+  
+  @media (max-width: 768px) {
+    .navbar-nav {
+      margin: 0;
+      padding: 0;
+    }
+    
+    .navbar-collapse {
+      overflow: hidden; /* Hide overflow on collapse */
+      max-height: 0;
+      transition: max-height 0.35s ease-out; /* Smooth transition for collapse animation */
+    }
+    
+    .navbar-collapse.show {
+      max-height: 500px; /* Adjust max-height as needed */
+    }
+    
+    .navbar-toggler-icon {
+      outline: none; /* Remove outline from toggler icon */
+    }
+    
+    .navbar-nav {
+      flex-direction: column; /* Stack links vertically */
+      text-align: center; /* Center align links */
+    }
+    
+    .nav-item {
+      margin: 5px 0; /* Margin between each nav item */
+    }
+  }
+  

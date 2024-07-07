@@ -1,0 +1,70 @@
+.dokan-card-details {
+    padding: 20px;
+    background-color: #f8f9fa;
+    display: flex;
+    justify-content: center;
+  }
+
+  .download-button {
+    margin-bottom: 20px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+  }
+  
+  .download-button:hover {
+    background-color: #0056b3;
+  }
+  
+  .slip-container {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 400px;
+  }
+  
+  .slip-date {
+    text-align: center;
+    font-size: 1.2em;
+    margin-bottom: 20px;
+    color: #343a40;
+  }
+  
+  .slip-items {
+    margin-bottom: 20px;
+  }
+  
+  .slip-item {
+    background-color: #f1f3f5;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .slip-seller,
+  .slip-item-name,
+  .slip-quantity,
+  .slip-price {
+    color: #495057;
+    margin: 5px 0;
+  }
+  
+  .slip-moderator {
+    text-align: center;
+    margin-top: 20px;
+    color: #343a40;
+  }
+  
+  .slip-total {
+    text-align: center;
+    font-size: 1.2em;
+    color: #007bff;
+    margin-top: 10px;
+  }
+  

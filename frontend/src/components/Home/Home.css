@@ -1,0 +1,68 @@
+.form-control {
+    width: 100%;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  /* Card styles (already provided in previous example) */
+  .card {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+    cursor: pointer; /* Add cursor pointer */
+  }
+  
+  .card:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  }
+  
+  .card-body {
+    padding: 1.25rem;
+  }
+  
+  .card-title {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem; /* Adjusted margin */
+  }
+  
+  .card-text {
+    color: #000407;
+  }
+  
+  /* Container styles */
+  .container {
+    margin-top: 20px; /* Added margin top */
+    padding: 0 15px; /* Added padding */
+  }
+  
+  /* Header styles */
+  h2 {
+    font-size: 2rem;
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+    padding: 10px 0;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  .btn-primary {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+  }
+  
+  .btn-primary:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Responsiveness for cards */
+  @media (max-width: 767.98px) {
+    .card {
+      margin-bottom: 20px; /* Adjust spacing for smaller screens */
+    }
+  }
+  
