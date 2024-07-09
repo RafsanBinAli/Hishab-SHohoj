@@ -1,42 +1,68 @@
 /* DokanerSlip.css */
-.dokaner-slip {
-    padding: 20px;
+
+.dokaner-slip-container {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  max-width: 1320px;
+  margin-left: 11rem;
+}
+
+.dokaner-slip-title {
+  font-size: 2rem;
+  color: #333;
+  text-align: center;
+  margin-bottom: 20px;
+  padding: 10px 0;
+  background-color: #f8f9fa;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.dokaner-slip-table {
+  margin-top: 20px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+
+.table th {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+
+.btn-primary:focus,
+.btn-primary.focus {
+  box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.5);
+}
+
+@media (max-width: 768px) {
+  .dokaner-slip-container{
+    margin-left: 0;
+    padding: 15px;
   }
-  
-  .dokaner-slip h2 {
-    font-size: 2rem;
-    color: #333;
-  }
-  
-  .dokaner-slip .table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-  }
-  
-  .dokaner-slip .table th,
-  .dokaner-slip .table td {
-    padding: 8px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-  }
-  
-  .dokaner-slip .btn-primary {
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 4px;
-    text-decoration: none;
-    cursor: pointer;
-  }
-  
-  .dokaner-slip .btn-primary:hover {
-    background-color: #0056b3;
-  }
-  
-  .dokaner-slip .btn-primary:focus,
-  .dokaner-slip .btn-primary.focus {
-    box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.5);
-  }
-  
+}

@@ -1,59 +1,91 @@
 /* Navbar.css */
 
 .navbar {
-    background-color: #ffffff; /* Navbar background color */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Navbar shadow */
+  background-color: #ffffff; /* Navbar background color */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Navbar shadow */
+  padding: 10px 20px; /* Padding for better spacing */
+}
+
+.navbar-brand {
+  font-size: 1.5rem; /* Navbar brand font size */
+  margin-left: 1rem;
+  font-weight: bold; /* Make the navbar brand bold */
+}
+
+.navbar-toggler {
+  border: none; /* Remove border from toggler button */
+}
+
+.navbar-nav {
+  margin-left: auto; /* Align navigation links to the right */
+  display: flex;
+  align-items: center;
+}
+
+.nav-link {
+  font-size: 1rem; /* Navigation link font size */
+  color: #333333; /* Link color */
+  transition: color 0.3s ease; /* Smooth transition for link color */
+  padding: 0.5rem 1rem; /* Padding for better touch targets */
+  font-weight: bold; /* Make the navigation links bold */
+}
+
+.nav-link:hover {
+  color: #007bff; /* Hover color for links (blue) */
+}
+
+@media (max-width: 991.98px) {
+  .navbar-collapse {
+    position: fixed;
+    top: 0;
+    left: -100%; /* Off-screen initially */
+    height: 100vh; /* Full height of viewport */
+    width: 300px; /* Adjust width as needed */
+    background-color: #343a40; /* Navbar background color */
+    padding: 80px 0 0; /* Adjust padding for spacing */
+    transition: left 0.3s ease; /* Smooth slide transition */
+    z-index: 1000; /* Ensure it overlays other content */
   }
-  
-  .navbar-brand {
-    font-size: 1.5rem; /* Navbar brand font size */
+
+  .navbar-collapse.show {
+    left: 0; /* Slide in from the left */
   }
-  
-  .navbar-toggler {
-    border: none; /* Remove border from toggler button */
+
+  .navbar-toggler-icon {
+    outline: none; /* Remove outline from toggler icon */
   }
-  
+
+  .navbar-nav {
+    flex-direction: column; /* Stack links vertically */
+  }
+
+  .nav-item {
+    margin: 5px 0; /* Margin between each nav item */
+  }
+}
+
+@media (min-width: 992px) {
   .navbar-nav {
     margin-left: auto; /* Align navigation links to the right */
   }
-  
-  .nav-link {
-    font-size: 1rem; /* Navigation link font size */
-    color: #333333; /* Link color */
-    transition: color 0.3s ease; /* Smooth transition for link color */
+
+  .navbar-collapse {
+    position: relative;
+    top: 0;
+    left: 0; /* On large screens, the collapse should be in its default position */
+    height: auto; /* Auto height on large screens */
+    width: auto; /* Auto width on large screens */
+    background-color: transparent; /* No background color on large screens */
+    padding: 0; /* No padding on large screens */
+    transition: none; /* No transition on large screens */
+    z-index: auto; /* Default z-index on large screens */
   }
-  
-  .nav-link:hover {
-    color: #007bff; /* Hover color for links (blue) */
+
+  .navbar-collapse.show {
+    left: 0; /* Default position on large screens */
   }
-  
-  @media (max-width: 768px) {
-    .navbar-nav {
-      margin: 0;
-      padding: 0;
-    }
-    
-    .navbar-collapse {
-      overflow: hidden; /* Hide overflow on collapse */
-      max-height: 0;
-      transition: max-height 0.35s ease-out; /* Smooth transition for collapse animation */
-    }
-    
-    .navbar-collapse.show {
-      max-height: 500px; /* Adjust max-height as needed */
-    }
-    
-    .navbar-toggler-icon {
-      outline: none; /* Remove outline from toggler icon */
-    }
-    
-    .navbar-nav {
-      flex-direction: column; /* Stack links vertically */
-      text-align: center; /* Center align links */
-    }
-    
-    .nav-item {
-      margin: 5px 0; /* Margin between each nav item */
-    }
+
+  .nav-item {
+    margin-left: 1rem; /* Adjust margin between items */
   }
-  
+}

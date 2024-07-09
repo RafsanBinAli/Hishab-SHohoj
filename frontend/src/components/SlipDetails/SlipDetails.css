@@ -1,6 +1,6 @@
 /* SlipDetails.css */
 .slip-details-container {
-    max-width: 800px;
+    max-width: 1320px;
     margin: auto;
     padding: 20px;
   }
@@ -74,3 +74,16 @@
     color: #777;
   }
   
+  @media only screen and (max-width: 992px) {
+    .slip-details-container{
+      margin-left: 0;
+      padding: 0;
+    }
+  }
+
+  @media only screen and (max-width: 768px) {
+    .slip-details-container{
+      margin-left: 0;
+      padding: 0;
+    }
+  }

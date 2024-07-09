@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ShopList from "./ShopList";
-import "./NewDokan2.css"
+import "./NewDokan2.css";
 
 const NewDokan2 = () => {
   const [shops, setShops] = useState([]);
@@ -76,7 +76,7 @@ const NewDokan2 = () => {
       }
 
       const newShop = await response.json();
-      alert("Shop created successfully!");
+      alert("নতুন দোকান রেজিট্রেশন সম্পূর্ন হয়েছে !");
 
       setFormData({
         shopName: "",
@@ -87,11 +87,11 @@ const NewDokan2 = () => {
 
       setImagePreview(null); // Clear image preview
       window.location.reload();
-
     } catch (error) {
       console.error("Error registering shop:", error);
     }
   };
+
   useEffect(() => {
     const fetchShops = async () => {
       try {
@@ -107,98 +107,95 @@ const NewDokan2 = () => {
 
     fetchShops();
   }, []);
-  useEffect(() => {}, [shops]);
+
   return (
     <div className="container mt-4 p-2">
-      <div className="row2 ">
-        
-          <div className="card2">
-            <div className="card-body2">
-              <h2 className="card-title mb-4">Register a Shop</h2>
-              <form onSubmit={handleSubmit}>
+      <div className="d-flex justify-content-center mb-4">
+        <div className="card2">
+          <div className="card-body2">
+            <h2 className="card-title mb-4">নতুন দোকান রেজিট্রেশন</h2>
+            <form onSubmit={handleSubmit}>
+              <div className="mb-3">
+                <label htmlFor="shopName" className="form-label">
+                  দোকানের নাম
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="shopName"
+                  name="shopName"
+                  value={formData.shopName}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div className="mb-3">
+                <label htmlFor="address" className="form-label">
+                  ঠিকানা
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="address"
+                  name="address"
+                  value={formData.address}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div className="mb-3">
+                <label htmlFor="phoneNumber" className="form-label">
+                  মোবাইল নম্বর
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="phoneNumber"
+                  name="phoneNumber"
+                  value={formData.phoneNumber}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div className="mb-3">
+                <label htmlFor="image" className="form-label">
+                  দোকানের ছবি সংযুক্ত করুন
+                </label>
+                <input
+                  type="file"
+                  className="form-control"
+                  id="image"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  required
+                />
+              </div>
+              {imagePreview && (
                 <div className="mb-3">
-                  <label htmlFor="shopName" className="form-label">
-                    Shop Name
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="shopName"
-                    name="shopName"
-                    value={formData.shopName}
-                    onChange={handleInputChange}
-                    required
+                  <img
+                    src={imagePreview}
+                    alt="Uploaded"
+                    className="img-thumbnail"
+                    style={{ maxHeight: "200px", maxWidth: "200px" }}
                   />
                 </div>
-                <div className="mb-3">
-                  <label htmlFor="address" className="form-label">
-                    Address
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="address"
-                    name="address"
-                    value={formData.address}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="phoneNumber" className="form-label">
-                    Phone Number
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="phoneNumber"
-                    name="phoneNumber"
-                    value={formData.phoneNumber}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="image" className="form-label">
-                    Upload Image
-                  </label>
-                  <input
-                    type="file"
-                    className="form-control"
-                    id="image"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                    required
-                  />
-                </div>
-                {imagePreview && (
-                  <div className="mb-3">
-                    <img
-                      src={imagePreview}
-                      alt="Uploaded"
-                      className="img-thumbnail"
-                      style={{ maxHeight: "200px", maxWidth: "200px" }}
-                    />
-                  </div>
-                )}
-                {loading ? (
-                  <button type="button" className="btn btn-primary" disabled>
-                    Loading...
-                  </button>
-                ) : (
-                  <button type="submit" className="btn btn-primary">
-                    Register Shop
-                  </button>
-                )}
-              </form>
-            </div>
-         
+              )}
+              {loading ? (
+                <button type="button" className="btn btn-primary" disabled>
+                  Loading...
+                </button>
+              ) : (
+                <button type="submit" className="btn btn-primary">
+                  রেজিস্টার
+                </button>
+              )}
+            </form>
+          </div>
         </div>
       </div>
-      
-      <div className="card3">
-          <ShopList shops={shops} />
-        </div>
+      <div className="shop-list-container">
+        <ShopList shops={shops} />
+      </div>
     </div>
   );
 };

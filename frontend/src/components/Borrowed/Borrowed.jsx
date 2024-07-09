@@ -25,7 +25,7 @@ const Borrowed = () => {
       phone: "5555555555",
     },
   ]);
-  // fyujfgi
+
   const [editingIndex, setEditingIndex] = useState(null);
   const [editData, setEditData] = useState({
     name: "",
@@ -57,98 +57,107 @@ const Borrowed = () => {
 
   return (
     <div className="borrowed-container">
-      <h2 className="borrowed-heading">Borrowed</h2>
-      <table className="borrowed-table">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Date</th>
-            <th>Total money</th>
-            <th>Due</th>
-            <th>Action</th>
-            <th>Phone</th>
-            <th>Edit</th>
-          </tr>
-        </thead>
-        <tbody>
-          {borrowList.map((borrow, index) => (
-            <tr key={index}>
-              {editingIndex === index ? (
-                <>
-                  <td>
-                    <input
-                      type="text"
-                      name="name"
-                      value={editData.name}
-                      onChange={handleInputChange}
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="date"
-                      name="date"
-                      value={editData.date}
-                      onChange={handleInputChange}
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="number"
-                      name="totalTaka"
-                      value={editData.totalTaka}
-                      onChange={handleInputChange}
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="number"
-                      name="due"
-                      value={editData.due}
-                      onChange={handleInputChange}
-                    />
-                  </td>
-                  <td>
-                    {editData.totalTaka - editData.due === 0 ? (
-                      <span className="action-paid">Paid</span>
-                    ) : (
-                      <span className="action-due">Due</span>
-                    )}
-                  </td>
-                  <td>
-                    <input
-                      type="text"
-                      name="phone"
-                      value={editData.phone}
-                      onChange={handleInputChange}
-                    />
-                  </td>
-                  <td>
-                    <button onClick={handleSaveClick}>Save</button>
-                  </td>
-                </>
-              ) : (
-                <>
-                  <td>{borrow.name}</td>
-                  <td>{borrow.date}</td>
-                  <td>{borrow.totalTaka}</td>
-                  <td>{borrow.due}</td>
-                  <td>
-                    {borrow.totalTaka - borrow.due === 0 ? (
-                      <span className="action-paid">Paid</span>
-                    ) : (
-                      <span className="action-due">Due</span>
-                    )}
-                  </td>
-                  <td>{borrow.phone}</td>
-                  <td>
-                    <button onClick={() => handleEditClick(index)}>Edit</button>
-                  </td>
-                </>
-              )}
+      <h2 className="borrowed-heading font-weight-bold">ধারসমূহ </h2>
+      <div className="table-responsive">
+        <table className="borrowed-table">
+          <thead>
+            <tr>
+              <th>নাম</th>
+              <th>তারিখ</th>
+              <th>মোট</th>
+              <th>বাকি </th>
+              <th>স্ট্যাটাস </th>
+              <th>মোবাইল</th>
+              <th>#</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {borrowList.map((borrow, index) => (
+              <tr key={index}>
+                {editingIndex === index ? (
+                  <>
+                    <td>
+                      <input
+                        type="text"
+                        name="name"
+                        value={editData.name}
+                        onChange={handleInputChange}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="date"
+                        name="date"
+                        value={editData.date}
+                        onChange={handleInputChange}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="number"
+                        name="totalTaka"
+                        value={editData.totalTaka}
+                        onChange={handleInputChange}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="number"
+                        name="due"
+                        value={editData.due}
+                        onChange={handleInputChange}
+                      />
+                    </td>
+                    <td>
+                      {editData.totalTaka - editData.due === 0 ? (
+                        <span className="action-paid">Paid</span>
+                      ) : (
+                        <span className="action-due">Due</span>
+                      )}
+                    </td>
+                    <td>
+                      <input
+                        type="text"
+                        name="phone"
+                        value={editData.phone}
+                        onChange={handleInputChange}
+                      />
+                    </td>
+                    <td>
+                      <button onClick={handleSaveClick} className="btn-save">
+                        Save
+                      </button>
+                    </td>
+                  </>
+                ) : (
+                  <>
+                    <td>{borrow.name}</td>
+                    <td>{borrow.date}</td>
+                    <td>{borrow.totalTaka}</td>
+                    <td>{borrow.due}</td>
+                    <td>
+                      {borrow.totalTaka - borrow.due === 0 ? (
+                        <span className="action-paid">Paid</span>
+                      ) : (
+                        <span className="action-due">Due</span>
+                      )}
+                    </td>
+                    <td>{borrow.phone}</td>
+                    <td>
+                      <button
+                        onClick={() => handleEditClick(index)}
+                        className="btn-edit"
+                      >
+                        Edit
+                      </button>
+                    </td>
+                  </>
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

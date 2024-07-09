@@ -26,12 +26,12 @@ const DokanerSlip = () => {
   }, []);
 
   return (
-    <div className="dokaner-slip container mt-4">
-      <h2 className="my-4 py-2 text-center">দোকানদারের স্লিপ</h2>
-      <div className="row">
-        <div className="col-md-8 offset-md-2">
+    <div className="dokaner-slip-container">
+      <h2 className="dokaner-slip-title font-weight-bold">দোকানদারের স্লিপ</h2>
+      <div className="dokaner-slip-table">
+        <div className="table-responsive">
           <table className="table table-striped">
-            <thead>
+            <thead className="table-header">
               <tr>
                 <th>দোকানের নাম</th>
                 <th>স্লিপ দেখুন</th>

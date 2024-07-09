@@ -143,7 +143,7 @@ const CardDetail = () => {
       await Promise.all(
         allSlips.map(async (slip) => {
           try {
-            console.log("slip",slip)
+            console.log("slip", slip);
             // Filter newPurchases for the current slip's shopName
             const purchasesToUpdate = newPurchases.filter(
               (purchase) => purchase.shopName === slip.shopName
@@ -188,7 +188,7 @@ const CardDetail = () => {
       );
 
       // Success message or further handling
-      alert("All slips updated successfully");
+      alert("সকল স্লিপ আপডেট সম্পূর্ন হয়েছে !!");
     } catch (error) {
       console.error("Error in handleSave:", error);
       // Handle error state or alert user
@@ -204,7 +204,7 @@ const CardDetail = () => {
 
   return (
     <div className="container-card-details mt-4">
-      <h2 className="my-4 py-2 text-center">হিসাবের বিবরণ</h2>
+      <h2 className="my-4 py-2 text-center font-weight-bold">হিসাবের বিবরণ</h2>
       {loadedData && (
         <div className="row mb-4">
           <div className="col-md-5">
@@ -241,7 +241,7 @@ const CardDetail = () => {
                     <th>পণ্যের নাম</th>
                     <th>পরিমাণ (কেজি)</th>
                     <th>দাম (টাকা/কেজি)</th>
-                    <th>Total</th>
+                    <th>মোট (টাকা)</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -262,7 +262,9 @@ const CardDetail = () => {
       )}
 
       <div className="mt-4">
-        <h4>নতুন দোকানের হিসাব যোগ করুন</h4>
+        <h2 className="my-4 py-2 text-center font-weight-bold">
+          নতুন দোকানের হিসাব যোগ করুন
+        </h2>
         <table className="table table-striped">
           <thead>
             <tr>
@@ -283,7 +285,7 @@ const CardDetail = () => {
                     value={row.shopName || ""}
                     onChange={(e) => handleShopChange(index, e)}
                   >
-                    <option value="">Select Shop</option>
+                    <option value="">সিলেক্ট দোকান</option>
                     {shops.map((shop, idx) => (
                       <option key={idx} value={shop.shopName}>
                         {shop.shopName}
@@ -298,7 +300,7 @@ const CardDetail = () => {
                     value={row.stockName}
                     onChange={(e) => handleInputChange(index, e)}
                   >
-                    <option value="">Select Stock</option>
+                    <option value="">সিলেক্ট স্টক</option>
                     {loadedData &&
                       loadedData.stock.map((stockItem, idx) => (
                         <option key={idx} value={stockItem.stockName}>
@@ -328,7 +330,7 @@ const CardDetail = () => {
                 <td>
                   {index === formRows.length - 1 && (
                     <button className="btn btn-primary" onClick={handleAddRow}>
-                      Add Row
+                      নতুন সারি
                     </button>
                   )}
                 </td>
@@ -336,8 +338,8 @@ const CardDetail = () => {
             ))}
           </tbody>
         </table>
-        <button className="btn btn-success mt-3" onClick={handleSave}>
-          Save Selection
+        <button className="btn1 btn-success mt-3" onClick={handleSave}>
+          সেভ করুন
         </button>
       </div>
     </div>

@@ -2,20 +2,18 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { format, addDays, parseISO } from "date-fns";
+import { format } from "date-fns";
 import "./Home.css";
 
 const Home = () => {
   const [cardData, setCardData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedDate, setSelectedDate] = useState(new Date(Date.now()));
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (selectedDate) {
-      fetchDealsForDate(selectedDate);
-    }
+    fetchDealsForDate(selectedDate);
   }, [selectedDate]);
 
   const fetchDealsForDate = async (date) => {
@@ -38,10 +36,6 @@ const Home = () => {
     setSearchTerm(event.target.value);
   };
 
-  const filteredCards = cardData.filter((card) =>
-    card.farmerName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   const handleNewDealClick = () => {
     navigate("/new-deal");
   };
@@ -52,19 +46,16 @@ const Home = () => {
 
   return (
     <div className="container mt-4">
-      <h2 className="my-4 py-2 text-center">আজকের মার্কেটের হিসাব</h2>
-      <div className="row mb-4 align-items-center">
+      <h2 className="my-4 py-2 text-center font-weight-bold">
+        আজকের মার্কেটের হিসাব
+      </h2>
+      <div className="row mb-4 align-items-center ml-1">
         <div className="col-md-3">
           <DatePicker
             selected={selectedDate}
             onChange={(date) => setSelectedDate(date)}
             dateFormat="dd MMMM, yyyy"
             className="form-control"
-            style={{
-              width: "100%",
-              padding: "0.375rem 0.75rem",
-              fontSize: "1rem",
-            }}
             placeholderText="Select a date"
             customInput={<input readOnly />}
             renderCustomHeader={({ date, decreaseMonth, increaseMonth }) => (
@@ -82,7 +73,7 @@ const Home = () => {
           <input
             type="text"
             className="form-control"
-            placeholder="Search by name, stock, or price..."
+            placeholder="সার্চ করুন দোকানের নাম,স্টক,দাম দিয়ে..."
             value={searchTerm}
             onChange={handleSearchChange}
           />
@@ -93,25 +84,37 @@ const Home = () => {
           </button>
         </div>
       </div>
-      <div className="row">
-        {filteredCards.map((card, index) => (
-          <div key={index} className="col-md-4 mb-4">
-            <div className="card" onClick={() => handleCardClick(card._id)}>
-              <div className="card-body">
-                <h5 className="card-title">{card.farmerName}</h5>
-                {card.stock.map((stockItem, idx) => (
-                  <div key={idx}>
-                    <p className="card-text">
-                      {stockItem.stockName}: <b> {stockItem.quantity} কেজি </b> x{" "}
-                      <b>{stockItem.price}</b> tk ={" "}
-                      <b>{stockItem.price * stockItem.quantity}</b> tk
-                    </p>
-                  </div>
-                ))}
+      <div className="row row-cols-1 row-cols-md-3 g-4 ml-1">
+        {cardData
+          .filter((card) =>
+            card.farmerName.toLowerCase().includes(searchTerm.toLowerCase())
+          )
+          .map((card, index) => (
+            <div key={index} className="col">
+              <div
+                className="card h-100 item"
+                onClick={() => handleCardClick(card._id)}
+              >
+                <div className="item-in">
+                  <h4 className="card-title">{card.farmerName}</h4>
+                  <div className="seperator"></div>
+                  {card.stock.map((stockItem, idx) => (
+                    <div key={idx}>
+                      <p className="card-text">
+                        <b>{stockItem.stockName}</b>:{" "}
+                        <b>{stockItem.quantity}</b> কেজি x{" "}
+                        <b>{stockItem.price}</b> টাকা ={" "}
+                        <b>{stockItem.price * stockItem.quantity}</b> টাকা
+                      </p>
+                    </div>
+                  ))}
+                  <a href="#">
+                    ক্লিক করুন <i className="fa fa-long-arrow-right"></i>
+                  </a>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
       </div>
     </div>
   );

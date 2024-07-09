@@ -38,31 +38,31 @@ const SlipDetails = () => {
 
   return (
     <div className="slip-details-container">
-      <h2 className="slip-details-heading">হিসাবের বিবরণ</h2>
+      <h2 className="slip-details-heading font-weight-bold">হিসাবের বিবরণ</h2>
       <div className="date-picker-container">
-      <DatePicker
-        selected={selectedDate}
-        onChange={handleDateChange}
-        dateFormat="dd MMMM, yyyy"
-        className="date-picker"
-        style={{
-          width: "100%",
-          padding: "0.375rem 0.75rem",
-          fontSize: "1rem",
-        }}
-        placeholderText="Select a date"
-        customInput={<input readOnly />}
-        renderCustomHeader={({ date, decreaseMonth, increaseMonth }) => (
-          <div>
-            <div>{format(date, "MMMM yyyy")}</div>
+        <DatePicker
+          selected={selectedDate}
+          onChange={handleDateChange}
+          dateFormat="dd MMMM, yyyy"
+          className="date-picker"
+          style={{
+            width: "100%",
+            padding: "0.375rem 0.75rem",
+            fontSize: "1rem",
+          }}
+          placeholderText="Select a date"
+          customInput={<input readOnly />}
+          renderCustomHeader={({ date, decreaseMonth, increaseMonth }) => (
             <div>
-              <button onClick={decreaseMonth}>{"<"}</button>
-              <button onClick={increaseMonth}>{">"}</button>
+              <div>{format(date, "MMMM yyyy")}</div>
+              <div>
+                <button onClick={decreaseMonth}>{"<"}</button>
+                <button onClick={increaseMonth}>{">"}</button>
+              </div>
             </div>
-          </div>
-        )}
-      />
-    </div>
+          )}
+        />
+      </div>
       {slipDetails ? (
         <div className="slip-card">
           <div className="card">
@@ -74,7 +74,7 @@ const SlipDetails = () => {
               <table className="table table-striped slip-table">
                 <thead>
                   <tr>
-                  <th>Farmer নাম</th>
+                    <th>কৃষকের নাম</th>
                     <th>পণ্যের নাম</th>
                     <th>পরিমাণ (কেজি)</th>
                     <th>দাম (টাকা/কেজি)</th>
@@ -85,7 +85,7 @@ const SlipDetails = () => {
                 <tbody>
                   {slipDetails.purchases.map((purchase, index) => (
                     <tr key={index} className="slip-row">
-                        <td>{purchase.farmerName}</td>
+                      <td>{purchase.farmerName}</td>
                       <td>{purchase.stockName}</td>
                       <td>{purchase.quantity}</td>
                       <td>{purchase.price}</td>
