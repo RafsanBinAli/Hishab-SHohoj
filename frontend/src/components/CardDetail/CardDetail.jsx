@@ -57,7 +57,7 @@ const CardDetail = () => {
     newFormRows[index][name] = value;
     setFormRows(newFormRows);
   };
-  console.log(loadedData);
+
   const handleAddRow = () => {
     setFormRows([
       ...formRows,
@@ -66,7 +66,7 @@ const CardDetail = () => {
   };
   const handleSave = async () => {
     try {
-      // Update the card details (assumed this updates purchases related to market deals)
+      // Step 1: Update the card details (assumed this updates purchases related to market deals)
       const newPurchases = formRows.map((row) => ({
         farmerName: loadedData?.farmerName,
         shopName: row.shopName,
@@ -94,17 +94,18 @@ const CardDetail = () => {
 
       console.log("Card details updated successfully");
 
-      // Get the current date and ensure it is formatted correctly
+      // Step 2: Get the current date and ensure it is formatted correctly
       const currentDate = new Date();
       const year = currentDate.getFullYear();
       const month = String(currentDate.getMonth() + 1).padStart(2, "0"); // Add 1 to month as it's zero-based
       const day = String(currentDate.getDate()).padStart(2, "0");
       const date = `${year}-${month}-${day}`;
 
-      // Check if a slip exists for the shop and selected date
+      // Step 3: Check if a slip exists for the shop and selected date, and update the slip
       const findOrCreateSlipResponses = await Promise.all(
         newPurchases.map(async (purchase) => {
           try {
+            // Find or create the slip
             const response = await fetch(
               `${process.env.REACT_APP_BACKEND_URL}/slip/findOrCreate`,
               {
@@ -122,67 +123,55 @@ const CardDetail = () => {
               );
             }
 
-            return response.json(); // Parse the JSON response
+            const slips = await response.json(); // Parse the JSON response (array of objects)
+
+            // Iterate through each slip in the array
+            await Promise.all(
+              slips.map(async (slip) => {
+                // Filter newPurchases for the current slip's shopName
+                const purchasesToUpdate = newPurchases.filter(
+                  (p) => p.shopName === slip.shopName
+                );
+
+                // Calculate totalAmount for the purchasesToUpdate
+                const totalAmountToUpdate = purchasesToUpdate.reduce(
+                  (total, p) => total + p.total,
+                  0
+                );
+
+                // Make the updateSlip API call for each slip with filtered purchases
+                const updateSlipResponse = await fetch(
+                  `${process.env.REACT_APP_BACKEND_URL}/slip/update/${slip._id}`,
+                  {
+                    method: "PUT",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                      shopName: slip.shopName,
+                      date,
+                      purchases: purchasesToUpdate, // Use filtered purchases
+                      totalAmount: totalAmountToUpdate, // Use calculated total amount
+                    }),
+                  }
+                );
+
+                if (!updateSlipResponse.ok) {
+                  throw new Error(`Failed to update slip ${slip._id}`);
+                }
+
+                console.log(
+                  `Slip ${slip._id} updated successfully with purchases:`,
+                  purchasesToUpdate
+                );
+              })
+            );
           } catch (error) {
             console.error(
               `Error finding or creating slip for ${purchase.shopName}:`,
               error
             );
             throw error; // Rethrow the error to handle it further if needed
-          }
-        })
-      );
-
-      console.log("findOr ", findOrCreateSlipResponses);
-
-      // Initialize variables for total purchases and total amount
-      let allPurchases = [];
-      let totalAmount = 0;
-      const allSlips = findOrCreateSlipResponses.flat();
-      // Iterate over each response and update the slip
-      await Promise.all(
-        allSlips.map(async (slip) => {
-          try {
-            console.log("slip", slip);
-            // Filter newPurchases for the current slip's shopName
-            const purchasesToUpdate = newPurchases.filter(
-              (purchase) => purchase.shopName === slip.shopName
-            );
-
-            // Calculate totalAmount for the purchasesToUpdate
-            const totalAmountToUpdate = purchasesToUpdate.reduce(
-              (total, purchase) => total + purchase.total,
-              0
-            );
-
-            // Make the updateSlip API call for each slip with filtered purchases
-            const updateSlipResponse = await fetch(
-              `${process.env.REACT_APP_BACKEND_URL}/slip/update/${slip._id}`,
-              {
-                method: "PUT",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  shopName: slip.shopName,
-                  date,
-                  purchases: purchasesToUpdate, // Use filtered purchases
-                  totalAmount: totalAmountToUpdate, // Use calculated total amount
-                }),
-              }
-            );
-
-            if (!updateSlipResponse.ok) {
-              throw new Error(`Failed to update slip ${slip._id}`);
-            }
-
-            console.log(
-              `Slip ${slip._id} updated successfully with purchases:`,
-              purchasesToUpdate
-            );
-          } catch (error) {
-            console.error("Error updating slip:", error);
-            // Handle error state or alert user
           }
         })
       );
