@@ -1,8 +1,9 @@
 const webpack = require("webpack");
+
 module.exports = function override(config, env) {
   config.resolve.fallback = {
     url: require.resolve("url"),
-    fs: require.resolve("fs"),
+    fs: false,
     assert: require.resolve("assert"),
     crypto: require.resolve("crypto-browserify"),
     http: require.resolve("stream-http"),
@@ -15,6 +16,9 @@ module.exports = function override(config, env) {
     new webpack.ProvidePlugin({
       process: "process/browser",
       Buffer: ["buffer", "Buffer"],
+    }),
+    new webpack.IgnorePlugin({
+      resourceRegExp: /canvg/,
     })
   );
 

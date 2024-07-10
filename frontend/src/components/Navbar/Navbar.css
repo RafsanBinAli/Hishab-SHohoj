@@ -6,36 +6,44 @@
   padding: 10px 20px; /* Padding for better spacing */
 }
 
-.navbar-brand {
+.navbar .navbar-brand {
   font-size: 1.5rem; /* Navbar brand font size */
   margin-left: 1rem;
   font-weight: bold; /* Make the navbar brand bold */
 }
 
-.navbar-toggler {
+.navbar .navbar-toggler {
   border: none; /* Remove border from toggler button */
 }
 
-.navbar-nav {
+.navbar .navbar-nav {
   margin-left: auto; /* Align navigation links to the right */
   display: flex;
   align-items: center;
 }
 
-.nav-link {
+.navbar .nav-link {
   font-size: 1rem; /* Navigation link font size */
-  color: #333333; /* Link color */
+  color: #ffffff; /* Link color */
   transition: color 0.3s ease; /* Smooth transition for link color */
   padding: 0.5rem 1rem; /* Padding for better touch targets */
   font-weight: bold; /* Make the navigation links bold */
 }
 
-.nav-link:hover {
+.navbar-dark .navbar-nav .nav-link {
+  color: white;
+}
+
+.navbar-dark .navbar-nav .nav-link:hover {
+  color: lightgray; /* Optional: change color on hover */
+}
+
+.navbar .nav-link:hover {
   color: #007bff; /* Hover color for links (blue) */
 }
 
 @media (max-width: 991.98px) {
-  .navbar-collapse {
+  .navbar .navbar-collapse {
     position: fixed;
     top: 0;
     left: -100%; /* Off-screen initially */
@@ -47,29 +55,29 @@
     z-index: 1000; /* Ensure it overlays other content */
   }
 
-  .navbar-collapse.show {
+  .navbar .navbar-collapse.show {
     left: 0; /* Slide in from the left */
   }
 
-  .navbar-toggler-icon {
+  .navbar .navbar-toggler-icon {
     outline: none; /* Remove outline from toggler icon */
   }
 
-  .navbar-nav {
+  .navbar .navbar-nav {
     flex-direction: column; /* Stack links vertically */
   }
 
-  .nav-item {
+  .navbar .nav-item {
     margin: 5px 0; /* Margin between each nav item */
   }
 }
 
 @media (min-width: 992px) {
-  .navbar-nav {
+  .navbar .navbar-nav {
     margin-left: auto; /* Align navigation links to the right */
   }
 
-  .navbar-collapse {
+  .navbar .navbar-collapse {
     position: relative;
     top: 0;
     left: 0; /* On large screens, the collapse should be in its default position */
@@ -81,11 +89,11 @@
     z-index: auto; /* Default z-index on large screens */
   }
 
-  .navbar-collapse.show {
+  .navbar .navbar-collapse.show {
     left: 0; /* Default position on large screens */
   }
 
-  .nav-item {
+  .navbar .nav-item {
     margin-left: 1rem; /* Adjust margin between items */
   }
 }
