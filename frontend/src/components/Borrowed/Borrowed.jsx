@@ -77,6 +77,7 @@ const Borrowed = () => {
                 {editingIndex === index ? (
                   <>
                     <td>
+                      +
                       <input
                         type="text"
                         name="name"

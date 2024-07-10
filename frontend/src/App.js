@@ -11,6 +11,7 @@ import NewDokan2 from "./components/NewDokan2/NewDokan2";
 import DokanerSlip from "./components/DokanerSlip/DokanerSLip";
 import SlipDetails from "./components/SlipDetails/SlipDetails";
 import SlipTable from "./components/SlipTable/SLipTable";
+import DailyTransaction from "./components/DailyTransaction/DailyTransaction";
 
 require("dotenv").config();
 function App() {
@@ -30,7 +31,7 @@ function App() {
           <Route path="/slip" element={<DokanerSlip />} />
           <Route path="/slip-details/:shopName/:id" element={<SlipDetails />} />
           <Route path="/hishab-table" element={<SlipTable />} />
-
+          <Route path="/todays-hishab" element={<DailyTransaction />} />
         </Routes>
       </div>
     </Router>

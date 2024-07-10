@@ -4,15 +4,11 @@
   margin: 0 auto; /* Center align the container */
 }
 
-.card {
-  margin-bottom: 20px;
+.container-card-details .row {
+  margin-left: 0px;
 }
 
-.row {
-  margin-left: 50px;
-}
-
-.btn1 {
+.container-card-details .btn1 {
   margin-right: 10px;
   font-size: 20px;
   border-radius: 4px;
@@ -21,62 +17,107 @@
   height: 3rem;
 }
 
-.card-text {
+.container-card-details .row .card-text {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   font-size: 20px;
   color: #0c0000;
 }
 
-.header-title {
+.container-card-details .header-title {
   margin-bottom: 10px;
   padding: 20px;
   border: solid 1px black;
   font-weight: bolder;
 }
-.card-body {
-  padding: 1px; /* Adjust padding for card body */
+.container-card-details .row .card-body {
+  padding: 5px; /* Adjust padding for card body */
   border: 1px solid #ddd; /* Example border for card body */
   border-radius: 8px; /* Example border radius */
+  margin-left: 0;
 }
-.table {
+.container-card-details .card-body .table {
   table-layout: fixed;
+  margin-bottom: 0;
+}
+
+.container-card-details .card-body .commission input[type="number"] {
+  width: 100%;
+  max-width: 100px; /* Set a maximum width to prevent spilling out */
+  box-sizing: border-box;
 }
 
 
 @media (max-width: 991.98px) {
-  .container-card-details {
+  .container-card-details .container-card-details {
     padding: 15px; /* Reduce padding for smaller screens */
   }
-  .card-body {
-    padding: 1.5px; /* Adjust padding for smaller screens */
+  .container-card-details .row .card-body {
+    padding: 0px; /* Adjust padding for smaller screens */
   }
-  .row {
+  .container-card-details .row {
     margin-left: 0;
   }
-  .table {
+  .container-card-details .card-body .table {
     table-layout: fixed;
     font-size: 5px;
+    margin-bottom: 0;
   }
-  
-  .table th, .table td {
+  .container-card-details .table th, .table td {
     overflow: hidden;
   }
 
-  .btn{
+  .container-card-details .btn{
     border-radius: 8px;
     font-size: 10px;
+  }
+
+  .container-card-details .card-body .commission input[type="number"] {
+  
+    max-width: 100px; /* Set a maximum width to prevent spilling out */
+    
   }
   
 }
 
 @media (max-width: 762px) {
-  .container-card-details {
+  .container-card-details .container-card-details {
     margin-left: 0; /* Remove left margin for smaller screens */
-    padding: 10px; /* Further reduce padding for extra small screens */
+    padding: 0px; /* Further reduce padding for extra small screens */
   }
 
-  .card-body {
-    padding: 1px; /* Adjust padding inside card body for smaller screens */
+  .container-card-details .row .card-body {
+    padding: 0px; /* Adjust padding inside card body for smaller screens */
+    margin-left: 0;
+  }
+
+  .container-card-details .row {
+    margin-left: 0;
+  }
+
+  .container-card-details .header-title {
+    padding: 10px; /* Adjust padding for header title in smaller screens */
+  }
+  .container-card-details .table{
+    table-layout: fixed;
+    font-size: 5px;
+    margin-bottom: 0;
+  }
+  .container-card-details .card-body .commission input[type="number"] {
+ 
+    max-width: 80px; /* Set a maximum width to prevent spilling out */
+    
+  }
+}
+
+
+@media (max-width: 576px) {
+  .container-card-details {
+    margin-left: 0; /* Remove left margin for smaller screens */
+    padding: 5px; /* Further reduce padding for extra small screens */
+  }
+
+  .row .card-body {
+    padding: 0px; /* Adjust padding inside card body for smaller screens */
     margin-left: 0;
   }
 
@@ -85,6 +126,16 @@
   }
 
   .header-title {
-    padding: 10px; /* Adjust padding for header title in smaller screens */
+    padding: 7px; /* Adjust padding for header title in smaller screens */
+  }
+  .table{
+    table-layout: fixed;
+    font-size: 4px;
+    margin-bottom: 0;
+  }
+  .container-card-details .card-body .commission input[type="number"] {
+
+    max-width: 50px; /* Set a maximum width to prevent spilling out */
+    
   }
 }

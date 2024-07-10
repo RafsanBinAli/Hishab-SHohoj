@@ -109,7 +109,7 @@ const Home = () => {
                     </div>
                   ))}
                   <a href="#">
-                    ক্লিক করুন <i className="fa fa-long-arrow-right"></i>
+                    কার্ডে ক্লিক করুন <i className="fa fa-long-arrow-right"></i>
                   </a>
                 </div>
               </div>

@@ -98,6 +98,15 @@ const Navbar = () => {
                 হিসাব খাতা
               </Link>
             </li>
+            <li className="nav-item">
+              <Link
+                className="nav-link"
+                to="/todays-hishab"
+                onClick={() => setIsOpen(false)}
+              >
+                আজকের হিসাব
+              </Link>
+            </li>
           </ul>
         </div>
       </div>

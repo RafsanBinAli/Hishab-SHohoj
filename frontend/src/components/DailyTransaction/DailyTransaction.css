@@ -1,0 +1,33 @@
+.container {
+    max-width: 1200px;
+    margin: auto;
+  }
+  
+  .card {
+    margin-bottom: 20px;
+  }
+  
+  .card-header {
+    background-color: #007bff;
+    color: white;
+    font-size: 1.2rem;
+  }
+  
+  .table {
+    margin-bottom: 0;
+  }
+  
+  .font-weight-bold {
+    font-weight: bold;
+  }
+  
+  @media (max-width: 767px) {
+    .card-header {
+      font-size: 1rem;
+    }
+  
+    .font-weight-bold {
+      font-size: 0.9rem;
+    }
+  }
+  
