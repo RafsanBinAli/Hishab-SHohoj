@@ -3,21 +3,25 @@ import { Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./Navbar.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
+import { faUserPlus, faTimes } from "@fortawesome/free-solid-svg-icons"; // Import faTimes for close icon
 
-const Navbar = ({setIsUserLoggedIn}) => {
+const Navbar = ({ setIsUserLoggedIn }) => {
   const [isOpen, setIsOpen] = useState(false);
   const navbarRef = useRef(null);
-  
+
   const handleLogout = () => {
     setIsOpen(false);
-    localStorage.removeItem('isUserLoggedIn');
-    localStorage.removeItem('userAuthToken');
+    localStorage.removeItem("isUserLoggedIn");
+    localStorage.removeItem("userAuthToken");
     setIsUserLoggedIn(false); // Update the login state in App.js
   };
 
-  const handleToggle = ({ setIsUserLoggedIn }) => {
+  const handleToggle = () => {
     setIsOpen(!isOpen);
+  };
+
+  const handleClose = () => {
+    setIsOpen(false);
   };
 
   const handleClickOutside = (event) => {
@@ -61,6 +65,18 @@ const Navbar = ({setIsUserLoggedIn}) => {
           className={`collapse navbar-collapse ${isOpen ? "show" : ""}`}
           id="navbarNav"
         >
+          {/* Close icon for smaller screens */}
+          <button
+            className={`navbar-toggler d-lg-none ${
+              isOpen ? "d-block ml-auto mt-2" : "d-none"
+            }`}
+            type="button"
+            onClick={handleClose}
+            aria-label="Close navigation"
+          >
+            <FontAwesomeIcon icon={faTimes} />
+          </button>
+
           <ul className="navbar-nav ml-auto">
             <li className="nav-item">
               <Link
@@ -116,16 +132,18 @@ const Navbar = ({setIsUserLoggedIn}) => {
                 Add Dokan Member <FontAwesomeIcon icon={faUserPlus} />
               </Link>
             </li>
-            <Link
-              className="nav-link"
-              to="/"
-              onClick={() => {
-                setIsOpen(false); // Close the navbar if it's open
-                handleLogout(); // Call logout function to clear localStorage
-              }}
-            >
-              Log Out
-            </Link>
+            <li className="nav-item">
+              <Link
+                className="nav-link"
+                to="/"
+                onClick={() => {
+                  setIsOpen(false); // Close the navbar if it's open
+                  handleLogout(); // Call logout function to clear localStorage
+                }}
+              >
+                Log Out
+              </Link>
+            </li>
           </ul>
         </div>
       </div>

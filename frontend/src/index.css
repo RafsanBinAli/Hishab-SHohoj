@@ -1,8 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Playwrite+DK+Uloopet:wght@100..400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&display=swap');
+
+
+/* Adjust paths and file names based on your actual downloaded files */
 
 body {
   margin: 0;
-  font-family: "Playwrite DK Uloopet", cursive;
+  font-family: 'Montserrat', sans-serif;
   font-optical-sizing: auto;
   font-weight: 100px;
   font-style: normal;                                          

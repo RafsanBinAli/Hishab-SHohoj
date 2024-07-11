@@ -6,13 +6,15 @@ const SlipTable = () => {
   const [paidInputs, setPaidInputs] = useState({});
   const [savedRows, setSavedRows] = useState({});
   const [clicked, setClicked] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
 
   useEffect(() => {
     const fetchSlips = async () => {
       try {
-        const currentDate = new Date().toISOString().split("T")[0];
         const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/slip/${currentDate}`
+          `${process.env.REACT_APP_BACKEND_URL}/slip/${selectedDate}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch slips");
@@ -25,7 +27,7 @@ const SlipTable = () => {
     };
 
     fetchSlips();
-  }, []);
+  }, [selectedDate]);
 
   const handlePaidChange = (event, shopName, totalAmount) => {
     const { value } = event.target;
@@ -91,6 +93,18 @@ const SlipTable = () => {
   return (
     <div className="slip-table-container">
       <h2 className="table-title font-weight-bold">আজকের স্লিপ</h2>
+      <div className="text-center mb-4">
+        <label htmlFor="datePicker" className="font-weight-bold">
+          তারিখ:
+        </label>
+        <input
+          type="date"
+          id="datePicker"
+          value={selectedDate}
+          onChange={(e) => setSelectedDate(e.target.value)}
+          className="ml-2"
+        />
+      </div>
       <div className="table-responsive">
         <table className="table">
           <thead>

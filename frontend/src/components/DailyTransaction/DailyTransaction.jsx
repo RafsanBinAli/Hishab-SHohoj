@@ -1,51 +1,62 @@
-import React from "react";
+import React, { useState } from "react";
 import "./DailyTransaction.css";
 
 const DailyTransaction = () => {
-  const todayData = {
+  const dummyData = {
     joma: [
       { name: "abc", amount: 1000 },
-      { name: "abc", amount: 1000 },
-      { name: "abc", amount: 1000 },
-      { name: "abc", amount: 1000 },
+      { name: "def", amount: 1200 },
+      { name: "ghi", amount: 1100 },
+      { name: "jkl", amount: 1500 },
     ],
     krishokerTk: [
       { name: "abc", amount: 1000 },
-      { name: "abc", amount: 1000 },
-      { name: "abc", amount: 1000 },
-      { name: "abc", amount: 1000 },
+      { name: "def", amount: 900 },
+      { name: "ghi", amount: 800 },
+      { name: "jkl", amount: 700 },
     ],
     dhar: [
-      { name: "abc", amount: 1000 },
-      { name: "abc", amount: 1000 },
-      { name: "abc", amount: 1000 },
+      { name: "abc", amount: 500 },
+      { name: "def", amount: 400 },
+      { name: "ghi", amount: 300 },
     ],
     onnanno: [
-      { name: "abc", amount: 1000 },
-      { name: "abc", amount: 1000 },
-      { name: "abc", amount: 1000 },
+      { name: "abc", amount: 200 },
+      { name: "def", amount: 150 },
+      { name: "ghi", amount: 100 },
     ],
   };
 
   const calculateTotal = (category) => {
-    return todayData[category].reduce((total, item) => total + item.amount, 0);
+    return dummyData[category].reduce((total, item) => total + item.amount, 0);
   };
 
   const totalJoma = calculateTotal("joma");
   const totalKrishokerTk = calculateTotal("krishokerTk");
   const totalDhar = calculateTotal("dhar");
   const totalOnnanno = calculateTotal("onnanno");
-  const grandTotal = totalJoma + totalKrishokerTk + totalDhar + totalOnnanno;
-
   const totalKhoroch = totalKrishokerTk + totalDhar + totalOnnanno;
   const remainingBalance = totalJoma - totalKhoroch;
 
-  const today = new Date().toLocaleDateString("en-GB");
+  const [selectedDate, setSelectedDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
 
   return (
     <div className="container-dailyTransaction mt-4">
       <h2 className="text-center my-4 py-2 font-weight-bold">আজকের হিসাব</h2>
-      <h4 className="text-center">তারিখ: {today}</h4>
+      <div className="text-center mb-4">
+        <label htmlFor="datePicker" className="font-weight-bold">
+          তারিখ:
+        </label>
+        <input
+          type="date"
+          id="datePicker"
+          value={selectedDate}
+          onChange={(e) => setSelectedDate(e.target.value)}
+          className="ml-2"
+        />
+      </div>
       <div className="row mb-4">
         <div className="col-md-12">
           <div className="card">
@@ -65,13 +76,13 @@ const DailyTransaction = () => {
                     <td colSpan="2">
                       <div
                         className={
-                          todayData.joma.length > 3 ? "scrollable-cell" : ""
+                          dummyData.joma.length > 3 ? "scrollable-cell" : ""
                         }
                       >
-                        {todayData.joma.map((item, index) => (
+                        {dummyData.joma.map((item, index) => (
                           <div
                             key={index}
-                            className="items d-flex justify-content-between"
+                            className="items d-flex justify-content-between row-item"
                           >
                             <span>{item.name}</span>
                             <span>{item.amount}</span>
@@ -82,19 +93,19 @@ const DailyTransaction = () => {
                     <td>{totalJoma}</td>
                   </tr>
                   <tr>
-                    <td className="font-weight-bold">কৃষকের টাকা</td>
+                    <td className="font-weight-bold">কৃষকের টাকা(খরচ)</td>
                     <td colSpan="2">
                       <div
                         className={
-                          todayData.krishokerTk.length > 3
+                          dummyData.krishokerTk.length > 3
                             ? "scrollable-cell"
                             : ""
                         }
                       >
-                        {todayData.krishokerTk.map((item, index) => (
+                        {dummyData.krishokerTk.map((item, index) => (
                           <div
                             key={index}
-                            className="d-flex justify-content-between"
+                            className="d-flex justify-content-between row-item"
                           >
                             <span>{item.name}</span>
                             <span>{item.amount}</span>
@@ -105,17 +116,17 @@ const DailyTransaction = () => {
                     <td>{totalKrishokerTk}</td>
                   </tr>
                   <tr>
-                    <td className="font-weight-bold">ধার</td>
+                    <td className="font-weight-bold">ধার (খরচ) </td>
                     <td colSpan="2">
                       <div
                         className={
-                          todayData.dhar.length > 3 ? "scrollable-cell" : ""
+                          dummyData.dhar.length > 3 ? "scrollable-cell" : ""
                         }
                       >
-                        {todayData.dhar.map((item, index) => (
+                        {dummyData.dhar.map((item, index) => (
                           <div
                             key={index}
-                            className="d-flex justify-content-between"
+                            className="d-flex justify-content-between row-item"
                           >
                             <span>{item.name}</span>
                             <span>{item.amount}</span>
@@ -126,17 +137,17 @@ const DailyTransaction = () => {
                     <td>{totalDhar}</td>
                   </tr>
                   <tr>
-                    <td className="font-weight-bold">অন্যান্য</td>
+                    <td className="font-weight-bold">অন্যান্য (খরচ) </td>
                     <td colSpan="2">
                       <div
                         className={
-                          todayData.onnanno.length > 3 ? "scrollable-cell" : ""
+                          dummyData.onnanno.length > 3 ? "scrollable-cell" : ""
                         }
                       >
-                        {todayData.onnanno.map((item, index) => (
+                        {dummyData.onnanno.map((item, index) => (
                           <div
                             key={index}
-                            className="d-flex justify-content-between"
+                            className="d-flex justify-content-between row-item"
                           >
                             <span>{item.name}</span>
                             <span>{item.amount}</span>

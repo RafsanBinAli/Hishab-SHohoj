@@ -4,35 +4,31 @@ import "./Borrowed.css";
 const Borrowed = () => {
   const [borrowList, setBorrowList] = useState([
     {
-      name: "John Doe",
-      date: "2024-07-01",
-      totalTaka: 1000,
-      due: 0,
-      phone: "1234567890",
+      krishokerNaam: "কৃষক ১",
+      dhar: 1000,
+      baki: 0,
+      oboshishto: 1000,
     },
     {
-      name: "Jane Smith",
-      date: "2024-07-02",
-      totalTaka: 500,
-      due: 500,
-      phone: "0987654321",
+      krishokerNaam: "কৃষক ২",
+      dhar: 500,
+      baki: 250,
+      oboshishto: 750,
     },
     {
-      name: "Alice Johnson",
-      date: "2024-07-03",
-      totalTaka: 750,
-      due: 250,
-      phone: "5555555555",
+      krishokerNaam: "কৃষক ৩",
+      dhar: 750,
+      baki: 500,
+      oboshishto: 1250,
     },
   ]);
 
   const [editingIndex, setEditingIndex] = useState(null);
   const [editData, setEditData] = useState({
-    name: "",
-    date: "",
-    totalTaka: "",
-    due: "",
-    phone: "",
+    krishokerNaam: "",
+    dhar: "",
+    baki: "",
+    oboshishto: "",
   });
 
   const handleEditClick = (index) => {
@@ -62,13 +58,10 @@ const Borrowed = () => {
         <table className="borrowed-table">
           <thead>
             <tr>
-              <th>নাম</th>
-              <th>তারিখ</th>
-              <th>মোট</th>
+              <th>কৃষকের নাম</th>
+              <th>ধার</th>
               <th>বাকি </th>
-              <th>স্ট্যাটাস </th>
-              <th>মোবাইল</th>
-              <th>#</th>
+              <th>অবশিষ্ট</th>
             </tr>
           </thead>
           <tbody>
@@ -77,81 +70,44 @@ const Borrowed = () => {
                 {editingIndex === index ? (
                   <>
                     <td>
-                      +
                       <input
                         type="text"
-                        name="name"
-                        value={editData.name}
-                        onChange={handleInputChange}
-                      />
-                    </td>
-                    <td>
-                      <input
-                        type="date"
-                        name="date"
-                        value={editData.date}
+                        name="krishokerNaam"
+                        value={editData.krishokerNaam}
                         onChange={handleInputChange}
                       />
                     </td>
                     <td>
                       <input
                         type="number"
-                        name="totalTaka"
-                        value={editData.totalTaka}
+                        name="dhar"
+                        value={editData.dhar}
                         onChange={handleInputChange}
                       />
                     </td>
                     <td>
                       <input
                         type="number"
-                        name="due"
-                        value={editData.due}
+                        name="baki"
+                        value={editData.baki}
                         onChange={handleInputChange}
                       />
-                    </td>
-                    <td>
-                      {editData.totalTaka - editData.due === 0 ? (
-                        <span className="action-paid">Paid</span>
-                      ) : (
-                        <span className="action-due">Due</span>
-                      )}
                     </td>
                     <td>
                       <input
-                        type="text"
-                        name="phone"
-                        value={editData.phone}
+                        type="number"
+                        name="oboshishto"
+                        value={editData.oboshishto}
                         onChange={handleInputChange}
                       />
-                    </td>
-                    <td>
-                      <button onClick={handleSaveClick} className="btn-save">
-                        Save
-                      </button>
                     </td>
                   </>
                 ) : (
                   <>
-                    <td>{borrow.name}</td>
-                    <td>{borrow.date}</td>
-                    <td>{borrow.totalTaka}</td>
-                    <td>{borrow.due}</td>
-                    <td>
-                      {borrow.totalTaka - borrow.due === 0 ? (
-                        <span className="action-paid">Paid</span>
-                      ) : (
-                        <span className="action-due">Due</span>
-                      )}
-                    </td>
-                    <td>{borrow.phone}</td>
-                    <td>
-                      <button
-                        onClick={() => handleEditClick(index)}
-                        className="btn-edit"
-                      >
-                        Edit
-                      </button>
-                    </td>
+                    <td>{borrow.krishokerNaam}</td>
+                    <td>{borrow.dhar}</td>
+                    <td>{borrow.baki}</td>
+                    <td>{borrow.oboshishto}</td>
                   </>
                 )}
               </tr>

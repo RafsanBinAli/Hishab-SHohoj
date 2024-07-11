@@ -49,6 +49,16 @@
   padding: 5px 0;
 }
 
+.container-dailyTransaction .row-item {
+  border-bottom: 1px solid #ddd; /* Add border to each row */
+  padding: 8px 0;
+}
+
+.container-dailyTransaction .row-item:last-child {
+  border-bottom: none;
+}
+
+
 
 
 
