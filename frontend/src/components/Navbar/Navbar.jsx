@@ -5,11 +5,18 @@ import "./Navbar.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
 
-const Navbar = () => {
+const Navbar = ({setIsUserLoggedIn}) => {
   const [isOpen, setIsOpen] = useState(false);
   const navbarRef = useRef(null);
+  
+  const handleLogout = () => {
+    setIsOpen(false);
+    localStorage.removeItem('isUserLoggedIn');
+    localStorage.removeItem('userAuthToken');
+    setIsUserLoggedIn(false); // Update the login state in App.js
+  };
 
-  const handleToggle = () => {
+  const handleToggle = ({ setIsUserLoggedIn }) => {
     setIsOpen(!isOpen);
   };
 
@@ -47,7 +54,7 @@ const Navbar = () => {
         >
           <span className="navbar-toggler-icon"></span>
         </button>
-        <Link className="navbar-brand" to="/">
+        <Link className="navbar-brand" to="/home">
           Hishab Shohoj
         </Link>
         <div
@@ -55,15 +62,6 @@ const Navbar = () => {
           id="navbarNav"
         >
           <ul className="navbar-nav ml-auto">
-            <li className="nav-item">
-              <Link
-                className="nav-link"
-                to="/"
-                onClick={() => setIsOpen(false)}
-              >
-                হোম
-              </Link>
-            </li>
             <li className="nav-item">
               <Link
                 className="nav-link"
@@ -112,12 +110,22 @@ const Navbar = () => {
             <li className="nav-item">
               <Link
                 className="nav-link"
-                to="/signup"
+                to="/signup-new-member"
                 onClick={() => setIsOpen(false)}
               >
-                Join <FontAwesomeIcon icon={faUserPlus} />
+                Add Dokan Member <FontAwesomeIcon icon={faUserPlus} />
               </Link>
             </li>
+            <Link
+              className="nav-link"
+              to="/"
+              onClick={() => {
+                setIsOpen(false); // Close the navbar if it's open
+                handleLogout(); // Call logout function to clear localStorage
+              }}
+            >
+              Log Out
+            </Link>
           </ul>
         </div>
       </div>
