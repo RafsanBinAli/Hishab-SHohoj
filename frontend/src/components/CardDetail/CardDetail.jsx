@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
-
 import { useParams } from "react-router-dom";
-
 import "./CardDetail.css";
-
 import jsPDF from "jspdf";
+import "@fontsource/noto-sans-bengali"; // Import the Noto Sans Bengali font
 
 const CardDetail = () => {
   const { id } = useParams(); // Assuming id is passed as a URL parameter
@@ -236,7 +234,7 @@ const CardDetail = () => {
   const handleDownload = () => {
     const doc = new jsPDF("p", "pt", "a4");
 
-    const elementHTML = document.querySelector("#dokaner-slip");
+    const elementHTML = document.getElementById("dokaner-slip");
 
     doc.html(elementHTML, {
       callback: function (pdf) {
@@ -245,42 +243,16 @@ const CardDetail = () => {
         for (let i = 1; i <= totalPages; i++) {
           pdf.setPage(i);
 
-          const styleElement = document.createElement("style");
-
-          styleElement.innerHTML = ` 
-
-            #dokaner-slip { 
-
-              color: #000000 !important; 
-
-              background-color: #ffffff !important; 
-
-            } 
-
-            #dokaner-slip table { 
-
-              color: #000000 !important; 
-
-            } 
-
-          `;
-
-          document.head.appendChild(styleElement);
+          // Apply styles for Bangla font
+          pdf.setFont("NotoSansBengali-Regular");
         }
-
-        pdf.output("dataurlnewwindow");
 
         pdf.save("dokaner-slip.pdf");
       },
-
       x: 10,
-
       y: 10,
-
-      width: 540, // Adjusted to fit within A4 width with margin
-
+      width: 540,
       windowWidth: 595.28,
-
       windowHeight: 841.89,
     });
   };
@@ -291,7 +263,7 @@ const CardDetail = () => {
 
       {loadedData && (
         <div className="row mb-2">
-          <div className="col-md-5 ml-20">
+          <div className="col-md-4 ml-10">
             <div className="card-body">
               <h5 className="header-title">কৃষকের হিসাব</h5>
 
@@ -317,11 +289,11 @@ const CardDetail = () => {
             </div>
           </div>
 
-          <div className="col-md-1 d-flex align-items-center justify-content-center">
+          <div className="col-1 d-flex align-items-center justify-content-center">
             <div className="vr"></div> {/* Vertical divider */}
           </div>
 
-          <div className="col-md-6">
+          <div className="col-md-7">
             <div className="card-body" id="dokaner-slip">
               <h5 className="header-title">দোকানের হিসাব</h5>
 

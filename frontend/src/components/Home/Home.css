@@ -51,6 +51,7 @@
 }
 
 .container .item-in {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
   background: #fff;
   padding: 20px 20px 20px 40px;;
   position: relative;

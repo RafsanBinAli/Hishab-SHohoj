@@ -1,33 +1,101 @@
-.container {
-    max-width: 1200px;
-    margin: auto;
+.container-dailyTransaction {
+  padding: 0 15px;
+  max-width: 1320px;
+  margin-left: 11rem;
+}
+
+.container-dailyTransaction .card {
+  margin-bottom: 20px;
+}
+
+.container-dailyTransaction .card-header {
+  background-color: #f0f0f0;
+  padding: 10px;
+}
+
+.container-dailyTransaction .card-body {
+  padding: 0;
+}
+
+.container-dailyTransaction .table {
+  width: 100%;
+  margin-bottom: 0;
+}
+
+.container-dailyTransaction  .table td, .table th {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+.container-dailyTransaction  .row {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.container-dailyTransaction  table-responsive {
+  overflow-x: auto;
+}
+
+.container-dailyTransaction  .scrollable-cell {
+  max-height: 120px; /* Adjust the height as needed */
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.container-dailyTransaction .scrollable-cell > div {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 0;
+}
+
+
+
+
+@media (max-width: 768px) {
+  .container-dailyTransaction {
+    padding: 0 12px;
+    margin-left: 0;
   }
-  
-  .card {
-    margin-bottom: 20px;
+  .container-dailyTransaction h2 {
+    font-size: 1.5rem;
   }
-  
-  .card-header {
-    background-color: #007bff;
-    color: white;
-    font-size: 1.2rem;
+
+  .container-dailyTransaction h4 {
+    font-size: 1.25rem;
   }
-  
-  .table {
-    margin-bottom: 0;
+
+  .container-dailyTransaction .table td, .table th {
+    padding: 6px;
+    font-size: 0.875rem;
   }
-  
-  .font-weight-bold {
-    font-weight: bold;
+ 
+
+  .container-dailyTransaction .scrollable-cell {
+    max-height: 100px; /* Adjust for smaller screens */
   }
-  
-  @media (max-width: 767px) {
-    .card-header {
-      font-size: 1rem;
-    }
-  
-    .font-weight-bold {
-      font-size: 0.9rem;
-    }
+
+}
+
+@media (max-width: 576px) {
+  .container-dailyTransaction {
+    padding: 0 12px;
+    margin-left: 0;
   }
-  
+  .container-dailyTransaction h2 {
+    font-size: 1.25rem;
+  }
+
+  .container-dailyTransaction h4 {
+    font-size: 1rem;
+  }
+
+  .container-dailyTransaction .table td, .table th {
+    padding: 4px;
+    font-size: 0.75rem;
+  }
+
+  .container-dailyTransaction .scrollable-cell {
+    max-height: 80px; /* Adjust for smaller screens */
+  }
+}

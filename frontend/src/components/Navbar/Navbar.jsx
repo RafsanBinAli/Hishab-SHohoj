@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import "bootstrap/dist/css/bootstrap.min.css"; // Import Bootstrap CSS
-import "./Navbar.css"; // Import your custom CSS for styling
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./Navbar.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -83,7 +85,7 @@ const Navbar = () => {
             <li className="nav-item">
               <Link
                 className="nav-link"
-                to="/Slip"
+                to="/slip"
                 onClick={() => setIsOpen(false)}
               >
                 স্লিপ
@@ -105,6 +107,15 @@ const Navbar = () => {
                 onClick={() => setIsOpen(false)}
               >
                 আজকের হিসাব
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link
+                className="nav-link"
+                to="/signup"
+                onClick={() => setIsOpen(false)}
+              >
+                Join <FontAwesomeIcon icon={faUserPlus} />
               </Link>
             </li>
           </ul>
