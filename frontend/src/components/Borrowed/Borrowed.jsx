@@ -4,9 +4,9 @@ import "./Borrowed.css";
 const Borrowed = () => {
   const [newFarmerData, setNewFarmerData] = useState({
     farmerName: "",
-    totalDue: 0,
-    payNow: 0,
-    remainingDue: 0,
+    totalDue: "",
+    payNow: "",
+    remainingDue: "",
   });
 
   const [farmerList, setFarmerList] = useState([]);
@@ -35,10 +35,17 @@ const Borrowed = () => {
 
   const handleNewFarmerInputChange = (e) => {
     const { name, value } = e.target;
-    setNewFarmerData((prevData) => ({
-      ...prevData,
-      [name]: name === "farmerName" ? value : parseFloat(value),
-    }));
+    const newValue = name === "farmerName" ? value : parseFloat(value);
+    setNewFarmerData((prevData) => {
+      const updatedData = {
+        ...prevData,
+        [name]: newValue,
+      };
+      if (name === "payNow" || name === "totalDue") {
+        updatedData.remainingDue = updatedData.totalDue - updatedData.payNow;
+      }
+      return updatedData;
+    });
 
     if (name === "farmerName") {
       const searchTerm = value.toLowerCase();
@@ -50,12 +57,12 @@ const Borrowed = () => {
   };
 
   const handleFarmerSelection = (farmer) => {
-    setNewFarmerData({
+    setNewFarmerData((prevData) => ({
+      ...prevData,
       farmerName: farmer.name,
-      totalDue: farmer.totalDue, // Adding totalDue from selected farmer
-      payNow: newFarmerData.payNow, // Preserve other fields if needed
-      remainingDue: newFarmerData.remainingDue,
-    });
+      totalDue: farmer.totalDue,
+      remainingDue: farmer.totalDue - prevData.payNow,
+    }));
     setFilteredFarmers([]);
   };
 
@@ -78,30 +85,23 @@ const Borrowed = () => {
     setShowNewPaymentForm(!showNewPaymentForm);
     setShowNewDebtForm(false);
   };
-  const handleEditFarmer = (index) => {
-    const farmerToEdit = farmerList[index];
-    setNewFarmerData({
-      farmerName: farmerToEdit.name,
-      totalDue: farmerToEdit.totalDue,
-      payNow: farmerToEdit.payNow,
-      remainingDue: farmerToEdit.remainingDue,
-    });
-    // Additional logic for showing the edit form or any specific behavior
-  };
- 
 
   return (
     <div className="borrowed-container">
-      <h2 className="borrowed-heading font-weight-bold">Due of Farmers</h2>
+      <h2 className="borrowed-heading font-weight-bold">কৃষকের ধার</h2>
 
       <div className="button-container">
-        <button onClick={toggleNewDebtForm}>Add New Debt Data</button>
-        <button onClick={toggleNewPaymentForm}>Add New Payment Data</button>
+        <button onClick={toggleNewDebtForm}>
+          নতুন ধার এর তথ্য সংযুক্ত করুন
+        </button>
+        <button onClick={toggleNewPaymentForm}>
+          নতুন পরিশোধের তথ্য সংযুক্ত করুন
+        </button>
       </div>
 
       {showNewDebtForm && (
         <div className="new-farmer-section">
-          <h3 className="farmer-header-demo">Add New Debt Data</h3>
+          <h3 className="farmer-header-demo">নতুন ধার এর তথ্য সংযুক্ত করুন</h3>
           <div className="new-farmer-inputs">
             <input
               type="text"
@@ -109,7 +109,7 @@ const Borrowed = () => {
               className="farmer-name"
               value={newFarmerData.farmerName}
               onChange={handleNewFarmerInputChange}
-              placeholder="Farmer Name"
+              placeholder="কৃষকের নাম"
             />
             {filteredFarmers.length > 0 && (
               <ul className="list-group-f">
@@ -127,33 +127,43 @@ const Borrowed = () => {
 
             <input
               type="number"
-              name="due"
-              value={newFarmerData?.totalDue}
+              name="totalDue"
+              value={newFarmerData.farmerName ? newFarmerData.totalDue : ""}
               onChange={handleNewFarmerInputChange}
-              placeholder="Due"
+              placeholder="মোট ধার"
+              disabled={!newFarmerData.farmerName}
             />
             <input
               type="number"
               name="payNow"
-              value={newFarmerData.payNow}
+              value={newFarmerData.farmerName ? newFarmerData.payNow : ""}
               onChange={handleNewFarmerInputChange}
-              placeholder="Pay Now"
+              placeholder="টাকা প্রদান"
+              disabled={!newFarmerData.farmerName}
             />
             <input
               type="number"
               name="remainingDue"
-              value={newFarmerData.remainingDue}
+              value={newFarmerData.farmerName ? newFarmerData.remainingDue : ""}
               onChange={handleNewFarmerInputChange}
-              placeholder="Remaining Due"
+              placeholder="অবশিষ্ট"
+              disabled={!newFarmerData.farmerName}
             />
-            <button onClick={handleSaveDebtClick}>Save</button>
+            <button
+              onClick={handleSaveDebtClick}
+              disabled={!newFarmerData.farmerName}
+            >
+              সংরক্ষণ করুন
+            </button>
           </div>
         </div>
       )}
 
       {showNewPaymentForm && (
         <div className="new-farmer-section">
-          <h3 className="farmer-header-demo">Add New Payment Data</h3>
+          <h3 className="farmer-header-demo">
+            নতুন পরিশোধের তথ্য সংযুক্ত করুন
+          </h3>
           <div className="new-farmer-inputs">
             <input
               type="text"
@@ -161,7 +171,7 @@ const Borrowed = () => {
               className="farmer-name"
               value={newFarmerData.farmerName}
               onChange={handleNewFarmerInputChange}
-              placeholder="Farmer Name"
+              placeholder="কৃষকের নাম"
             />
             {filteredFarmers.length > 0 && (
               <ul className="list-group-f">
@@ -180,11 +190,17 @@ const Borrowed = () => {
             <input
               type="number"
               name="payNow"
-              value={newFarmerData.payNow}
+              value={newFarmerData.farmerName ? newFarmerData.payNow : ""}
               onChange={handleNewFarmerInputChange}
-              placeholder="Pay Now"
+              placeholder="টাকা প্রদান"
+              disabled={!newFarmerData.farmerName}
             />
-            <button onClick={handleSavePaymentClick}>Save</button>
+            <button
+              onClick={handleSavePaymentClick}
+              disabled={!newFarmerData.farmerName}
+            >
+              সংরক্ষণ করুন
+            </button>
           </div>
         </div>
       )}
@@ -193,12 +209,10 @@ const Borrowed = () => {
         <table className="borrowed-table">
           <thead>
             <tr>
-              <th>Farmer's Name</th>
-              <th>Total Due</th>
-              <th>Paid Untill now</th>
-              <th>Remaining Due</th>
-              <th>Action</th>
-
+              <th>কৃষকের নাম</th>
+              <th>মোট ধার</th>
+              <th>টাকা প্রদান</th>
+              <th>অবশিষ্ট</th>
             </tr>
           </thead>
           <tbody>
@@ -208,9 +222,6 @@ const Borrowed = () => {
                 <td>{farmer.totalDue}</td>
                 <td>{farmer.payNow}</td>
                 <td>{farmer.remainingDue}</td>
-                <td>
-                  <button className="btn btn-secondary" onClick={() => handleEditFarmer(index)}>Edit</button>
-                </td>
               </tr>
             ))}
           </tbody>
