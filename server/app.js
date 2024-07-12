@@ -10,10 +10,10 @@ var usersRouter = require("./routes/users");
 const dotenv = require('dotenv').config()
 var app = express();
 
-const MONGODB_URI = 'mongodb+srv://octopus:Rafsan67@cluster0.rllrx4c.mongodb.net/?retryWrites=true&w=majority';
+const MONGODB_URI = process.env.MONGODB_URI;
 
 // Connect to MongoDB Atlas
-mongoose.connect(MONGODB_URI,{ dbName: 'Dalal'})
+mongoose.connect(MONGODB_URI,{ dbName: process.env.DB_NAME})
   .then(() => console.log('MongoDB Atlas connected'))
   .catch(err => console.error('MongoDB Atlas connection error:', err));
 
