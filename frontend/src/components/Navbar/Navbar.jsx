@@ -111,7 +111,7 @@ const Navbar = ({ setIsUserLoggedIn }) => {
                 to="/hishab-table"
                 onClick={() => setIsOpen(false)}
               >
-                হিসাব খাতা
+                দোকানের হিসাব
               </Link>
             </li>
             <li className="nav-item">
@@ -120,7 +120,7 @@ const Navbar = ({ setIsUserLoggedIn }) => {
                 to="/todays-hishab"
                 onClick={() => setIsOpen(false)}
               >
-                আজকের হিসাব
+                টোটাল হিসাব
               </Link>
             </li>
             <li className="nav-item">
