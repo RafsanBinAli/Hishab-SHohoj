@@ -16,6 +16,10 @@ const farmerSchema = new mongoose.Schema({
   fathersName: {
     type: String,
   },
+  totalDue:{
+    type: Number,
+    default:0,
+  }
 });
 
 module.exports = mongoose.model("Farmer", farmerSchema);

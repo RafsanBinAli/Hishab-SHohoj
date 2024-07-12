@@ -184,7 +184,7 @@ const NewDeal = () => {
                 <ul className="list-group">
                   {filteredUsers.map((user) => (
                     <li
-                      key={user.id}
+                      key={user._id}
                       className="list-group-item"
                       onClick={() => handleUserSelect(user)}
                     >
