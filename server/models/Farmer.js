@@ -19,6 +19,10 @@ const farmerSchema = new mongoose.Schema({
   totalDue:{
     type: Number,
     default:0,
+  },
+  totalPaid:{
+    type:Number,
+    default:0,
   }
 });
 

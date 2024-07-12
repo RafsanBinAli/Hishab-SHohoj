@@ -21,7 +21,6 @@ const purchaseSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  
 });
 
 const slipSchema = new mongoose.Schema({
@@ -32,15 +31,7 @@ const slipSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     index: true,
-    get: function(date) {
-        return date.toISOString().split('T')[0]; // Return YYYY-MM-DD format
-    },
-    set: function(dateString) {
-        const date = new Date(dateString); // Parse date string into Date object
-        date.setUTCHours(0, 0, 0, 0); // Set time to 00:00 UTC
-        return date;
-    }
-},
+  },
   purchases: {
     type: [purchaseSchema],
     required: true,
@@ -57,19 +48,14 @@ const slipSchema = new mongoose.Schema({
   },
   dueAmount: {
     type: Number,
-    get: function() {
-      return this.totalAmount - this.paid;
-    },
-    set: function(value) {
-      // Optionally handle setting due if needed
-      // This getter is primarily for read-only purposes
-      return value;
-    }
+    
+    default:0,
+   
   },
   isEdited: {
     type: Boolean,
     default: false,
-  }
+  },
 });
 
 module.exports = mongoose.model("Slip", slipSchema);

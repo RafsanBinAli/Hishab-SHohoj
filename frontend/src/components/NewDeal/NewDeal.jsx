@@ -115,7 +115,7 @@ const NewDeal = () => {
       alert("Successfully created new deals");
       setNewDealInfo(initialNewDealInfo);
       setSelectedUser(null);
-      navigate("/");
+      navigate("/home");
     } catch (error) {
       console.error("Error adding deal:", error);
       alert(error.message || "Failed to add deal");

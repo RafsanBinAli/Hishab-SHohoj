@@ -1,56 +1,45 @@
 const Slip = require("../models/slip");
+
+const { findSlip, createSlip } = require("../services/slipService");
+
 exports.findOrCreateSlip = async (req, res) => {
-  const { shopName, date } = req.body;
+  const { shopName } = req.body;
+
+  const currentDate = new Date();
+  const year = currentDate.getFullYear();
+  const month = String(currentDate.getMonth() + 1).padStart(2, "0");
+  const day = String(currentDate.getDate()).padStart(2, "0");
+  const startOfDay = new Date(Date.UTC(year, month - 1, day, 0, 0, 0));
+  const endOfDay = new Date(Date.UTC(year, month - 1, day, 23, 59, 59, 999));
 
   try {
-    let slips = [];
-
-    // Handle multiple shop names in case of array
-    if (Array.isArray(shopName)) {
-      slips = await Promise.all(
-        shopName.map(async (name) => {
-          let slip = await Slip.findOne({
-            shopName: name,
-            createdAt: date,
-          });
-
-          if (!slip) {
-            slip = new Slip({
-              shopName: name,
-              createdAt: date,
-              purchases: [],
-              totalAmount: 0,
-            });
-
-            await slip.save();
-            console.log("Creating new slip for", name, "on", date);
-          }
-
-          return slip;
-        })
-      );
-    } else {
-      let slip = await Slip.findOne({
+    console.log("shopName is", shopName);
+    let slip = await Slip.findOneAndUpdate(
+      {
         shopName,
-        createdAt: date,
-      });
-
-      if (!slip) {
-        slip = new Slip({
+        createdAt: {
+          $gte: startOfDay,
+          $lt: endOfDay,
+        },
+      },
+      {
+        $setOnInsert: {
           shopName,
-          createdAt: date,
+          createdAt: startOfDay,
           purchases: [],
           totalAmount: 0,
-        });
-
-        await slip.save();
-        console.log("Creating new slip for", shopName, "on", date);
+          paidAmount: 0,
+          isEdited: false,
+        },
+      },
+      {
+        new: true, // Return the updated document if found or created
+        upsert: true, // Create a new document if not found
+        setDefaultsOnInsert: true, // Ensure defaults are set when inserting a new document
       }
+    );
 
-      slips.push(slip);
-    }
-
-    res.status(200).json(slips);
+    res.status(200).json(slip);
   } catch (error) {
     console.error("Error finding or creating slip:", error);
     res.status(500).json({ message: "Server error" });
@@ -128,7 +117,6 @@ exports.findSlipByDate = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-
 
 exports.updateSlipPaidAmount = async (req, res) => {
   const { slipId, paidAmount, edit } = req.body;
