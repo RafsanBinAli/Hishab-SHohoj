@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import "./Borrowed.css";
 
 const Borrowed = () => {
   const [newFarmerData, setNewFarmerData] = useState({
     farmerName: "",
     totalDue: "",
-    payNow: "",
+    totalPaid: "",
     remainingDue: "",
     payGet: "",
+    newDhar: "",
   });
 
   const [farmerList, setFarmerList] = useState([]);
@@ -32,7 +32,6 @@ const Borrowed = () => {
         console.error("Error fetching farmer data:", error);
       }
     };
-
     fetchFarmerData();
   }, []);
 
@@ -45,13 +44,12 @@ const Borrowed = () => {
         [name]: value,
       };
 
-      // Calculate remainingDue based on payNow and totalDue
-      if (name === "payNow") {
+      if (name === "newDhar") {
         updatedData.remainingDue =
           parseFloat(updatedData.totalDue || 0) + parseFloat(value || 0);
       } else if (name === "totalDue") {
         updatedData.remainingDue =
-          parseFloat(value || 0) + parseFloat(updatedData.payNow || 0);
+          parseFloat(value || 0) + parseFloat(updatedData.totalPaid || 0);
       }
 
       // Calculate remainingDue based on payGet and totalDue
@@ -79,7 +77,7 @@ const Borrowed = () => {
     setNewFarmerData({
       farmerName: farmer.name,
       totalDue: farmer.totalDue,
-      payNow: "",
+      totalPaid: "",
       remainingDue: farmer.totalDue,
       payGet: "",
     });
@@ -87,56 +85,67 @@ const Borrowed = () => {
   };
 
   const handleSaveDebtClick = async () => {
+    console.log("new dhar", newFarmerData.newDhar);
     try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL}/update-farmer/${newFarmerData.farmerName}`,
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/update-farmers/${newFarmerData.farmerName}`,
         {
-          totalDue: newFarmerData.remainingDue,
-          payNow: newFarmerData.payNow,
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            newDhar: newFarmerData.newDhar,
+          }),
         }
       );
-
-      // Update farmerList after successful update
+      if (!response.ok) {
+        throw new Error("Failed to update farmer's details");
+      }
+      const updatedFarmer = await response.json();
       const updatedFarmerList = farmerList.map((farmer) =>
         farmer.name === newFarmerData.farmerName
           ? {
               ...farmer,
-              totalDue: newFarmerData.remainingDue,
+              totalDue: updatedFarmer.totalDue,
             }
           : farmer
       );
       setFarmerList(updatedFarmerList);
-
       alert("ধারের ডাটা সংরক্ষণ হয়েছে!");
-      console.log("Debt data saved:", response.data);
+      console.log("Debt data saved:", updatedFarmer);
     } catch (error) {
       console.error("Error saving debt data:", error);
       alert(error.message || "Failed to save debt data");
     }
   };
-
   const handleSavePaymentClick = async () => {
     try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL}/update-farmer/${newFarmerData.farmerName}`,
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/update-farmers/${newFarmerData.farmerName}`,
         {
-          farmerName: newFarmerData.farmerName,
-          totalDue: newFarmerData.remainingDue,
-          payGet: newFarmerData.payGet,
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            payGet: newFarmerData.payGet,
+          }),
         }
       );
-
-      // Update farmerList after successful update
+      if (!response.ok) {
+        throw new Error("Failed to update farmer's payment details");
+      }
+      const updatedFarmer = await response.json();
       const updatedFarmerList = farmerList.map((farmer) =>
         farmer.name === newFarmerData.farmerName
           ? {
               ...farmer,
-              totalDue: newFarmerData.remainingDue,
+              totalDue: newFarmerData.totalDue,
             }
           : farmer
       );
       setFarmerList(updatedFarmerList);
-
       alert("পরিশোধের ডাটা সংরক্ষণ হয়েছে!");
       console.log("Payment data saved:", newFarmerData);
     } catch (error) {
@@ -159,7 +168,7 @@ const Borrowed = () => {
     setNewFarmerData({
       farmerName: farmer.name,
       totalDue: farmer.totalDue,
-      payNow: farmer.payNow,
+      totalPaid: farmer.totalPaid,
       remainingDue: farmer.remainingDue,
       payGet: farmer.payGet,
     });
@@ -210,14 +219,13 @@ const Borrowed = () => {
               type="number"
               name="totalDue"
               value={newFarmerData.totalDue}
-              onChange={handleNewFarmerInputChange}
               placeholder="পূর্বের ধার"
               disabled={!newFarmerData.farmerName}
             />
             <input
               type="number"
-              name="payNow"
-              value={newFarmerData.payNow}
+              name="newDhar"
+              value={newFarmerData.newDhar}
               onChange={handleNewFarmerInputChange}
               placeholder="টাকা প্রদান"
               disabled={!newFarmerData.farmerName}
@@ -320,8 +328,8 @@ const Borrowed = () => {
               <tr key={index}>
                 <td>{farmer.name}</td>
                 <td>{farmer.totalDue}</td>
-                <td>{farmer.payNow}</td>
-                <td>{farmer.remainingDue}</td>
+                <td>{farmer.totalPaid}</td>
+                <td>{farmer.totalDue - farmer.totalPaid}</td>
                 <td>
                   <button
                     className="btn btn-sm btn-primary"

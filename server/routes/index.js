@@ -10,7 +10,7 @@ const slipController=require("../controllers/slipController")
 router.post("/create-farmer", farmerController.createFarmer);
 router.get("/get-farmer/:name", farmerController.findFarmerByName);
 router.get("/get-all-farmers", farmerController.showAllFarmers);
-router.put("/farmers/:name", farmerController.updateFarmer);
+router.put("/update-farmers/:name", farmerController.updateFarmer);
 
 // Route to create a new deal (assuming it references framer)
 router.post("/create-deal", newDealController.createDeal);
