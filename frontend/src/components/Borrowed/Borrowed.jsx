@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import "./Borrowed.css";
 
 const Borrowed = () => {
@@ -7,6 +8,7 @@ const Borrowed = () => {
     totalDue: "",
     payNow: "",
     remainingDue: "",
+    payGet: "",
   });
 
   const [farmerList, setFarmerList] = useState([]);
@@ -36,15 +38,31 @@ const Borrowed = () => {
 
   const handleNewFarmerInputChange = (e) => {
     const { name, value } = e.target;
-    const newValue = name === "farmerName" ? value : parseFloat(value);
+
     setNewFarmerData((prevData) => {
       const updatedData = {
         ...prevData,
-        [name]: newValue,
+        [name]: value,
       };
-      if (name === "payNow" || name === "totalDue") {
-        updatedData.remainingDue = updatedData.totalDue - updatedData.payNow;
+
+      // Calculate remainingDue based on payNow and totalDue
+      if (name === "payNow") {
+        updatedData.remainingDue =
+          parseFloat(updatedData.totalDue || 0) + parseFloat(value || 0);
+      } else if (name === "totalDue") {
+        updatedData.remainingDue =
+          parseFloat(value || 0) + parseFloat(updatedData.payNow || 0);
       }
+
+      // Calculate remainingDue based on payGet and totalDue
+      if (name === "payGet") {
+        updatedData.remainingDue =
+          parseFloat(updatedData.totalDue || 0) - parseFloat(value || 0);
+      } else if (name === "totalDue") {
+        updatedData.remainingDue =
+          parseFloat(value || 0) - parseFloat(updatedData.payGet || 0);
+      }
+
       return updatedData;
     });
 
@@ -58,23 +76,72 @@ const Borrowed = () => {
   };
 
   const handleFarmerSelection = (farmer) => {
-    setNewFarmerData((prevData) => ({
-      ...prevData,
+    setNewFarmerData({
       farmerName: farmer.name,
       totalDue: farmer.totalDue,
-      remainingDue: farmer.totalDue - prevData.payNow,
-    }));
+      payNow: "",
+      remainingDue: farmer.totalDue,
+      payGet: "",
+    });
     setFilteredFarmers([]);
   };
 
-  const handleSaveDebtClick = () => {
-    console.log("Saving debt data:", newFarmerData);
-    // Example: axios.post('/api/saveDebt', newFarmerData);
+  const handleSaveDebtClick = async () => {
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_BACKEND_URL}/update-farmer/${newFarmerData.farmerName}`,
+        {
+          totalDue: newFarmerData.remainingDue,
+          payNow: newFarmerData.payNow,
+        }
+      );
+
+      // Update farmerList after successful update
+      const updatedFarmerList = farmerList.map((farmer) =>
+        farmer.name === newFarmerData.farmerName
+          ? {
+              ...farmer,
+              totalDue: newFarmerData.remainingDue,
+            }
+          : farmer
+      );
+      setFarmerList(updatedFarmerList);
+
+      alert("ধারের ডাটা সংরক্ষণ হয়েছে!");
+      console.log("Debt data saved:", response.data);
+    } catch (error) {
+      console.error("Error saving debt data:", error);
+      alert(error.message || "Failed to save debt data");
+    }
   };
 
-  const handleSavePaymentClick = () => {
-    console.log("Saving payment data:", newFarmerData);
-    // Example: axios.post('/api/savePayment', newFarmerData);
+  const handleSavePaymentClick = async () => {
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_BACKEND_URL}/update-farmer/${newFarmerData.farmerName}`,
+        {
+          farmerName: newFarmerData.farmerName,
+          totalDue: newFarmerData.remainingDue,
+          payGet: newFarmerData.payGet,
+        }
+      );
+
+      // Update farmerList after successful update
+      const updatedFarmerList = farmerList.map((farmer) =>
+        farmer.name === newFarmerData.farmerName
+          ? {
+              ...farmer,
+              totalDue: newFarmerData.remainingDue,
+            }
+          : farmer
+      );
+      setFarmerList(updatedFarmerList);
+
+      alert("পরিশোধের ডাটা সংরক্ষণ হয়েছে!");
+      console.log("Payment data saved:", newFarmerData);
+    } catch (error) {
+      console.error("Error saving payment data:", error);
+    }
   };
 
   const toggleNewDebtForm = () => {
@@ -94,6 +161,7 @@ const Borrowed = () => {
       totalDue: farmer.totalDue,
       payNow: farmer.payNow,
       remainingDue: farmer.remainingDue,
+      payGet: farmer.payGet,
     });
     setShowNewDebtForm(true);
     setShowNewPaymentForm(false);
@@ -141,7 +209,7 @@ const Borrowed = () => {
             <input
               type="number"
               name="totalDue"
-              value={newFarmerData.farmerName ? newFarmerData.totalDue : ""}
+              value={newFarmerData.totalDue}
               onChange={handleNewFarmerInputChange}
               placeholder="পূর্বের ধার"
               disabled={!newFarmerData.farmerName}
@@ -149,7 +217,7 @@ const Borrowed = () => {
             <input
               type="number"
               name="payNow"
-              value={newFarmerData.farmerName ? newFarmerData.payNow : ""}
+              value={newFarmerData.payNow}
               onChange={handleNewFarmerInputChange}
               placeholder="টাকা প্রদান"
               disabled={!newFarmerData.farmerName}
@@ -157,7 +225,7 @@ const Borrowed = () => {
             <input
               type="number"
               name="remainingDue"
-              value={newFarmerData.farmerName ? newFarmerData.remainingDue : ""}
+              value={newFarmerData.remainingDue}
               onChange={handleNewFarmerInputChange}
               placeholder="মোট ধার"
               disabled={!newFarmerData.farmerName}
@@ -203,7 +271,7 @@ const Borrowed = () => {
             <input
               type="number"
               name="totalDue"
-              value={newFarmerData.farmerName ? newFarmerData.totalDue : ""}
+              value={newFarmerData.totalDue}
               onChange={handleNewFarmerInputChange}
               placeholder="মোট ধার"
               disabled={!newFarmerData.farmerName}
@@ -211,8 +279,8 @@ const Borrowed = () => {
 
             <input
               type="number"
-              name="payNow"
-              value={newFarmerData.farmerName ? newFarmerData.payNow : ""}
+              name="payGet"
+              value={newFarmerData.payGet}
               onChange={handleNewFarmerInputChange}
               placeholder="টাকা গ্রহণ"
               disabled={!newFarmerData.farmerName}
@@ -221,7 +289,7 @@ const Borrowed = () => {
             <input
               type="number"
               name="remainingDue"
-              value={newFarmerData.farmerName ? newFarmerData.remainingDue : ""}
+              value={newFarmerData.remainingDue}
               onChange={handleNewFarmerInputChange}
               placeholder="অবশিষ্ট ধার"
               disabled={!newFarmerData.farmerName}

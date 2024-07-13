@@ -23,8 +23,8 @@ function App() {
   );
   const handleLogout = () => {
     setIsUserLoggedIn(false);
-    localStorage.removeItem('isUserLoggedIn');
-    localStorage.removeItem('userAuthToken');
+    localStorage.removeItem("isUserLoggedIn");
+    localStorage.removeItem("userAuthToken");
   };
 
   useEffect(() => {
@@ -38,12 +38,11 @@ function App() {
       window.removeEventListener("storage", handleStorageChange);
     };
   }, []);
-  
 
   return (
     <Router>
       <div className="App">
-      {isUserLoggedIn && <Navbar setIsUserLoggedIn={setIsUserLoggedIn} />}
+        {isUserLoggedIn && <Navbar setIsUserLoggedIn={setIsUserLoggedIn} />}
 
         <Routes>
           <Route path="/home" element={<Home />} />
@@ -62,7 +61,7 @@ function App() {
             path="/"
             element={<Login setIsUserLoggedIn={setIsUserLoggedIn} />}
           />
-          <Route path="/signup-new-member" element={< Signup/>}/>
+          <Route path="/signup-new-member" element={<Signup />} />
         </Routes>
       </div>
     </Router>
