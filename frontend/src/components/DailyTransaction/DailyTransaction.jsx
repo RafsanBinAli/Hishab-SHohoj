@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./DailyTransaction.css";
 
 const DailyTransaction = () => {
@@ -38,9 +38,20 @@ const DailyTransaction = () => {
   const totalKhoroch = totalKrishokerTk + totalDhar + totalOnnanno;
   const remainingBalance = totalJoma - totalKhoroch;
 
-  const [selectedDate, setSelectedDate] = useState(
-    new Date().toISOString().split("T")[0]
-  );
+  const getCurrentDate = () => {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  const [selectedDate, setSelectedDate] = useState("");
+
+  useEffect(() => {
+    const today = getCurrentDate();
+    setSelectedDate(today);
+  }, []);
 
   return (
     <div className="container-dailyTransaction mt-4">

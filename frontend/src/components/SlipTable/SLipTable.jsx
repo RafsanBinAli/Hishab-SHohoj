@@ -6,9 +6,20 @@ const SlipTable = () => {
   const [paidInputs, setPaidInputs] = useState({});
   const [savedRows, setSavedRows] = useState({});
   const [clicked, setClicked] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(
-    new Date().toISOString().split("T")[0]
-  );
+  const [selectedDate, setSelectedDate] = useState("");
+
+  const getCurrentDate = () => {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  useEffect(() => {
+    const today = getCurrentDate();
+    setSelectedDate(today);
+  }, []);
 
   useEffect(() => {
     const fetchSlips = async () => {
@@ -26,7 +37,9 @@ const SlipTable = () => {
       }
     };
 
-    fetchSlips();
+    if (selectedDate) {
+      fetchSlips();
+    }
   }, [selectedDate]);
 
   const handlePaidChange = (event, shopName, totalAmount) => {
@@ -147,7 +160,7 @@ const SlipTable = () => {
                       className="save-button"
                       onClick={() => handleSave(slip)}
                     >
-                      Save
+                      সেভ করুন
                     </button>
                   )}
                 </td>

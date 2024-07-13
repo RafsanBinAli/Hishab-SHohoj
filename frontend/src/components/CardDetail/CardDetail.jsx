@@ -2,7 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import "./CardDetail.css";
 import jsPDF from "jspdf";
-import "@fontsource/noto-sans-bengali"; // Import the Noto Sans Bengali font
+import "jspdf-autotable";
+import { format } from "date-fns";
+import banglaFont from "../../font/Nikosh.ttf"; // Replace with your font file path
 
 const CardDetail = () => {
   const { id } = useParams(); // Assuming id is passed as a URL parameter
@@ -18,6 +20,7 @@ const CardDetail = () => {
   const [commission, setCommission] = useState(0);
 
   const [finalAmount, setFinalAmount] = useState(0);
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
   useEffect(() => {
     const fetchCardDetails = async () => {
@@ -95,7 +98,7 @@ const CardDetail = () => {
         price: row.price,
         total: row.quantity * row.price,
       }));
-  
+
       const updateCardResponse = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/update-card-details/${id}`,
         {
@@ -110,9 +113,9 @@ const CardDetail = () => {
         throw new Error("Failed to update card details");
       }
       console.log("Card details updated successfully");
-  
+
       const slipsMap = new Map(); // Use Map instead of Set
-  
+
       const findOrCreateSlipResponses = await Promise.all(
         newPurchases.map(async (purchase) => {
           try {
@@ -133,7 +136,7 @@ const CardDetail = () => {
               );
             }
             const slip = await response.json();
-  
+
             // Add to slipsMap using _id as key and shopName as value
             slipsMap.set(slip._id, slip.shopName);
             console.log("Slip added to map:", slip._id, slip.shopName);
@@ -146,7 +149,7 @@ const CardDetail = () => {
           }
         })
       );
-  
+
       // Step 4: Update slips with new purchases
       const updateSlipResponses = await Promise.all(
         Array.from(slipsMap.keys()).map(async (_id) => {
@@ -159,7 +162,7 @@ const CardDetail = () => {
               (total, p) => total + p.total,
               0
             );
-  
+
             const updateSlipResponse = await fetch(
               `${process.env.REACT_APP_BACKEND_URL}/slip/update/${_id}`,
               {
@@ -187,13 +190,12 @@ const CardDetail = () => {
           }
         })
       );
-  
+
       alert("সকল স্লিপ আপডেট সম্পূর্ন হয়েছে !!");
     } catch (error) {
       console.error("Error in handleSave:", error);
     }
   };
-  
 
   const handleShopChange = (index, event) => {
     const { name, value } = event.target;
@@ -222,29 +224,59 @@ const CardDetail = () => {
   }, [commission, loadedData]);
 
   const handleDownload = () => {
-    const doc = new jsPDF("p", "pt", "a4");
+    const doc = new jsPDF();
 
-    const elementHTML = document.getElementById("dokaner-slip");
+    // Load Bangla font
+    doc.addFileToVFS(banglaFont);
+    doc.addFont(banglaFont, "BanglaFont", "normal");
 
-    doc.html(elementHTML, {
-      callback: function (pdf) {
-        const totalPages = pdf.internal.getNumberOfPages();
+    // Set font for the entire document
+    doc.setFont("BanglaFont");
 
-        for (let i = 1; i <= totalPages; i++) {
-          pdf.setPage(i);
+    // Set font size
+    doc.setFontSize(12);
 
-          // Apply styles for Bangla font
-          pdf.setFont("NotoSansBengali-Regular");
-        }
+    // Document content
+    doc.text("হিসাবের বিবরণ", 14, 20);
+    doc.text(`কৃষকের নাম: ${loadedData.farmerName}`, 14, 30);
+    doc.text(`তারিখ: ${format(selectedDate, "dd MMMM, yyyy")}`, 14, 40);
 
-        pdf.save("dokaner-slip.pdf");
+    // Table headers
+    const tableColumn = [
+      { header: "দোকানের নাম", dataKey: "Name" },
+      { header: "পণ্যের নাম", dataKey: "stockName" },
+      { header: "পরিমাণ (কেজি)", dataKey: "quantity" },
+      { header: "দাম (টাকা/কেজি)", dataKey: "price" },
+      { header: "মোট টাকা", dataKey: "totalAmount" },
+    ];
+
+    // Table rows
+    const tableRows = loadedData.purchases.map((purchase) => ({
+      shopName: purchase.shopName,
+      stockName: purchase.stockName,
+      quantity: purchase.quantity.toString(),
+      price: purchase.price.toString(),
+      totalAmount: (purchase.quantity * purchase.price).toString(),
+    }));
+
+    // Set table headers font
+    doc.autoTable(tableColumn, tableRows, {
+      startY: 50,
+      margin: { top: 50 },
+      styles: { font: "BanglaFont", fontStyle: "normal" },
+      columnStyles: {
+        0: { fontStyle: "normal" },
+        1: { fontStyle: "normal" },
+        2: { fontStyle: "normal" },
+        3: { fontStyle: "normal" },
+        4: { fontStyle: "normal" },
       },
-      x: 10,
-      y: 10,
-      width: 540,
-      windowWidth: 595.28,
-      windowHeight: 841.89,
+      headerStyles: { fontStyle: "normal" },
+      bodyStyles: { fontStyle: "normal" },
+      showHead: "firstPage",
     });
+
+    doc.save("farmers-slip.pdf");
   };
 
   return (
@@ -360,7 +392,7 @@ const CardDetail = () => {
               className="btn btn-primary mt-2 mb-2"
               onClick={handleDownload}
             >
-              Download
+              পিডিএফ ডাউনলোড করুন
             </button>
           </div>
         </div>

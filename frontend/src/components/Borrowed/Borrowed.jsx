@@ -13,6 +13,7 @@ const Borrowed = () => {
   const [showNewDebtForm, setShowNewDebtForm] = useState(false);
   const [showNewPaymentForm, setShowNewPaymentForm] = useState(false);
   const [filteredFarmers, setFilteredFarmers] = useState([]);
+  const [editingFarmer, setEditingFarmer] = useState(null);
 
   useEffect(() => {
     const fetchFarmerData = async () => {
@@ -86,6 +87,18 @@ const Borrowed = () => {
     setShowNewDebtForm(false);
   };
 
+  const handleEditClick = (farmer) => {
+    setEditingFarmer(farmer);
+    setNewFarmerData({
+      farmerName: farmer.name,
+      totalDue: farmer.totalDue,
+      payNow: farmer.payNow,
+      remainingDue: farmer.remainingDue,
+    });
+    setShowNewDebtForm(true);
+    setShowNewPaymentForm(false);
+  };
+
   return (
     <div className="borrowed-container">
       <h2 className="borrowed-heading font-weight-bold">কৃষকের ধার</h2>
@@ -130,7 +143,7 @@ const Borrowed = () => {
               name="totalDue"
               value={newFarmerData.farmerName ? newFarmerData.totalDue : ""}
               onChange={handleNewFarmerInputChange}
-              placeholder="মোট ধার"
+              placeholder="পূর্বের ধার"
               disabled={!newFarmerData.farmerName}
             />
             <input
@@ -146,7 +159,7 @@ const Borrowed = () => {
               name="remainingDue"
               value={newFarmerData.farmerName ? newFarmerData.remainingDue : ""}
               onChange={handleNewFarmerInputChange}
-              placeholder="অবশিষ্ট"
+              placeholder="মোট ধার"
               disabled={!newFarmerData.farmerName}
             />
             <button
@@ -189,10 +202,28 @@ const Borrowed = () => {
 
             <input
               type="number"
+              name="totalDue"
+              value={newFarmerData.farmerName ? newFarmerData.totalDue : ""}
+              onChange={handleNewFarmerInputChange}
+              placeholder="মোট ধার"
+              disabled={!newFarmerData.farmerName}
+            />
+
+            <input
+              type="number"
               name="payNow"
               value={newFarmerData.farmerName ? newFarmerData.payNow : ""}
               onChange={handleNewFarmerInputChange}
-              placeholder="টাকা প্রদান"
+              placeholder="টাকা গ্রহণ"
+              disabled={!newFarmerData.farmerName}
+            />
+
+            <input
+              type="number"
+              name="remainingDue"
+              value={newFarmerData.farmerName ? newFarmerData.remainingDue : ""}
+              onChange={handleNewFarmerInputChange}
+              placeholder="অবশিষ্ট ধার"
               disabled={!newFarmerData.farmerName}
             />
             <button
@@ -213,6 +244,7 @@ const Borrowed = () => {
               <th>মোট ধার</th>
               <th>টাকা প্রদান</th>
               <th>অবশিষ্ট</th>
+              <th>#</th>
             </tr>
           </thead>
           <tbody>
@@ -222,6 +254,14 @@ const Borrowed = () => {
                 <td>{farmer.totalDue}</td>
                 <td>{farmer.payNow}</td>
                 <td>{farmer.remainingDue}</td>
+                <td>
+                  <button
+                    className="btn btn-sm btn-primary"
+                    onClick={() => handleEditClick(farmer)}
+                  >
+                    Edit
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>

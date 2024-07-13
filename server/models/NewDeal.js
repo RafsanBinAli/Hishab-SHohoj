@@ -26,17 +26,12 @@ purchaseSchema.virtual("total").get(function () {
 // Ensure virtual fields are included in toJSON output
 purchaseSchema.set("toJSON", { virtuals: true });
 
-
 const stockSchema = new mongoose.Schema({
   stockName: {
     type: String,
     required: true,
   },
   quantity: {
-    type: Number,
-    required: true,
-  },
-  price: {
     type: Number,
     required: true,
   },

@@ -102,9 +102,7 @@ const Home = () => {
                     <div key={idx}>
                       <p className="card-text">
                         <b>{stockItem.stockName}</b>:{" "}
-                        <b>{stockItem.quantity}</b> কেজি x{" "}
-                        <b>{stockItem.price}</b> টাকা ={" "}
-                        <b>{stockItem.price * stockItem.quantity}</b> টাকা
+                        <b>{stockItem.quantity}</b> কেজি{" "}
                       </p>
                     </div>
                   ))}

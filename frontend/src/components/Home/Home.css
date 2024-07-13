@@ -75,7 +75,7 @@
   bottom: 0px;
   height: 2px;
   width: 0%;
-  background: #333333;
+  background: #000000;
   right: 0px;
   transition: width 0.4s;
 }
@@ -85,18 +85,20 @@
   margin-top: 25px;
   letter-spacing: 2px;
   text-transform: uppercase;
+  color:#000000;
 }
 
 .container .item p {
   font-size: 15px;
   margin-bottom: 5px;
+  color: #000000;
 }
 
 .container .item a {
   font-family: 'Montserrat', sans-serif;
   font-size: 15px;
   text-transform: uppercase;
-  color: #666666;
+  color: #000000;
   margin-top: 10px;
   display: inline-block;
   position: relative;

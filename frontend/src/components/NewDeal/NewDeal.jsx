@@ -15,13 +15,12 @@ const NewDeal = () => {
 
   const initialNewDealInfo = {
     name: "",
-    stockItems: [{ stockName: "", quantity: 0, price: 0 }],
+    stockItems: [{ stockName: "", quantity: 0 }],
   };
 
   const [newDealInfo, setNewDealInfo] = useState(initialNewDealInfo);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
-  
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -73,7 +72,6 @@ const NewDeal = () => {
   };
 
   const handleUserSelect = (user) => {
-    
     setSelectedUser(user);
     setNewDealInfo({
       ...newDealInfo,
@@ -88,9 +86,7 @@ const NewDeal = () => {
     const name = selectedUser.name;
     if (
       !name ||
-      newDealInfo.stockItems.some(
-        (item) => !item.stockName || !item.quantity || !item.price
-      )
+      newDealInfo.stockItems.some((item) => !item.stockName || !item.quantity)
     ) {
       alert("সব ঘর পূরন করুন");
       return;
@@ -112,7 +108,7 @@ const NewDeal = () => {
         throw new Error(errorMessage.message || "Failed to add deal");
       }
 
-      alert("Successfully created new deals");
+      alert("নতুন ডিল সম্পূর্ন হয়েছে!");
       setNewDealInfo(initialNewDealInfo);
       setSelectedUser(null);
       navigate("/home");
@@ -139,10 +135,9 @@ const NewDeal = () => {
         throw new Error(errorMessage.error || "Network response was not ok");
       }
 
-      alert("Successfully created");
+      alert("নতুন কৃষক সংযুক্ত হয়েছে!");
       setShowAddForm(false);
       window.location.reload();
-
     } catch (error) {
       alert(error.message);
     }
@@ -151,10 +146,7 @@ const NewDeal = () => {
   const handleAddRow = () => {
     setNewDealInfo({
       ...newDealInfo,
-      stockItems: [
-        ...newDealInfo.stockItems,
-        { stockName: "", quantity: 0, price: 0 },
-      ],
+      stockItems: [...newDealInfo.stockItems, { stockName: "", quantity: 0 }],
     });
   };
 
@@ -177,6 +169,7 @@ const NewDeal = () => {
                 className="form-control"
                 id="name"
                 name="name"
+                placeholder="কৃষকের নাম সার্চ করুন "
                 value={newDealInfo.name}
                 onChange={(e) => handleDealInputChange(e)}
               />
@@ -226,9 +219,8 @@ const NewDeal = () => {
             <table className="table">
               <thead>
                 <tr>
-                  <th>দ্রব্যের নাম</th>
-                  <th> পরিমাণ</th>
-                  <th>দাম</th>
+                  <th>পণ্য নাম</th>
+                  <th> পরিমাণ(কেজি)</th>
                   <th>Action</th>
                 </tr>
               </thead>
@@ -240,6 +232,7 @@ const NewDeal = () => {
                         type="text"
                         className="form-control"
                         name="stockName"
+                        placeholder="পণ্য নাম"
                         value={item.stockName}
                         onChange={(e) => handleDealInputChange(e, index)}
                       />
@@ -249,19 +242,12 @@ const NewDeal = () => {
                         type="number"
                         className="form-control"
                         name="quantity"
+                        placeholder="পরিমাণ"
                         value={item.quantity}
                         onChange={(e) => handleDealInputChange(e, index)}
                       />
                     </td>
-                    <td>
-                      <input
-                        type="number"
-                        className="form-control"
-                        name="price"
-                        value={item.price}
-                        onChange={(e) => handleDealInputChange(e, index)}
-                      />
-                    </td>
+
                     <td>
                       {index > 0 && (
                         <button
@@ -269,7 +255,7 @@ const NewDeal = () => {
                           className="btn btn-danger"
                           onClick={() => handleRemoveRow(index)}
                         >
-                          Remove
+                          বাতিল করুন
                         </button>
                       )}
                     </td>
@@ -284,11 +270,11 @@ const NewDeal = () => {
                   className="btn btn-primary"
                   onClick={handleAddRow}
                 >
-                  Add Row
+                  নতুন সারি
                 </button>
               </div>
               <button className="btn btn-primary mt-3" onClick={handleAddDeal}>
-                Save
+                সেভ করুন
               </button>
             </div>
           </form>
@@ -322,14 +308,14 @@ const NewDeal = () => {
                   ))}
               </div>
             ) : (
-              <p>No user selected</p>
+              <p>কোনো কৃষক সিলেক্ট করা হয়নি</p>
             )}
           </div>
           <button
             className="btn btn-primary mt-3 mb-4"
             onClick={() => setShowAddForm(true)}
           >
-            Add New Farmer
+            নতুন কৃষক সংযুক্ত করুন
           </button>
           {showAddForm && (
             <div className="add-user-form">
@@ -384,7 +370,7 @@ const NewDeal = () => {
                   className="btn btn-primary"
                   onClick={handleAddUser}
                 >
-                  Save
+                  সেভ করুন
                 </button>
               </form>
             </div>
