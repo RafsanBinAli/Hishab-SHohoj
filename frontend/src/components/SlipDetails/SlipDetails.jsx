@@ -7,7 +7,7 @@ import "./SlipDetails.css"; // Custom CSS for styling
 import { format } from "date-fns";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
-import banglaFont from "../../font/Nikosh.ttf"; // Replace with your font file path
+import banglaFont from "../../font/NikoshGrameen.ttf"; // Replace with your font file path
 
 const SlipDetails = () => {
   const { shopName } = useParams(); // Get shopName from URL parameter
@@ -18,7 +18,6 @@ const SlipDetails = () => {
     const fetchSlipDetails = async () => {
       try {
         const formattedDate = format(selectedDate, "yyyy-MM-dd"); // Format date as yyyy-MM-dd
-        console.log(formattedDate);
         const response = await fetch(
           `${process.env.REACT_APP_BACKEND_URL}/slip-details/${formattedDate}?shopName=${shopName}`
         );

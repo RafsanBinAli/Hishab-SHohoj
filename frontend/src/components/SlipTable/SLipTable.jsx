@@ -105,7 +105,7 @@ const SlipTable = () => {
 
   return (
     <div className="slip-table-container">
-      <h2 className="table-title font-weight-bold">আজকের স্লিপ</h2>
+      <h2 className="table-title font-weight-bold">দোকানের আজকের হিসাব</h2>
       <div className="text-center mb-4">
         <label htmlFor="datePicker" className="font-weight-bold">
           তারিখ:
@@ -126,6 +126,7 @@ const SlipTable = () => {
               <th>মোট টাকা</th>
               <th>পরিশোধ</th>
               <th>বাকি</th>
+              <th>Updated By</th>
               <th>স্ট্যাটাস</th>
             </tr>
           </thead>
@@ -154,6 +155,7 @@ const SlipTable = () => {
                     ? slip.totalAmount - slip.paidAmount
                     : slip.totalAmount - (paidInputs[slip.shopName] || 0)}
                 </td>
+                <td> Rafi </td>
                 <td>
                   {!savedRows[slip.shopName] && !slip.isEdited && (
                     <button

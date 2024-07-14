@@ -78,7 +78,7 @@ const DailyTransaction = () => {
                     <th> হিসাবের ধরণ </th>
                     <th>নাম</th>
                     <th>টাকা</th>
-                    <th></th>
+                    <th>মোট</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -90,15 +90,16 @@ const DailyTransaction = () => {
                           dummyData.joma.length > 3 ? "scrollable-cell" : ""
                         }
                       >
-                        {dummyData.joma.map((item, index) => (
-                          <div
-                            key={index}
-                            className="items d-flex justify-content-between row-item"
-                          >
-                            <span>{item.name}</span>
-                            <span>{item.amount}</span>
-                          </div>
-                        ))}
+                        <table className="table table-bordered">
+                          <tbody>
+                            {dummyData.joma.map((item, index) => (
+                              <tr key={index}>
+                                <td>{item.name}</td>
+                                <td>{item.amount}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
                       </div>
                     </td>
                     <td>{totalJoma}</td>
@@ -113,57 +114,60 @@ const DailyTransaction = () => {
                             : ""
                         }
                       >
-                        {dummyData.krishokerTk.map((item, index) => (
-                          <div
-                            key={index}
-                            className="d-flex justify-content-between row-item"
-                          >
-                            <span>{item.name}</span>
-                            <span>{item.amount}</span>
-                          </div>
-                        ))}
+                        <table className="table table-bordered">
+                          <tbody>
+                            {dummyData.krishokerTk.map((item, index) => (
+                              <tr key={index}>
+                                <td>{item.name}</td>
+                                <td>{item.amount}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
                       </div>
                     </td>
                     <td>{totalKrishokerTk}</td>
                   </tr>
                   <tr>
-                    <td className="font-weight-bold">ধার (খরচ) </td>
+                    <td className="font-weight-bold">ধার (খরচ)</td>
                     <td colSpan="2">
                       <div
                         className={
                           dummyData.dhar.length > 3 ? "scrollable-cell" : ""
                         }
                       >
-                        {dummyData.dhar.map((item, index) => (
-                          <div
-                            key={index}
-                            className="d-flex justify-content-between row-item"
-                          >
-                            <span>{item.name}</span>
-                            <span>{item.amount}</span>
-                          </div>
-                        ))}
+                        <table className="table table-bordered">
+                          <tbody>
+                            {dummyData.dhar.map((item, index) => (
+                              <tr key={index}>
+                                <td>{item.name}</td>
+                                <td>{item.amount}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
                       </div>
                     </td>
                     <td>{totalDhar}</td>
                   </tr>
                   <tr>
-                    <td className="font-weight-bold">অন্যান্য (খরচ) </td>
+                    <td className="font-weight-bold">অন্যান্য (খরচ)</td>
                     <td colSpan="2">
                       <div
                         className={
                           dummyData.onnanno.length > 3 ? "scrollable-cell" : ""
                         }
                       >
-                        {dummyData.onnanno.map((item, index) => (
-                          <div
-                            key={index}
-                            className="d-flex justify-content-between row-item"
-                          >
-                            <span>{item.name}</span>
-                            <span>{item.amount}</span>
-                          </div>
-                        ))}
+                        <table className="table table-bordered">
+                          <tbody>
+                            {dummyData.onnanno.map((item, index) => (
+                              <tr key={index}>
+                                <td>{item.name}</td>
+                                <td>{item.amount}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
                       </div>
                     </td>
                     <td>{totalOnnanno}</td>

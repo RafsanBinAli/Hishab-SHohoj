@@ -13,9 +13,17 @@
 .borrowed-heading {
   color: #000000;
   margin-bottom: 20px;
+  font-size: 2rem;
+  font-weight: bolder;
+}
+
+.farmer-header-demo{
+  color: #000000;
+  margin-bottom: 20px;
   font-size: 1.5rem;
   font-weight: bolder;
 }
+
 
 .table-responsive {
   overflow-x: auto;
@@ -95,6 +103,8 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 10px;
+  margin-top: 0px;
+  
 }
 
 .new-farmer-inputs input {
@@ -151,10 +161,37 @@
 .list-group-item:last-child {
   border-bottom: none; /* Remove border for the last item */
 }
+.headings{
+  margin-right: -10rem;
+}
+
+.farmerName{
+  margin-right: 11rem;
+}
+
+.totalDue{
+  margin-right: 11rem;
+}
+
+.payGet{
+  margin-right: 11rem;
+}
+
+.payNow{
+  margin-left: -10rem;
+}
+
+.remainingDue{
+  margin-right: 11rem;
+}
+
+.saveBtn .headingBtn{
+  margin-top: 2rem;
+}
 
 .new-farmer-inputs{
 
-  margin-top:20px;
+  margin-top:0px;
   margin-bottom: 20px;
 }
 

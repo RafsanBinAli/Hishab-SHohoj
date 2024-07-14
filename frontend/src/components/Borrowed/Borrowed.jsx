@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./Borrowed.css";
+import BorrowedTable from "./BorrowedTable";
+import FarmerDetailsToggler from "./FarmerDetailsToggler";
 
 const Borrowed = () => {
   const [newFarmerData, setNewFarmerData] = useState({
@@ -52,13 +54,12 @@ const Borrowed = () => {
           parseFloat(value || 0) + parseFloat(updatedData.totalPaid || 0);
       }
 
-      // Calculate remainingDue based on payGet and totalDue
-      if (name === "payGet") {
+      if (name === "payNow") {
         updatedData.remainingDue =
           parseFloat(updatedData.totalDue || 0) - parseFloat(value || 0);
       } else if (name === "totalDue") {
         updatedData.remainingDue =
-          parseFloat(value || 0) - parseFloat(updatedData.payGet || 0);
+          parseFloat(value || 0) - parseFloat(updatedData.payNow || 0);
       }
 
       return updatedData;
@@ -86,6 +87,14 @@ const Borrowed = () => {
 
   const handleSaveDebtClick = async () => {
     console.log("new dhar", newFarmerData.newDhar);
+
+    if (
+      newFarmerData.newDhar <= 0 ||
+      newFarmerData.newDhar > newFarmerData.totalDue
+    ) {
+      alert("Invalid value for ধার দান. Please enter a valid amount.");
+      return;
+    }
     try {
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/update-farmers/${newFarmerData.farmerName}`,
@@ -120,6 +129,16 @@ const Borrowed = () => {
     }
   };
   const handleSavePaymentClick = async () => {
+    if (
+      newFarmerData.payGet <= 0 ||
+      newFarmerData.payGet > newFarmerData.totalDue ||
+      newFarmerData.payNow <= 0 ||
+      newFarmerData.payNow > newFarmerData.totalDue
+    ) {
+      alert("Invalid value for টাকা গ্রহণ/ধার দান. সঠিক তথ্য প্রদান করুন.");
+      return;
+    }
+
     try {
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/update-farmers/${newFarmerData.farmerName}`,
@@ -163,186 +182,41 @@ const Borrowed = () => {
     setShowNewDebtForm(false);
   };
 
-  const handleEditClick = (farmer) => {
-    setEditingFarmer(farmer);
-    setNewFarmerData({
-      farmerName: farmer.name,
-      totalDue: farmer.totalDue,
-      totalPaid: farmer.totalPaid,
-      remainingDue: farmer.remainingDue,
-      payGet: farmer.payGet,
-    });
-    setShowNewDebtForm(true);
-    setShowNewPaymentForm(false);
+  const handleEditClick = (farmer) => {};
+
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
   };
+
+  const filteredFarmersList = farmerList.filter((farmer) =>
+    farmer.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="borrowed-container">
       <h2 className="borrowed-heading font-weight-bold">কৃষকের ধার</h2>
 
-      <div className="button-container">
-        <button onClick={toggleNewDebtForm}>
-          নতুন ধার এর তথ্য সংযুক্ত করুন
-        </button>
-        <button onClick={toggleNewPaymentForm}>
-          নতুন পরিশোধের তথ্য সংযুক্ত করুন
-        </button>
-      </div>
-
-      {showNewDebtForm && (
-        <div className="new-farmer-section">
-          <h3 className="farmer-header-demo">নতুন ধার এর তথ্য সংযুক্ত করুন</h3>
-          <div className="new-farmer-inputs">
-            <input
-              type="text"
-              name="farmerName"
-              className="farmer-name"
-              value={newFarmerData.farmerName}
-              onChange={handleNewFarmerInputChange}
-              placeholder="কৃষকের নাম"
-            />
-            {filteredFarmers.length > 0 && (
-              <ul className="list-group-f">
-                {filteredFarmers.map((farmer) => (
-                  <li
-                    key={farmer._id}
-                    className="list-group-item"
-                    onClick={() => handleFarmerSelection(farmer)}
-                  >
-                    {farmer.name}
-                  </li>
-                ))}
-              </ul>
-            )}
-
-            <input
-              type="number"
-              name="totalDue"
-              value={newFarmerData.totalDue}
-              placeholder="পূর্বের ধার"
-              disabled={!newFarmerData.farmerName}
-            />
-            <input
-              type="number"
-              name="newDhar"
-              value={newFarmerData.newDhar}
-              onChange={handleNewFarmerInputChange}
-              placeholder="টাকা প্রদান"
-              disabled={!newFarmerData.farmerName}
-            />
-            <input
-              type="number"
-              name="remainingDue"
-              value={newFarmerData.remainingDue}
-              onChange={handleNewFarmerInputChange}
-              placeholder="মোট ধার"
-              disabled={!newFarmerData.farmerName}
-            />
-            <button
-              onClick={handleSaveDebtClick}
-              disabled={!newFarmerData.farmerName}
-            >
-              সংরক্ষণ করুন
-            </button>
-          </div>
-        </div>
-      )}
-
-      {showNewPaymentForm && (
-        <div className="new-farmer-section">
-          <h3 className="farmer-header-demo">
-            নতুন পরিশোধের তথ্য সংযুক্ত করুন
-          </h3>
-          <div className="new-farmer-inputs">
-            <input
-              type="text"
-              name="farmerName"
-              className="farmer-name"
-              value={newFarmerData.farmerName}
-              onChange={handleNewFarmerInputChange}
-              placeholder="কৃষকের নাম"
-            />
-            {filteredFarmers.length > 0 && (
-              <ul className="list-group-f">
-                {filteredFarmers.map((farmer) => (
-                  <li
-                    key={farmer._id}
-                    className="list-group-item"
-                    onClick={() => handleFarmerSelection(farmer)}
-                  >
-                    {farmer.name}
-                  </li>
-                ))}
-              </ul>
-            )}
-
-            <input
-              type="number"
-              name="totalDue"
-              value={newFarmerData.totalDue}
-              onChange={handleNewFarmerInputChange}
-              placeholder="মোট ধার"
-              disabled={!newFarmerData.farmerName}
-            />
-
-            <input
-              type="number"
-              name="payGet"
-              value={newFarmerData.payGet}
-              onChange={handleNewFarmerInputChange}
-              placeholder="টাকা গ্রহণ"
-              disabled={!newFarmerData.farmerName}
-            />
-
-            <input
-              type="number"
-              name="remainingDue"
-              value={newFarmerData.remainingDue}
-              onChange={handleNewFarmerInputChange}
-              placeholder="অবশিষ্ট ধার"
-              disabled={!newFarmerData.farmerName}
-            />
-            <button
-              onClick={handleSavePaymentClick}
-              disabled={!newFarmerData.farmerName}
-            >
-              সংরক্ষণ করুন
-            </button>
-          </div>
-        </div>
-      )}
-
-      <div className="table-responsive">
-        <table className="borrowed-table">
-          <thead>
-            <tr>
-              <th>কৃষকের নাম</th>
-              <th>মোট ধার</th>
-              <th>টাকা প্রদান</th>
-              <th>অবশিষ্ট</th>
-              <th>#</th>
-            </tr>
-          </thead>
-          <tbody>
-            {farmerList.map((farmer, index) => (
-              <tr key={index}>
-                <td>{farmer.name}</td>
-                <td>{farmer.totalDue}</td>
-                <td>{farmer.totalPaid}</td>
-                <td>{farmer.totalDue - farmer.totalPaid}</td>
-                <td>
-                  <button
-                    className="btn btn-sm btn-primary"
-                    onClick={() => handleEditClick(farmer)}
-                  >
-                    Edit
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <FarmerDetailsToggler
+        toggleNewDebtForm={toggleNewDebtForm}
+        toggleNewPaymentForm={toggleNewPaymentForm}
+        newFarmerData={newFarmerData}
+        handleNewFarmerInputChange={handleNewFarmerInputChange}
+        filteredFarmers={filteredFarmers}
+        handleFarmerSelection={handleFarmerSelection}
+        handleSavePaymentClick={handleSavePaymentClick}
+        handleSaveDebtClick={handleSaveDebtClick}
+        showNewPaymentForm={showNewPaymentForm}
+        showNewDebtForm={showNewDebtForm}
+      />
+      <BorrowedTable
+        filteredFarmersList={filteredFarmersList}
+        searchTerm={searchTerm}
+        handleSearch={handleSearch}
+        handleEditClick={handleEditClick}
+        showNewDebtForm={showNewDebtForm}
+      />
     </div>
   );
 };
