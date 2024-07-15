@@ -7,9 +7,29 @@ const BorrowedTable = ({
   handleSearch,
   handleEditClick,
 }) => {
+  const [editingFarmerName, setEditingFarmerName] = useState(null);
+  const [editedFarmerData, setEditedFarmerData] = useState({
+    totalDue: "",
+    totalPaid: "",
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setEditedFarmerData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleSaveClick = (farmerName) => {
+    console.log(farmerName);
+    handleEditClick(farmerName, editedFarmerData);
+    setEditingFarmerName(null);
+  };
+
   return (
     <div>
-      <h2 className="card-title mb-4">দোকানের লিস্ট </h2>
+      <h2 className="card-title mb-4">দোকানের লিস্ট</h2>
       <input
         type="text"
         className="form-control mb-3"
@@ -34,17 +54,62 @@ const BorrowedTable = ({
             {filteredFarmersList.map((farmer) => (
               <tr key={farmer.id}>
                 <td>{farmer.name}</td>
-                <td>{farmer.totalDue}</td>
-                <td>{farmer.totalPaid}</td>
+                <td>
+                  {editingFarmerName === farmer.name ? (
+                    <input
+                      type="number"
+                      name="totalDue"
+                      value={editedFarmerData.totalDue}
+                      onChange={handleInputChange}
+                    />
+                  ) : (
+                    farmer.totalDue
+                  )}
+                </td>
+                <td>
+                  {editingFarmerName === farmer.name ? (
+                    <input
+                      type="number"
+                      name="totalPaid"
+                      value={editedFarmerData.totalPaid}
+                      onChange={handleInputChange}
+                    />
+                  ) : (
+                    farmer.totalPaid
+                  )}
+                </td>
                 <td>{farmer.totalDue - farmer.totalPaid}</td>
                 <td>abc</td>
                 <td>
-                  <button
-                    className="btn btn-primary"
-                    onClick={() => handleEditClick(farmer)}
-                  >
-                    Edit
-                  </button>
+                  {editingFarmerName === farmer.name ? (
+                    <>
+                      <button
+                        className="btn btn-primary"
+                        onClick={() => handleSaveClick(farmer.name)}
+                      >
+                        Save
+                      </button>
+                      <button
+                        className="btn btn-secondary"
+                        onClick={() => setEditingFarmerName(null)}
+                      >
+                        Cancel
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      className="btn btn-primary"
+                      onClick={() => {
+                        setEditingFarmerName(farmer.name);
+                        setEditedFarmerData({
+                          totalDue: farmer.totalDue,
+                          totalPaid: farmer.totalPaid,
+                        });
+                      }}
+                    >
+                      Edit
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}

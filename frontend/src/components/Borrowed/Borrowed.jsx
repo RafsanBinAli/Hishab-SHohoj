@@ -1,3 +1,5 @@
+// Borrowed.js
+
 import React, { useState, useEffect } from "react";
 import "./Borrowed.css";
 import BorrowedTable from "./BorrowedTable";
@@ -128,10 +130,11 @@ const Borrowed = () => {
       alert(error.message || "Failed to save debt data");
     }
   };
+
   const handleSavePaymentClick = async () => {
     if (
-      newFarmerData.payGet <= 0 ||
-      newFarmerData.payGet > newFarmerData.totalDue ||
+      newFarmerData.newDhar <= 0 ||
+      newFarmerData.newDhar > newFarmerData.totalDue ||
       newFarmerData.payNow <= 0 ||
       newFarmerData.payNow > newFarmerData.totalDue
     ) {
@@ -182,7 +185,33 @@ const Borrowed = () => {
     setShowNewDebtForm(false);
   };
 
-  const handleEditClick = (farmer) => {};
+  const handleEditClick = async (farmerName, updatedData) => {
+    console.log(farmerName);
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/update-farmers/${farmerName}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedData),
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to update farmer's details");
+      }
+      const updatedFarmer = await response.json();
+      const updatedFarmerList = farmerList.map((farmer) =>
+        farmer.name === farmerName ? updatedFarmer : farmer
+      );
+      setFarmerList(updatedFarmerList);
+      alert("Farmer data updated successfully!");
+    } catch (error) {
+      console.error("Error updating farmer data:", error);
+      alert("Failed to update farmer data");
+    }
+  };
 
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -215,7 +244,6 @@ const Borrowed = () => {
         searchTerm={searchTerm}
         handleSearch={handleSearch}
         handleEditClick={handleEditClick}
-        showNewDebtForm={showNewDebtForm}
       />
     </div>
   );
