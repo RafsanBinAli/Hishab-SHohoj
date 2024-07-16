@@ -1,0 +1,160 @@
+.dhar-details-container {
+  margin: 20px;
+  padding: 20px;
+  border: 1px solid #333;
+  border-radius: 10px;
+  background-color: #f0f0f0;
+  width: 80%;
+  margin-left: 7%;
+}
+
+.details-header {
+  font-size: 28px;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #111;
+  border-bottom: 2px solid #333;
+  padding-bottom: 10px;
+}
+
+.details-content {
+  font-size: 18px;
+  color: #222;
+}
+
+.details-content p {
+  margin: 10px 0;
+}
+
+
+.entries-header {
+  font-size: 24px;
+  color: #111;
+  border-bottom: 2px solid #333;
+  padding-bottom: 5px;
+  margin-bottom: 10px;
+}
+
+.entries-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.entry-item {
+  padding: 15px;
+  margin-bottom: 10px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.entry-item p {
+  margin: 5px 0;
+}
+
+.entry-item strong {
+  color: #000;
+  font-weight: bold;
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 15px;
+}
+
+.card-header {
+  font-size: 20px;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.card-section {
+  display: flex;
+  gap: 20px;
+}
+
+.card-section-left {
+  flex: 1;
+  border: 2px solid bisque; /* Border with bisque color */
+  padding: 10px; /* Padding for inner content */
+  background-color: #fff; /* White background */
+  border-radius: 5px; /* Rounded corners */
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Shadow effect */
+}
+
+
+.card-section-right {
+  flex: 1;
+}
+
+.card-section-right p {
+  margin-bottom: 0;
+}
+
+/* Custom styling for debt entries */
+.entry-item .debt-added {
+  border-left: 4px solid #218c74; /* Teal color for new debt */
+}
+
+.entry-item .debt-repaid {
+  border-left: 4px solid #ff5252; /* Red color for debt repayment */
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px; /* Adjust margin as needed */
+  margin-left: 10%;
+}
+
+.label {
+  width: 120px; /* Adjust width as needed */
+  font-weight: bold;
+  margin-right: 10px; /* Spacing between label and data */
+  text-decoration: underline; /* Underline for label */
+  margin-right: 15%;
+}
+
+.data {
+  flex: 1; /* Take up remaining space */
+}
+
+.farmer-info{
+  margin-top: 5%;
+  padding: 10px;
+}
+.info-item-farmer{
+  padding:5px;
+}
+@media (max-width: 768px) {
+  .card-section {
+    flex-direction: column; /* Stack sections vertically on smaller screens */
+  }
+
+  .label {
+    width: 100%; /* Full width for labels on smaller screens */
+    margin-right: 0; /* Remove right margin */
+    margin-bottom: 5px; /* Adjust margin as needed */
+    padding-left: 10px; /* Add left padding for labels */
+  }
+
+  .details-header {
+    font-size: 24px; /* Reduce font size for details header */
+  }
+
+  .entries-header {
+    font-size: 20px; /* Reduce font size for entries header */
+  }
+
+  .details-content {
+    font-size: 16px; /* Reduce font size for content */
+  }
+
+  .entry-item p {
+    font-size: 14px; /* Reduce font size for entry item paragraphs */
+    padding-left: 10px; /* Add left padding for paragraphs */
+  }
+}
+

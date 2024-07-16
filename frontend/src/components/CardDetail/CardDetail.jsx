@@ -376,6 +376,19 @@ const CardDetail = () => {
                       />
                     </td>
                   </tr>
+                  <tr>
+                    <td colSpan="4" className="text-right font-weight-bold">
+                      Khajna(টাকা):
+                    </td>
+
+                    <td className="commission font-weight-bold">
+                      <input
+                        type="number"
+                        value={commission}
+                        onChange={handleCommissionChange}
+                      />
+                    </td>
+                  </tr>
 
                   <tr>
                     <td colSpan="4" className="text-right font-weight-bold">

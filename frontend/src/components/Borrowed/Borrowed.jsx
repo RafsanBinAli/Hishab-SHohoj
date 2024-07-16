@@ -13,13 +13,13 @@ const Borrowed = () => {
     remainingDue: "",
     payGet: "",
     newDhar: "",
+    editHistory:[]
   });
 
   const [farmerList, setFarmerList] = useState([]);
   const [showNewDebtForm, setShowNewDebtForm] = useState(false);
   const [showNewPaymentForm, setShowNewPaymentForm] = useState(false);
   const [filteredFarmers, setFilteredFarmers] = useState([]);
-  const [editingFarmer, setEditingFarmer] = useState(null);
 
   useEffect(() => {
     const fetchFarmerData = async () => {
@@ -75,6 +75,7 @@ const Borrowed = () => {
       setFilteredFarmers(filtered);
     }
   };
+  
 
   const handleFarmerSelection = (farmer) => {
     setNewFarmerData({
@@ -89,36 +90,41 @@ const Borrowed = () => {
 
   const handleSaveDebtClick = async () => {
     console.log("new dhar", newFarmerData.newDhar);
-
+  
     if (
-      newFarmerData.newDhar <= 0 ||
-      newFarmerData.newDhar > newFarmerData.totalDue
+      newFarmerData.newDhar <= 0 
     ) {
       alert("Invalid value for ধার দান. Please enter a valid amount.");
       return;
     }
+  
     try {
+      const userAuthToken = localStorage.getItem("userAuthToken");
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/update-farmers/${newFarmerData.farmerName}`,
         {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${userAuthToken}`,
           },
           body: JSON.stringify({
             newDhar: newFarmerData.newDhar,
           }),
         }
       );
+  
       if (!response.ok) {
         throw new Error("Failed to update farmer's details");
       }
+  
       const updatedFarmer = await response.json();
       const updatedFarmerList = farmerList.map((farmer) =>
         farmer.name === newFarmerData.farmerName
           ? {
               ...farmer,
               totalDue: updatedFarmer.totalDue,
+              editHistory: updatedFarmer.editHistory
             }
           : farmer
       );
@@ -133,37 +139,35 @@ const Borrowed = () => {
 
   const handleSavePaymentClick = async () => {
     if (
-      newFarmerData.newDhar <= 0 ||
-      newFarmerData.newDhar > newFarmerData.totalDue ||
-      newFarmerData.payNow <= 0 ||
-      newFarmerData.payNow > newFarmerData.totalDue
+      newFarmerData.payGet <= 0 
+      
     ) {
       alert("Invalid value for টাকা গ্রহণ/ধার দান. সঠিক তথ্য প্রদান করুন.");
       return;
     }
 
     try {
+      const userAuthToken = localStorage.getItem("userAuthToken");
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/update-farmers/${newFarmerData.farmerName}`,
         {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${userAuthToken}`,
           },
           body: JSON.stringify({
-            payGet: newFarmerData.payGet,
+            newDhar: newFarmerData.payGet,
           }),
         }
       );
-      if (!response.ok) {
-        throw new Error("Failed to update farmer's payment details");
-      }
       const updatedFarmer = await response.json();
       const updatedFarmerList = farmerList.map((farmer) =>
         farmer.name === newFarmerData.farmerName
           ? {
               ...farmer,
               totalDue: newFarmerData.totalDue,
+              editHistory: updatedFarmer.editHistory
             }
           : farmer
       );

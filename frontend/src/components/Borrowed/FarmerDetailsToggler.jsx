@@ -79,7 +79,7 @@ const FarmerDetailsToggler = ({
               <input
                 type="number"
                 name="newDhar"
-                value={newFarmerData.payGet}
+                value={newFarmerData.newDhar}
                 onChange={handleNewFarmerInputChange}
                 placeholder="ধার দান"
                 disabled={!newFarmerData.farmerName}
@@ -104,7 +104,7 @@ const FarmerDetailsToggler = ({
             <div className="saveBtn">
               <div className="headingBtn"></div>
               <button
-                onClick={handleSavePaymentClick}
+                onClick={handleSaveDebtClick}
                 disabled={!newFarmerData.farmerName}
               >
                 সংরক্ষণ করুন

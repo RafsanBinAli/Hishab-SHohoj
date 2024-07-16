@@ -6,7 +6,6 @@ import Navbar from "./components/Navbar/Navbar";
 import NewDeal from "./components/NewDeal/NewDeal";
 import CardDetail from "./components/CardDetail/CardDetail";
 import DokanCardDetails from "./components/DokanCardDetails/DokanCardDetails";
-import NewDokan from "./components/NewDokan/NewDokan";
 import Borrowed from "./components/Borrowed/Borrowed";
 import NewDokan2 from "./components/NewDokan2/NewDokan2";
 import DokanerSlip from "./components/DokanerSlip/DokanerSLip";
@@ -15,6 +14,7 @@ import SlipTable from "./components/SlipTable/SLipTable";
 import DailyTransaction from "./components/DailyTransaction/DailyTransaction";
 import Login from "./components/Login/Login";
 import Signup from "./components/Signup/Signup";
+import DharDetails from "./components/DharDetails/DharDetails";
 
 require("dotenv").config();
 function App() {
@@ -50,9 +50,7 @@ function App() {
           <Route path="/card-detail/:id" element={<CardDetail />} />
           <Route path="/dokans" element={<NewDokan2 />} />
           <Route path="/dokan-details" element={<DokanCardDetails />} />
-          <Route path="/new-dokan" element={<NewDokan />} />
           <Route path="/borrow" element={<Borrowed />} />
-          <Route path="/new-dokan2" element={<NewDokan2 />} />
           <Route path="/slip" element={<DokanerSlip />} />
           <Route path="/slip-details/:shopName/:id" element={<SlipDetails />} />
           <Route path="/hishab-table" element={<SlipTable />} />
@@ -62,6 +60,7 @@ function App() {
             element={<Login setIsUserLoggedIn={setIsUserLoggedIn} />}
           />
           <Route path="/signup-new-member" element={<Signup />} />
+          <Route path="/dhar-details/:id" element={<DharDetails />} />
         </Routes>
       </div>
     </Router>

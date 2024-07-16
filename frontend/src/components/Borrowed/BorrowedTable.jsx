@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Borrowed.css";
 
 const BorrowedTable = ({
@@ -12,6 +13,7 @@ const BorrowedTable = ({
     totalDue: "",
     totalPaid: "",
   });
+  const navigate= useNavigate();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -25,6 +27,9 @@ const BorrowedTable = ({
     console.log(farmerName);
     handleEditClick(farmerName, editedFarmerData);
     setEditingFarmerName(null);
+  };
+  const handleDetailsClick = (farmer) => {
+    navigate(`/dhar-details/${farmer._id}`, { state: { farmer } });
   };
 
   return (
@@ -98,17 +103,11 @@ const BorrowedTable = ({
                     </>
                   ) : (
                     <button
-                      className="btn btn-primary"
-                      onClick={() => {
-                        setEditingFarmerName(farmer.name);
-                        setEditedFarmerData({
-                          totalDue: farmer.totalDue,
-                          totalPaid: farmer.totalPaid,
-                        });
-                      }}
-                    >
-                      Edit
-                    </button>
+                        className="btn btn-info"
+                        onClick={() => handleDetailsClick(farmer)}
+                      >
+                        Details
+                      </button>
                   )}
                 </td>
               </tr>

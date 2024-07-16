@@ -53,25 +53,35 @@ exports.showAllFarmers = async (req, res) => {
 
 exports.updateFarmer = async (req, res) => {
   const { name } = req.params;
-  const { newDhar,payGet } = req.body;
-
+  const { newDhar, payGet } = req.body;
   try {
     const farmer = await Farmer.findOne({ name });
     if (!farmer) {
       return res.status(404).json({ error: "Farmer not found" });
     }
-    if(payGet){
+    if (payGet) {
       farmer.totalPaid = farmer.totalPaid + parseFloat(payGet || 0);
-    }
-    else{
+      const action = {
+        editedBy: req.user.username,
+        date: new Date(),
+        debtAmount: parseFloat(payGet || 0),
+        action: "repayDebt",
+      };
+      farmer.lastEditedBy.push(action);
+    } else {
       farmer.totalDue = farmer.totalDue + parseFloat(newDhar || 0);
-    }
-    
-    
+      const action = {
+        editedBy: req.user.username,
+        date: new Date(),
+        debtAmount: parseFloat(newDhar || 0),
+        action: "newDebt",
+      };
 
+      farmer.lastEditedBy.push(action);
+    }
     await farmer.save();
 
-    res.json({ totalDue: farmer.totalDue });
+    res.json({ totalDue: farmer.totalDue, editHistory: farmer.lastEditedBy });
   } catch (error) {
     console.error("Error updating farmer:", error);
     res.status(500).json({ error: "Failed to update farmer" });
