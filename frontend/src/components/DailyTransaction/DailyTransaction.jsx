@@ -4,10 +4,10 @@ import "./DailyTransaction.css";
 const DailyTransaction = () => {
   const dummyData = {
     joma: [
-      { name: "abc", amount: 1000 },
-      { name: "def", amount: 1200 },
-      { name: "ghi", amount: 1100 },
-      { name: "jkl", amount: 1500 },
+      { name: "Rahim", amount: 1000 },
+      { name: "Karim", amount: 1200 },
+      { name: "Kalam", amount: 1100 },
+      { name: "Abu", amount: 1500 },
     ],
     krishokerTk: [
       { name: "abc", amount: 1000 },
@@ -21,9 +21,9 @@ const DailyTransaction = () => {
       { name: "ghi", amount: 300 },
     ],
     onnanno: [
-      { name: "abc", amount: 200 },
-      { name: "def", amount: 150 },
-      { name: "ghi", amount: 100 },
+      { name: "Cha", amount: 200 },
+      { name: "Rickshaw", amount: 150 },
+      { name: "Pani", amount: 100 },
     ],
   };
 

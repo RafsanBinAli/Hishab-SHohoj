@@ -1,19 +1,69 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Borrowed.css";
 
-const BorrowedTable = ({
-  filteredFarmersList,
-  searchTerm,
-  handleSearch,
-  handleEditClick,
-}) => {
+const BorrowedTable = ({}) => {
   const [editingFarmerName, setEditingFarmerName] = useState(null);
   const [editedFarmerData, setEditedFarmerData] = useState({
     totalDue: "",
     totalPaid: "",
   });
-  const navigate= useNavigate();
+  const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [farmerList, setFarmerList] = useState([]);
+
+  useEffect(() => {
+    const fetchFarmerData = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_BACKEND_URL}/get-all-farmers`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch farmer data");
+        }
+        const data = await response.json();
+        setFarmerList(data);
+      } catch (error) {
+        console.error("Error fetching farmer data:", error);
+      }
+    };
+    fetchFarmerData();
+  }, []);
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+  };
+  const filteredFarmersList = farmerList.filter((farmer) =>
+    farmer.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const handleEditClick = async (farmerName, updatedData) => {
+    console.log(farmerName);
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/update-farmers/${farmerName}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedData),
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to update farmer's details");
+      }
+      const updatedFarmer = await response.json();
+      const updatedFarmerList = farmerList.map((farmer) =>
+        farmer.name === farmerName ? updatedFarmer : farmer
+      );
+      setFarmerList(updatedFarmerList);
+      alert("Farmer data updated successfully!");
+    } catch (error) {
+      console.error("Error updating farmer data:", error);
+      alert("Failed to update farmer data");
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -28,6 +78,7 @@ const BorrowedTable = ({
     handleEditClick(farmerName, editedFarmerData);
     setEditingFarmerName(null);
   };
+
   const handleDetailsClick = (farmer) => {
     navigate(`/dhar-details/${farmer._id}`, { state: { farmer } });
   };
@@ -51,7 +102,7 @@ const BorrowedTable = ({
               <th>মোট ধার</th>
               <th>টাকা প্রদান</th>
               <th>বাকী টাকা</th>
-              <th>Updated By</th>
+
               <th>#</th>
             </tr>
           </thead>
@@ -84,7 +135,7 @@ const BorrowedTable = ({
                   )}
                 </td>
                 <td>{farmer.totalDue - farmer.totalPaid}</td>
-                <td>abc</td>
+
                 <td>
                   {editingFarmerName === farmer.name ? (
                     <>
@@ -103,11 +154,11 @@ const BorrowedTable = ({
                     </>
                   ) : (
                     <button
-                        className="btn btn-info"
-                        onClick={() => handleDetailsClick(farmer)}
-                      >
-                        Details
-                      </button>
+                      className="btn btn-info"
+                      onClick={() => handleDetailsClick(farmer)}
+                    >
+                      Details
+                    </button>
                   )}
                 </td>
               </tr>
