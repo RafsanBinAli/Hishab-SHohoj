@@ -126,7 +126,7 @@ const SlipTable = () => {
               <th>মোট টাকা</th>
               <th>পরিশোধ</th>
               <th>বাকি</th>
-              <th>Updated By</th>
+             
               <th>স্ট্যাটাস</th>
             </tr>
           </thead>
@@ -155,7 +155,7 @@ const SlipTable = () => {
                     ? slip.totalAmount - slip.paidAmount
                     : slip.totalAmount - (paidInputs[slip.shopName] || 0)}
                 </td>
-                <td> Rafi </td>
+             
                 <td>
                   {!savedRows[slip.shopName] && !slip.isEdited && (
                     <button
