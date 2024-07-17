@@ -1,5 +1,10 @@
 import "./App.css";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+} from "react-router-dom";
 import { useState, useEffect } from "react";
 import Home from "./components/Home/Home";
 import Navbar from "./components/Navbar/Navbar";
@@ -17,10 +22,12 @@ import Signup from "./components/Signup/Signup";
 import DharDetails from "./components/DharDetails/DharDetails";
 
 require("dotenv").config();
+
 function App() {
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(
     localStorage.getItem("isUserLoggedIn") === "true"
   );
+
   const handleLogout = () => {
     setIsUserLoggedIn(false);
     localStorage.removeItem("isUserLoggedIn");
@@ -39,28 +46,70 @@ function App() {
     };
   }, []);
 
+  const PrivateRoute = ({ element, ...rest }) => {
+    return isUserLoggedIn ? element : <Navigate to="/login" replace />;
+  };
+
   return (
     <Router>
       <div className="App">
         {isUserLoggedIn && <Navbar setIsUserLoggedIn={setIsUserLoggedIn} />}
 
         <Routes>
-          <Route path="/home" element={<Home />} />
-          <Route path="/new-deal" element={<NewDeal />} />
-          <Route path="/card-detail/:id" element={<CardDetail />} />
-          <Route path="/dokans" element={<NewDokan2 />} />
-          <Route path="/dokan-details" element={<DokanCardDetails />} />
-          <Route path="/borrow" element={<Borrowed />} />
-          <Route path="/slip" element={<DokanerSlip />} />
-          <Route path="/slip-details/:shopName/:id" element={<SlipDetails />} />
-          <Route path="/hishab-table" element={<SlipTable />} />
-          <Route path="/todays-hishab" element={<DailyTransaction />} />
           <Route
             path="/"
             element={<Login setIsUserLoggedIn={setIsUserLoggedIn} />}
           />
-          <Route path="/signup-new-member" element={<Signup />} />
-          <Route path="/dhar-details/:id" element={<DharDetails />} />
+          <Route
+            path="/login"
+            element={<Login setIsUserLoggedIn={setIsUserLoggedIn} />}
+          />
+          <Route
+            path="/signup-new-member"
+            element={<PrivateRoute element={<Signup />} />}
+          />
+          <Route path="/home" element={<PrivateRoute element={<Home />} />} />
+          <Route
+            path="/new-deal"
+            element={<PrivateRoute element={<NewDeal />} />}
+          />
+          <Route
+            path="/card-detail/:id"
+            element={<PrivateRoute element={<CardDetail />} />}
+          />
+          <Route
+            path="/dokans"
+            element={<PrivateRoute element={<NewDokan2 />} />}
+          />
+          <Route
+            path="/dokan-details"
+            element={<PrivateRoute element={<DokanCardDetails />} />}
+          />
+          <Route
+            path="/borrow"
+            element={<PrivateRoute element={<Borrowed />} />}
+          />
+          <Route
+            path="/slip"
+            element={<PrivateRoute element={<DokanerSlip />} />}
+          />
+          <Route
+            path="/slip-details/:shopName/:id"
+            element={<PrivateRoute element={<SlipDetails />} />}
+          />
+          <Route
+            path="/hishab-table"
+            element={<PrivateRoute element={<SlipTable />} />}
+          />
+          <Route
+            path="/todays-hishab"
+            element={<PrivateRoute element={<DailyTransaction />} />}
+          />
+          <Route
+            path="/dhar-details/:id"
+            element={<PrivateRoute element={<DharDetails />} />}
+          />
+          <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </div>
     </Router>

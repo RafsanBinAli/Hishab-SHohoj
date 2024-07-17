@@ -4,7 +4,8 @@ import "./CardDetail.css";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { format } from "date-fns";
-import banglaFont from "../../font/Nikosh.ttf"; // Replace with your font file path
+import banglaFont from "../../font/TiroBangla-Regular.ttf"; // Replace with your font file path
+import NikoshGrameen from "../NikoshGrameen";
 
 const CardDetail = () => {
   const { id } = useParams(); // Assuming id is passed as a URL parameter
@@ -18,6 +19,7 @@ const CardDetail = () => {
   ]);
 
   const [commission, setCommission] = useState(0);
+  const [khajna, setKhajna] = useState(0);
 
   const [finalAmount, setFinalAmount] = useState(0);
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -212,6 +214,11 @@ const CardDetail = () => {
 
     setCommission(commissionValue);
   };
+  const handleKhajnaChange = (event) => {
+    const khajnaValue = event.target.value;
+
+    setKhajna(khajnaValue);
+  };
 
   useEffect(() => {
     const totalAmount = loadedData?.purchases.reduce(
@@ -220,18 +227,16 @@ const CardDetail = () => {
       0
     );
 
-    setFinalAmount(totalAmount - commission);
-  }, [commission, loadedData]);
+    setFinalAmount(totalAmount - commission - khajna);
+  }, [commission, khajna, loadedData]);
 
   const handleDownload = () => {
     const doc = new jsPDF();
 
-    // Load Bangla font
-    doc.addFileToVFS(banglaFont);
-    doc.addFont(banglaFont, "BanglaFont", "normal");
-
-    // Set font for the entire document
-    doc.setFont("BanglaFont");
+    // Load and add the Bangla font
+    doc.addFileToVFS("TiroBangla-Regular.ttf", banglaFont);
+    doc.addFont("TiroBangla-Regular.ttf", "normal");
+    doc.setFont("TiroBangla-Regular", "normal");
 
     // Set font size
     doc.setFontSize(12);
@@ -243,11 +248,11 @@ const CardDetail = () => {
 
     // Table headers
     const tableColumn = [
-      { header: "দোকানের নাম", dataKey: "Name" },
+      { header: "দোকানের নাম", dataKey: "shopName" },
       { header: "পণ্যের নাম", dataKey: "stockName" },
       { header: "পরিমাণ (কেজি)", dataKey: "quantity" },
       { header: "দাম (টাকা/কেজি)", dataKey: "price" },
-      { header: "মোট টাকা", dataKey: "totalAmount" },
+      { header: "মোট টাকা", dataKey: "total" },
     ];
 
     // Table rows
@@ -256,14 +261,14 @@ const CardDetail = () => {
       stockName: purchase.stockName,
       quantity: purchase.quantity.toString(),
       price: purchase.price.toString(),
-      totalAmount: (purchase.quantity * purchase.price).toString(),
+      total: (purchase.quantity * purchase.price).toString(),
     }));
 
     // Set table headers font
     doc.autoTable(tableColumn, tableRows, {
       startY: 50,
       margin: { top: 50 },
-      styles: { font: "BanglaFont", fontStyle: "normal" },
+      styles: { font: "NikoshGrameen", fontStyle: "normal" },
       columnStyles: {
         0: { fontStyle: "normal" },
         1: { fontStyle: "normal" },
@@ -271,12 +276,30 @@ const CardDetail = () => {
         3: { fontStyle: "normal" },
         4: { fontStyle: "normal" },
       },
-      headerStyles: { fontStyle: "normal" },
-      bodyStyles: { fontStyle: "normal" },
-      showHead: "firstPage",
     });
 
-    doc.save("farmers-slip.pdf");
+    // Additional texts
+    doc.text(
+      `মোট টাকা (টাকা): ${loadedData.purchases.reduce(
+        (total, item) => total + item.total,
+        0
+      )}`,
+      14,
+      doc.autoTable.previous.finalY + 10
+    );
+    doc.text(
+      `কমিশন (টাকা): ${commission}`,
+      14,
+      doc.autoTable.previous.finalY + 20
+    );
+    doc.text(`খাজনা (টাকা): ${khajna}`, 14, doc.autoTable.previous.finalY + 30);
+    doc.text(
+      `ফাইনাল এমাউন্ট (টাকা): ${finalAmount}`,
+      14,
+      doc.autoTable.previous.finalY + 40
+    );
+
+    doc.save("farmer-slip.pdf");
   };
 
   return (
@@ -384,8 +407,8 @@ const CardDetail = () => {
                     <td className="commission font-weight-bold">
                       <input
                         type="number"
-                        value={commission}
-                        onChange={handleCommissionChange}
+                        value={khajna}
+                        onChange={handleKhajnaChange}
                       />
                     </td>
                   </tr>
