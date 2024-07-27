@@ -50,7 +50,7 @@ const newDealSchema = new mongoose.Schema(
     },
     stock: {
       type: [stockSchema],
-      required: true,
+      default:[]
     },
     purchases: {
       type: [purchaseSchema],

@@ -134,7 +134,18 @@ const BorrowedTable = ({}) => {
                     farmer.totalPaid
                   )}
                 </td>
-                <td>{farmer.totalDue - farmer.totalPaid}</td>
+                <td
+                  style={{
+                    backgroundColor:
+                      farmer.totalDue - farmer.totalPaid === 0 ? "green" : "",
+                    color:
+                      farmer.totalDue - farmer.totalPaid === 0 ? "white" : "",
+                  }}
+                >
+                  {farmer.totalDue - farmer.totalPaid === 0
+                    ? "Paid"
+                    : farmer.totalDue - farmer.totalPaid}
+                </td>
 
                 <td>
                   {editingFarmerName === farmer.name ? (

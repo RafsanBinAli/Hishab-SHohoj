@@ -6,9 +6,9 @@ import {
   Navigate,
 } from "react-router-dom";
 import { useState, useEffect } from "react";
-import Home from "./components/Home/Home";
+
 import Navbar from "./components/Navbar/Navbar";
-import NewDeal from "./components/NewDeal/NewDeal";
+import NewDeal from "./components/Farmer/Farmer";
 import CardDetail from "./components/CardDetail/CardDetail";
 import DokanCardDetails from "./components/DokanCardDetails/DokanCardDetails";
 import Borrowed from "./components/Borrowed/Borrowed";
@@ -20,6 +20,7 @@ import DailyTransaction from "./components/DailyTransaction/DailyTransaction";
 import Login from "./components/Login/Login";
 import Signup from "./components/Signup/Signup";
 import DharDetails from "./components/DharDetails/DharDetails";
+import Farmer from "./components/Farmer/Farmer";
 
 require("dotenv").config();
 
@@ -68,10 +69,10 @@ function App() {
             path="/signup-new-member"
             element={<PrivateRoute element={<Signup />} />}
           />
-          <Route path="/home" element={<PrivateRoute element={<Home />} />} />
+          <Route path="/home" element={<PrivateRoute element={<CardDetail />} />} />
           <Route
-            path="/new-deal"
-            element={<PrivateRoute element={<NewDeal />} />}
+            path="/farmers"
+            element={<PrivateRoute element={<Farmer />} />}
           />
           <Route
             path="/card-detail/:id"

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./Navbar.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUserPlus, faTimes } from "@fortawesome/free-solid-svg-icons"; // Import faTimes for close icon
+import { faUserPlus, faTimes } from "@fortawesome/free-solid-svg-icons";
 
 const Navbar = ({ setIsUserLoggedIn }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -13,7 +13,7 @@ const Navbar = ({ setIsUserLoggedIn }) => {
     setIsOpen(false);
     localStorage.removeItem("isUserLoggedIn");
     localStorage.removeItem("userAuthToken");
-    setIsUserLoggedIn(false); // Update the login state in App.js
+    setIsUserLoggedIn(false); 
   };
 
   const handleToggle = () => {
@@ -76,7 +76,7 @@ const Navbar = ({ setIsUserLoggedIn }) => {
           >
             <FontAwesomeIcon icon={faTimes} />
           </button>
-
+          কৃষকের
           <ul className="navbar-nav ml-auto">
             <li className="nav-item">
               <Link
@@ -85,6 +85,15 @@ const Navbar = ({ setIsUserLoggedIn }) => {
                 onClick={() => setIsOpen(false)}
               >
                 দোকান
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link
+                className="nav-link"
+                to="/farmers"
+                onClick={() => setIsOpen(false)}
+              >
+                 কৃষক
               </Link>
             </li>
             <li className="nav-item">

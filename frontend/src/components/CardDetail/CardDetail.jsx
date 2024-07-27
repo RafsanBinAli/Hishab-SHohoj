@@ -1,52 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
 import "./CardDetail.css";
-import jsPDF from "jspdf";
-import "jspdf-autotable";
-import { format } from "date-fns";
-import banglaFont from "../../font/TiroBangla-Regular.ttf"; // Replace with your font file path
-import NikoshGrameen from "../NikoshGrameen";
+import FarmerSlipDetails from "./FarmerSlipDetails";
 
 const CardDetail = () => {
-  const { id } = useParams(); // Assuming id is passed as a URL parameter
-
   const [loadedData, setLoadedData] = useState(null);
-
   const [shops, setShops] = useState([]);
-
+  const [farmers, setFarmers] = useState([]);
+  const [allCardDetails, setAllCardDetails] = useState([]);
+  const [individualCardDetails, setIndividualCardDetails] = useState(null);
+  const [individualFarmerData, setIndividualFarmerData] = useState(null);
   const [formRows, setFormRows] = useState([
-    { shopName: "", stockName: "", quantity: "", price: "" },
+    { farmerName: "", shopName: "", stockName: "", quantity: "", price: "" },
   ]);
-
-  const [commission, setCommission] = useState(0);
-  const [khajna, setKhajna] = useState(0);
-
-  const [finalAmount, setFinalAmount] = useState(0);
-  const [selectedDate, setSelectedDate] = useState(new Date());
-
-  useEffect(() => {
-    const fetchCardDetails = async () => {
-      try {
-        const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/get-card-details/${id}`
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch card details");
-        }
-
-        const data = await response.json();
-
-        setLoadedData(data);
-      } catch (error) {
-        console.error("Error fetching card details:", error);
-
-        // Handle error state or alert user
-      }
-    };
-
-    fetchCardDetails();
-  }, [id]);
 
   useEffect(() => {
     const fetchShops = async () => {
@@ -58,49 +23,95 @@ const CardDetail = () => {
         if (!response.ok) {
           throw new Error("Failed to fetch shops");
         }
-
         const data = await response.json();
-
         setShops(data);
       } catch (error) {
         console.error("Error fetching shops:", error);
+      }
+    };
+    const fetchFarmers = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_BACKEND_URL}/get-all-farmers`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch users");
+        }
+        const data = await response.json();
+        data.sort((a, b) => a.name.localeCompare(b.name));
 
-        // Handle error state or alert user
+        setFarmers(data);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
+    const fetchCardDetails = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_BACKEND_URL}/get-market-deals`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch all the card details");
+        }
+
+        const data = await response.json();
+        console.log(data);
+        setAllCardDetails(data);
+      } catch (error) {
+        console.log("Error fetching all card details", error);
       }
     };
 
     fetchShops();
+    fetchFarmers();
+    fetchCardDetails();
   }, []);
 
   const handleInputChange = (index, event) => {
     const { name, value } = event.target;
-
     const newFormRows = [...formRows];
-
     newFormRows[index][name] = value;
-
     setFormRows(newFormRows);
   };
 
-  const handleAddRow = () => {
-    setFormRows([
-      ...formRows,
-
-      { shopName: "", stockName: "", quantity: "", price: "" },
-    ]);
-  };
+  // const handleAddRow = () => {
+  //   setFormRows([
+  //     ...formRows,
+  //     {farmerName:"", shopName: "", stockName: "", quantity: "", price: "" },
+  //   ]);
+  // };
 
   const handleSave = async () => {
     try {
       const newPurchases = formRows.map((row) => ({
-        farmerName: loadedData?.farmerName,
+        farmerName: row.farmerName,
         shopName: row.shopName,
         stockName: row.stockName,
         quantity: row.quantity,
         price: row.price,
         total: row.quantity * row.price,
       }));
-
+      let id = individualCardDetails?._id;
+      if (id === undefined) {
+        console.log("farmer Name: ",individualFarmerData.name)
+        const createCardDetailsResponse = await fetch(
+          `${process.env.REACT_APP_BACKEND_URL}/create-deal`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ name: individualFarmerData?.name }),
+          }
+        );
+        if (!createCardDetailsResponse.ok) {
+          throw new Error("Failed to create new Card!");
+        }
+        const data= await createCardDetailsResponse.json()
+        setIndividualCardDetails(data);
+        console.log("response", createCardDetailsResponse)
+        id=data._id
+      }
       const updateCardResponse = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/update-card-details/${id}`,
         {
@@ -201,255 +212,47 @@ const CardDetail = () => {
 
   const handleShopChange = (index, event) => {
     const { name, value } = event.target;
-
     const newFormRows = [...formRows];
-
     newFormRows[index][name] = value;
-
     setFormRows(newFormRows);
   };
-
-  const handleCommissionChange = (event) => {
-    const commissionValue = event.target.value;
-
-    setCommission(commissionValue);
-  };
-  const handleKhajnaChange = (event) => {
-    const khajnaValue = event.target.value;
-
-    setKhajna(khajnaValue);
-  };
-
-  useEffect(() => {
-    const totalAmount = loadedData?.purchases.reduce(
-      (total, item) => total + item.total,
-
-      0
+  const handleFarmerChange = (index, event) => {
+    const { name, value } = event.target;
+    const newFormRows = [...formRows];
+    newFormRows[index][name] = value;
+    setFormRows(newFormRows);
+    const selectedFarmer = farmers.find((farmer) => farmer.name === value);
+    setIndividualFarmerData(selectedFarmer);
+    const selectedCard = allCardDetails.find(
+      (card) => card.farmerName == value
     );
-
-    setFinalAmount(totalAmount - commission - khajna);
-  }, [commission, khajna, loadedData]);
-
-  const handleDownload = () => {
-    const doc = new jsPDF();
-
-    // Load and add the Bangla font
-    doc.addFileToVFS("TiroBangla-Regular.ttf", banglaFont);
-    doc.addFont("TiroBangla-Regular.ttf", "normal");
-    doc.setFont("TiroBangla-Regular", "normal");
-
-    // Set font size
-    doc.setFontSize(12);
-
-    // Document content
-    doc.text("হিসাবের বিবরণ", 14, 20);
-    doc.text(`কৃষকের নাম: ${loadedData.farmerName}`, 14, 30);
-    doc.text(`তারিখ: ${format(selectedDate, "dd MMMM, yyyy")}`, 14, 40);
-
-    // Table headers
-    const tableColumn = [
-      { header: "দোকানের নাম", dataKey: "shopName" },
-      { header: "পণ্যের নাম", dataKey: "stockName" },
-      { header: "পরিমাণ (কেজি)", dataKey: "quantity" },
-      { header: "দাম (টাকা/কেজি)", dataKey: "price" },
-      { header: "মোট টাকা", dataKey: "total" },
-    ];
-
-    // Table rows
-    const tableRows = loadedData.purchases.map((purchase) => ({
-      shopName: purchase.shopName,
-      stockName: purchase.stockName,
-      quantity: purchase.quantity.toString(),
-      price: purchase.price.toString(),
-      total: (purchase.quantity * purchase.price).toString(),
-    }));
-
-    // Set table headers font
-    doc.autoTable(tableColumn, tableRows, {
-      startY: 50,
-      margin: { top: 50 },
-      styles: { font: "NikoshGrameen", fontStyle: "normal" },
-      columnStyles: {
-        0: { fontStyle: "normal" },
-        1: { fontStyle: "normal" },
-        2: { fontStyle: "normal" },
-        3: { fontStyle: "normal" },
-        4: { fontStyle: "normal" },
-      },
-    });
-
-    // Additional texts
-    doc.text(
-      `মোট টাকা (টাকা): ${loadedData.purchases.reduce(
-        (total, item) => total + item.total,
-        0
-      )}`,
-      14,
-      doc.autoTable.previous.finalY + 10
-    );
-    doc.text(
-      `কমিশন (টাকা): ${commission}`,
-      14,
-      doc.autoTable.previous.finalY + 20
-    );
-    doc.text(`খাজনা (টাকা): ${khajna}`, 14, doc.autoTable.previous.finalY + 30);
-    doc.text(
-      `ফাইনাল এমাউন্ট (টাকা): ${finalAmount}`,
-      14,
-      doc.autoTable.previous.finalY + 40
-    );
-
-    doc.save("farmer-slip.pdf");
+    setIndividualCardDetails(selectedCard);
+    console.log("selected Card Details", selectedCard);
   };
 
   return (
     <div className="container-card-details mt-4">
       <h2 className="my-4 py-2 text-center font-weight-bold">হিসাবের বিবরণ</h2>
-
-      {loadedData && (
-        <div className="row mb-2">
-          <div className="col-md-4 ml-10">
-            <div className="card-body">
-              <h5 className="header-title">কৃষকের হিসাব</h5>
-
-              <table className="table table-striped">
-                <thead>
-                  <tr>
-                    <th>পণ্যের নাম</th>
-
-                    <th>পরিমাণ (কেজি)</th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {loadedData.stock.map((item, index) => (
-                    <tr key={index}>
-                      <td>{item.stockName}</td>
-
-                      <td>{item.quantity}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <div className="col-1 d-flex align-items-center justify-content-center">
-            <div className="vr"></div> {/* Vertical divider */}
-          </div>
-
-          <div className="col-md-7">
-            <div className="card-body" id="dokaner-slip">
-              <h5 className="header-title">দোকানের হিসাব</h5>
-
-              <table className="table table-striped">
-                <thead>
-                  <tr>
-                    <th>দোকানের নাম</th>
-
-                    <th>পণ্যের নাম</th>
-
-                    <th>পরিমাণ (কেজি)</th>
-
-                    <th>দাম (টাকা/কেজি)</th>
-
-                    <th>মোট (টাকা)</th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {loadedData.purchases.map((item, index) => (
-                    <tr key={index}>
-                      <td>{item.shopName}</td>
-
-                      <td>{item.stockName}</td>
-
-                      <td>{item.quantity}</td>
-
-                      <td>{item.price}</td>
-
-                      <td>{item.total}</td>
-                    </tr>
-                  ))}
-
-                  <tr>
-                    <td colSpan="4" className="text-right font-weight-bold">
-                      মোট (টাকা):
-                    </td>
-
-                    <td className="font-weight-bold">
-                      {loadedData.purchases.reduce(
-                        (total, item) => total + item.total,
-
-                        0
-                      )}
-                    </td>
-                  </tr>
-
-                  <tr>
-                    <td colSpan="4" className="text-right font-weight-bold">
-                      কমিশন (টাকা):
-                    </td>
-
-                    <td className="commission font-weight-bold">
-                      <input
-                        type="number"
-                        value={commission}
-                        onChange={handleCommissionChange}
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td colSpan="4" className="text-right font-weight-bold">
-                      Khajna(টাকা):
-                    </td>
-
-                    <td className="commission font-weight-bold">
-                      <input
-                        type="number"
-                        value={khajna}
-                        onChange={handleKhajnaChange}
-                      />
-                    </td>
-                  </tr>
-
-                  <tr>
-                    <td colSpan="4" className="text-right font-weight-bold">
-                      চূড়ান্ত মোট (টাকা):
-                    </td>
-
-                    <td className="font-weight-bold">{finalAmount}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            <button
-              className="btn btn-primary mt-2 mb-2"
-              onClick={handleDownload}
-            >
-              পিডিএফ ডাউনলোড করুন
-            </button>
-          </div>
-        </div>
-      )}
+      {
+        <FarmerSlipDetails
+          loadedData={loadedData}
+          individualFarmerData={individualFarmerData}
+          individualCardDetails={individualCardDetails}
+        />
+      }
 
       <div className="mt-4">
         <h2 className="my-4 py-2 text-center font-weight-bold">
           নতুন দোকানের হিসাব যোগ করুন
         </h2>
-
         <table className="table table-striped">
           <thead>
             <tr>
+              <th>কৃষকের নাম</th>
               <th>দোকানের নাম</th>
-
               <th>দ্রব্যের নাম</th>
-
               <th>পরিমাণ (কেজি)</th>
-
               <th>দাম ( টাকা/কেজি )</th>
-
               <th></th>
             </tr>
           </thead>
@@ -457,6 +260,22 @@ const CardDetail = () => {
           <tbody>
             {formRows.map((row, index) => (
               <tr key={index}>
+                <td>
+                  <select
+                    className="form-control"
+                    name="farmerName"
+                    value={row.farmerName || ""}
+                    onChange={(e) => handleFarmerChange(index, e)}
+                  >
+                    <option value="">সিলেক্ট Farmer</option>
+
+                    {farmers.map((farmer, idx) => (
+                      <option key={idx} value={farmer.name}>
+                        {farmer.name}
+                      </option>
+                    ))}
+                  </select>
+                </td>
                 <td>
                   <select
                     className="form-control"
@@ -474,7 +293,7 @@ const CardDetail = () => {
                   </select>
                 </td>
 
-                <td>
+                {/* <td>
                   <select
                     className="form-control"
                     name="stockName"
@@ -490,8 +309,16 @@ const CardDetail = () => {
                         </option>
                       ))}
                   </select>
+                </td> */}
+                <td>
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="stockName"
+                    value={row.stockName}
+                    onChange={(e) => handleInputChange(index, e)}
+                  />
                 </td>
-
                 <td>
                   <input
                     type="number"
@@ -512,18 +339,17 @@ const CardDetail = () => {
                   />
                 </td>
 
-                <td>
+                {/* <td>
                   {index === formRows.length - 1 && (
                     <button className="btn btn-primary" onClick={handleAddRow}>
                       নতুন সারি
                     </button>
                   )}
-                </td>
+                </td> */}
               </tr>
             ))}
           </tbody>
         </table>
-
         <button className="btn1 btn-success mt-3" onClick={handleSave}>
           সেভ করুন
         </button>

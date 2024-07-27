@@ -5,12 +5,8 @@ const { startOfDay, endOfDay } = require('date-fns');
 exports.createDeal = async (req, res) => {
   try {
     console.log(req.body);
-    const stockItems = req.body.stockItems;
+  
     const userName = req.body.name;
-
-    if ( !Array.isArray(stockItems)) {
-      return res.status(400).json({ message: "Invalid request data" });
-    }
 
     // Find the user by userName to get userId
     const farmer = await Farmer.findOne({ name: userName });
@@ -20,16 +16,16 @@ exports.createDeal = async (req, res) => {
     }
 
     // Map stocks array to create an array of stock objects for the new deal
-    const stocksArray = stockItems.map((stock) => ({
-      stockName: stock.stockName,
-      quantity: stock.quantity,
-      price: stock.price,
-    }));
+    // const stocksArray = stockItems.map((stock) => ({
+    //   stockName: stock.stockName,
+    //   quantity: stock.quantity,
+    //   price: stock.price,
+    // }));
 
     const newDeal = new NewDeal({
       farmerId: farmer._id, // Assuming farmerId is the reference to the Farmer model
       farmerName: userName,
-      stock: stocksArray,
+      // stock: stocksArray,
     });
 
     await newDeal.save();
