@@ -102,7 +102,6 @@ const BorrowedTable = ({}) => {
               <th>মোট ধার</th>
               <th>টাকা প্রদান</th>
               <th>বাকী টাকা</th>
-
               <th>#</th>
             </tr>
           </thead>
@@ -146,7 +145,6 @@ const BorrowedTable = ({}) => {
                     ? "Paid"
                     : farmer.totalDue - farmer.totalPaid}
                 </td>
-
                 <td>
                   {editingFarmerName === farmer.name ? (
                     <>

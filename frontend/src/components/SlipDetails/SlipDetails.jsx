@@ -13,6 +13,7 @@ const SlipDetails = () => {
   const { shopName } = useParams(); // Get shopName from URL parameter
   const [selectedDate, setSelectedDate] = useState(new Date()); // Initialize with today's date
   const [slipDetails, setSlipDetails] = useState(null);
+  const [shopDetails,setShopDetails]=useState(null)
 
   useEffect(() => {
     const fetchSlipDetails = async () => {
@@ -34,6 +35,24 @@ const SlipDetails = () => {
 
     fetchSlipDetails();
   }, [selectedDate, shopName]);
+  useEffect(() => {
+    const getShopDetails = async()=>{
+    try {
+     
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/get-shop-details/${shopName}`)
+      if(!response.ok){
+        throw new Error("Failed to fetch shop details");
+      }
+      const data = await response.json();
+      console.log(data)
+      setShopDetails(data);
+     }
+     catch (error) {
+      console.log("error occured", error);
+    }
+  }
+    getShopDetails();
+  }, [shopName]);
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
@@ -113,6 +132,9 @@ const SlipDetails = () => {
           <div className="card">
             <div className="card-body">
               <h5 className="card-title">{slipDetails.shopName}</h5>
+              <p className="card-text">
+                Total Due before: {shopDetails.totalDue}
+              </p>
               <p className="card-text">
                 Total Amount: {slipDetails.totalAmount}
               </p>

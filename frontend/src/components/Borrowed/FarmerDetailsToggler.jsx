@@ -41,10 +41,14 @@ const FarmerDetailsToggler = () => {
       alert("Invalid value for ধার দান. Please enter a valid amount.");
       return;
     }
-
+  
     try {
       const userAuthToken = localStorage.getItem("userAuthToken");
-      const response = await fetch(
+      if (!userAuthToken) {
+        throw new Error("User is not authenticated. Please log in again.");
+      }
+  
+      const updateFarmerResponse = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/update-farmers/${newFarmerData.farmerName}`,
         {
           method: "PUT",
@@ -57,12 +61,13 @@ const FarmerDetailsToggler = () => {
           }),
         }
       );
-
-      if (!response.ok) {
+  
+      if (!updateFarmerResponse.ok) {
         throw new Error("Failed to update farmer's details");
       }
-
-      const updatedFarmer = await response.json();
+  
+      const updatedFarmer = await updateFarmerResponse.json();
+  
       const updatedFarmerList = farmerList.map((farmer) =>
         farmer.name === newFarmerData.farmerName
           ? {
@@ -72,7 +77,27 @@ const FarmerDetailsToggler = () => {
             }
           : farmer
       );
+  
       setFarmerList(updatedFarmerList);
+  
+      const transactionResponse = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/transaction/dhar-entry`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            farmerName: newFarmerData.farmerName,
+            amount: newFarmerData.newDhar,
+          }),
+        }
+      );
+  
+      if (!transactionResponse.ok) {
+        throw new Error("Failed to update transaction details");
+      }
+  
       alert("ধারের ডাটা সংরক্ষণ হয়েছে!");
       console.log("Debt data saved:", updatedFarmer);
     } catch (error) {
@@ -80,6 +105,7 @@ const FarmerDetailsToggler = () => {
       alert(error.message || "Failed to save debt data");
     }
   };
+  
 
   const handleSavePaymentClick = async () => {
     if (newFarmerData.payGet <= 0) {
@@ -120,6 +146,23 @@ const FarmerDetailsToggler = () => {
       );
 
       setFarmerList(updatedFarmerList);
+      const transactionResponse = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/transaction/dhar-repay`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            farmerName: newFarmerData.farmerName,
+            amount: newFarmerData.payGet,
+          }),
+        }
+      );
+  
+      if (!transactionResponse.ok) {
+        throw new Error("Failed to update transaction details");
+      }
       alert("পরিশোধের ডাটা সংরক্ষণ হয়েছে!");
       console.log("Payment data saved:", updatedFarmer);
     } catch (error) {

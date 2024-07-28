@@ -94,9 +94,24 @@ const SlipTable = () => {
       if (!updatePurchaseResponse.ok) {
         throw new Error("Failed to update slip's remainingTotal");
       }
+      const transactionResponse = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/transaction/dokan-payment`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            shopName: slip.shopName,
+            amount: paidAmount,
+          }),
+        }
+      );
+      if(!transactionResponse.ok){
+        throw new Error("Error Setting dokan payment")
+      }
 
-      alert("Slip saved successfully");
-
+      alert("Slip & Transaction saved successfully");
       setSavedRows({ ...savedRows, [slip.shopName]: true });
     } catch (error) {
       console.error("Error saving slip:", error);
@@ -126,7 +141,6 @@ const SlipTable = () => {
               <th>মোট টাকা</th>
               <th>পরিশোধ</th>
               <th>বাকি</th>
-             
               <th>স্ট্যাটাস</th>
             </tr>
           </thead>
@@ -155,7 +169,6 @@ const SlipTable = () => {
                     ? slip.totalAmount - slip.paidAmount
                     : slip.totalAmount - (paidInputs[slip.shopName] || 0)}
                 </td>
-             
                 <td>
                   {!savedRows[slip.shopName] && !slip.isEdited && (
                     <button

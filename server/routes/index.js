@@ -15,13 +15,16 @@ router.put("/update-farmers/:name",isAuthenticated, farmerController.updateFarme
 // Route to create a new deal (assuming it references framer)
 router.post("/create-deal", newDealController.createDeal);
 router.get("/get-market-deals", newDealController.getAllMarketDeals);
+router.get("/get-all-market-details-ofToday",newDealController.getAllMarketDealsOfToday)
 router.get("/get-card-details/:id", newDealController.getCardDetailsById);
 router.put("/update-card-details/:id", newDealController.updateDealPurchases);
+router.post("/card-details-update-secondary",newDealController.updateCardDetails)
 
 
 router.post('/create-shop', shopController.createShop);
 router.get('/get-all-shops',shopController.getShops);
 router.put('/shop/update-totalDue', shopController.updateTotalDue);
+router.get('/get-shop-details/:shopName',shopController.getShopDetailsByName)
 
 
 router.post("/slip/findOrCreate", slipController.findOrCreateSlip);

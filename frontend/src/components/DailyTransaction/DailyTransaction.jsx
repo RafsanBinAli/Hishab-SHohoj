@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from "react";
 import "./DailyTransaction.css";
+import LastCalculation from "./LastCalculation";
 
 const DailyTransaction = () => {
+  const [transactionDetails, setTransactionDetails] = useState(null);
+  const [onnannoData, setOnnannoData] = useState([
+    { name: "চা-নাস্তা", amount: 0 },
+    { name: "রিক্সা ভাডা ও অন্যান্য", amount: 0 },
+  ]);
   const dummyData = {
     joma: [
       { name: "Rahim", amount: 1000 },
@@ -20,11 +26,6 @@ const DailyTransaction = () => {
       { name: "def", amount: 400 },
       { name: "ghi", amount: 300 },
     ],
-    onnanno: [
-      { name: "Cha", amount: 200 },
-      { name: "Rickshaw", amount: 150 },
-      { name: "Pani", amount: 100 },
-    ],
   };
 
   const calculateTotal = (category) => {
@@ -34,8 +35,8 @@ const DailyTransaction = () => {
   const totalJoma = calculateTotal("joma");
   const totalKrishokerTk = calculateTotal("krishokerTk");
   const totalDhar = calculateTotal("dhar");
-  const totalOnnanno = calculateTotal("onnanno");
-  const totalKhoroch = totalKrishokerTk + totalDhar + totalOnnanno;
+
+  const totalKhoroch = totalKrishokerTk + totalDhar;
   const remainingBalance = totalJoma - totalKhoroch;
 
   const getCurrentDate = () => {
@@ -52,6 +53,31 @@ const DailyTransaction = () => {
     const today = getCurrentDate();
     setSelectedDate(today);
   }, []);
+
+  useEffect(() => {
+    const fetchTransactionDetails = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_BACKEND_URL}/transaction/get-daily`
+        );
+        if (!response.ok) {
+          throw new Error("Unable to fetch data");
+        }
+        const data = await response.json();
+        setTransactionDetails(data);
+        console.log("transaction data", data);
+      } catch (error) {
+        console.log("Error occured", error);
+      }
+    };
+    fetchTransactionDetails();
+  }, [selectedDate]);
+
+  const handleOnnannoAmountChange = (index, event) => {
+    const updatedOnnannoData = [...onnannoData];
+    updatedOnnannoData[index].amount = parseInt(event.target.value, 10) || 0;
+    setOnnannoData(updatedOnnannoData);
+  };
 
   return (
     <div className="container-dailyTransaction mt-4">
@@ -83,16 +109,16 @@ const DailyTransaction = () => {
                 </thead>
                 <tbody>
                   <tr>
-                    <td className="font-weight-bold">জমা</td>
+                    <td className="font-weight-bold">দোকানের জমা</td>
                     <td colSpan="2">
                       <div
                         className={
-                          dummyData.joma.length > 3 ? "scrollable-cell" : ""
+                          transactionDetails?.credit.dokanPayment.length > 3 ? "scrollable-cell" : ""
                         }
                       >
                         <table className="table table-bordered">
                           <tbody>
-                            {dummyData.joma.map((item, index) => (
+                            {transactionDetails?.credit.dokanPayment.map((item, index) => (
                               <tr key={index}>
                                 <td>{item.name}</td>
                                 <td>{item.amount}</td>
@@ -102,21 +128,83 @@ const DailyTransaction = () => {
                         </table>
                       </div>
                     </td>
-                    <td>{totalJoma}</td>
+                    <td>{transactionDetails?.credit?.dokanPayment
+                        ? transactionDetails.credit.dokanPayment.reduce(
+                            (total, item) => total + item.amount,
+                            0
+                          )
+                        : 0}</td>
                   </tr>
                   <tr>
-                    <td className="font-weight-bold">কৃষকের টাকা(খরচ)</td>
+                    <td className="font-weight-bold">খাজনা</td>
+                    <td colSpan="2">
+                      <div>
+                        <table className="table table-bordered">
+                          <tbody>{transactionDetails?.credit.khajnas}</tbody>
+                        </table>
+                      </div>
+                    </td>
+                    <td>{transactionDetails?.credit.khajnas}</td>
+                  </tr>
+                  <tr>
+                    <td className="font-weight-bold">কমিশন</td>
+                    <td colSpan="2">
+                      <div>
+                        <table className="table table-bordered">
+                          <tbody>
+                            {transactionDetails?.credit.commissions}
+                          </tbody>
+                        </table>
+                      </div>
+                    </td>
+                    <td>{transactionDetails?.credit.commissions}</td>
+                  </tr>
+                  <tr>
+                    <td className="font-weight-bold">ধার (porishod)</td>
                     <td colSpan="2">
                       <div
                         className={
-                          dummyData.krishokerTk.length > 3
+                          transactionDetails?.cebit?.dharReturns &&
+                          transactionDetails.credit.dharReturns.length > 3
                             ? "scrollable-cell"
                             : ""
                         }
                       >
                         <table className="table table-bordered">
                           <tbody>
-                            {dummyData.krishokerTk.map((item, index) => (
+                            {transactionDetails?.credit?.dharReturns &&
+                              transactionDetails.credit.dharReturns.map(
+                                (item, index) => (
+                                  <tr key={index}>
+                                    <td>{item.name}</td>
+                                    <td>{item.amount}</td>
+                                  </tr>
+                                )
+                              )}
+                          </tbody>
+                        </table>
+                      </div>
+                    </td>
+                    <td>
+                      {transactionDetails?.credit?.dharReturns
+                        ? transactionDetails.credit.dharReturns.reduce(
+                            (total, item) => total + item.amount,
+                            0
+                          )
+                        : 0}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="font-weight-bold">কৃষকের টাকা(খরচ)</td>
+                    <td colSpan="2">
+                      <div
+                        className={
+                          transactionDetails?.debit.farmersPayment.length > 3 ? "scrollable-cell" : ""
+                        }
+                      >
+                        <table className="table table-bordered">
+                          <tbody>
+                            {transactionDetails?.debit.farmersPayment.map((item, index) => (
                               <tr key={index}>
                                 <td>{item.name}</td>
                                 <td>{item.amount}</td>
@@ -126,74 +214,84 @@ const DailyTransaction = () => {
                         </table>
                       </div>
                     </td>
-                    <td>{totalKrishokerTk}</td>
+                    <td>{transactionDetails?.debit?.farmersPayment
+                        ? transactionDetails.debit.farmersPayment.reduce(
+                            (total, item) => total + item.amount,
+                            0
+                          )
+                        : 0}</td>
                   </tr>
                   <tr>
                     <td className="font-weight-bold">ধার (খরচ)</td>
                     <td colSpan="2">
                       <div
                         className={
-                          dummyData.dhar.length > 3 ? "scrollable-cell" : ""
+                          transactionDetails?.debit?.dhar &&
+                          transactionDetails.debit.dhar.length > 3
+                            ? "scrollable-cell"
+                            : ""
                         }
                       >
                         <table className="table table-bordered">
                           <tbody>
-                            {dummyData.dhar.map((item, index) => (
-                              <tr key={index}>
-                                <td>{item.name}</td>
-                                <td>{item.amount}</td>
-                              </tr>
-                            ))}
+                            {transactionDetails?.debit?.dhar &&
+                              transactionDetails.debit.dhar.map(
+                                (item, index) => (
+                                  <tr key={index}>
+                                    <td>{item.name}</td>
+                                    <td>{item.amount}</td>
+                                  </tr>
+                                )
+                              )}
                           </tbody>
                         </table>
                       </div>
                     </td>
-                    <td>{totalDhar}</td>
+                    <td>
+                      {transactionDetails?.debit?.dhar
+                        ? transactionDetails.debit.dhar.reduce(
+                            (total, item) => total + item.amount,
+                            0
+                          )
+                        : 0}
+                    </td>
                   </tr>
+
                   <tr>
                     <td className="font-weight-bold">অন্যান্য (খরচ)</td>
                     <td colSpan="2">
-                      <div
-                        className={
-                          dummyData.onnanno.length > 3 ? "scrollable-cell" : ""
-                        }
-                      >
+                      <div>
                         <table className="table table-bordered">
                           <tbody>
-                            {dummyData.onnanno.map((item, index) => (
+                            {onnannoData.map((item, index) => (
                               <tr key={index}>
                                 <td>{item.name}</td>
-                                <td>{item.amount}</td>
+                                <td>
+                                  <input
+                                    type="number"
+                                    value={item.amount}
+                                    onChange={(e) =>
+                                      handleOnnannoAmountChange(index, e)
+                                    }
+                                  />
+                                </td>
                               </tr>
                             ))}
                           </tbody>
                         </table>
                       </div>
                     </td>
-                    <td>{totalOnnanno}</td>
+                    <td></td>
                   </tr>
                 </tbody>
               </table>
             </div>
           </div>
-          <div className="row mb-4">
-            <div className="col-md-6 mx-auto">
-              <div className="card">
-                <div className="card-header text-center font-weight-bold">
-                  সারাংশ
-                </div>
-                <div className="card-body text-center">
-                  <p className="font-weight-bold">
-                    মোট খরচ: {totalKhoroch} টাকা
-                  </p>
-                  <p className="font-weight-bold">মোট জমা: {totalJoma} টাকা</p>
-                  <p className="font-weight-bold">
-                    বাকি টাকা: {remainingBalance} টাকা
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
+          <LastCalculation
+            totalJoma={totalJoma}
+            totalKhoroch={totalKhoroch}
+            remainingBalance={remainingBalance}
+          />
         </div>
       </div>
     </div>

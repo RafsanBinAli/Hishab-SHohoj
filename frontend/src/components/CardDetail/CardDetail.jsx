@@ -48,7 +48,7 @@ const CardDetail = () => {
     const fetchCardDetails = async () => {
       try {
         const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/get-market-deals`
+          `${process.env.REACT_APP_BACKEND_URL}/get-all-market-details-ofToday`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch all the card details");
@@ -227,7 +227,7 @@ const CardDetail = () => {
       (card) => card.farmerName == value
     );
     setIndividualCardDetails(selectedCard);
-    console.log("selected Card Details", selectedCard);
+    
   };
 
   return (

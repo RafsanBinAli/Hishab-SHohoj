@@ -52,3 +52,17 @@ exports.updateTotalDue = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+exports.getShopDetailsByName = async (req, res) => {
+  try {
+    const { shopName } = req.params;
+    const shop = await Shop.findOne({ shopName });
+    if (!shop) {
+      return res.status(404).json({ message: "Shop not found by this name" });
+    }
+    res.status(200).json(shop);
+  } catch (error) {
+    console.error("Error fetching data of shop", error);
+    res.status(500).json({ message: "Server Error!" });
+  }
+};

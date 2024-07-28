@@ -3,7 +3,7 @@ const FarmerDetails = ({ individualFarmerData }) => {
     <>
       <div className="col-md-4 ml-10">
         <div className="card-body">
-          <h5 className="header-title">কৃষকের Porichoy</h5>
+          <h5 className="header-title">কৃষকের পরিচয়</h5>
           <div className="flex">
             <span>Name</span> : <p> {individualFarmerData?.name}</p>
             <span>Village</span> : <p> {individualFarmerData?.village}</p>

@@ -1,11 +1,11 @@
-import jsPDF from "jspdf";
-import "jspdf-autotable";
-import { format } from "date-fns";
-import banglaFont from "../../font/TiroBangla-Regular.ttf";
-import NikoshGrameen from "../NikoshGrameen";
 import { useEffect, useState } from "react";
-const FarmerAndDokanSlip = ({ individualCardDetails, loadedData }) => {
+import handleDownload from "../../functions/handleDownload";
+import NikoshGrameen from "../NikoshGrameen";
+
+const FarmerAndDokanSlip = ({ individualCardDetails }) => {
+  console.log("Individual Card Details:", individualCardDetails);
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [isOkClicked, setIsOkClicked] = useState(false);
   const [commission, setCommission] = useState(0);
   const [khajna, setKhajna] = useState(0);
   const [finalAmount, setFinalAmount] = useState(0);
@@ -21,78 +21,74 @@ const FarmerAndDokanSlip = ({ individualCardDetails, loadedData }) => {
   };
 
   useEffect(() => {
-    const totalAmount = loadedData?.purchases.reduce(
+    const totalAmount = individualCardDetails?.purchases.reduce(
       (total, item) => total + item.total,
       0
     );
 
     setFinalAmount(totalAmount - commission - khajna);
-  }, [commission, khajna, loadedData]);
+  }, [commission, khajna, individualCardDetails]);
 
-  const handleDownload = () => {
-    const doc = new jsPDF();
-    // Load and add the Bangla font
-    doc.addFileToVFS("TiroBangla-Regular.ttf", banglaFont);
-    doc.addFont("TiroBangla-Regular.ttf", "normal");
-    doc.setFont("TiroBangla-Regular", "normal");
-    // Set font size
-    doc.setFontSize(12);
-    // Document content
-    doc.text("হিসাবের বিবরণ", 14, 20);
-    doc.text(`কৃষকের নাম: ${loadedData.farmerName}`, 14, 30);
-    doc.text(`তারিখ: ${format(selectedDate, "dd MMMM, yyyy")}`, 14, 40);
-    // Table headers
-    const tableColumn = [
-      { header: "দোকানের নাম", dataKey: "shopName" },
-      { header: "পণ্যের নাম", dataKey: "stockName" },
-      { header: "পরিমাণ (কেজি)", dataKey: "quantity" },
-      { header: "দাম (টাকা/কেজি)", dataKey: "price" },
-      { header: "মোট টাকা", dataKey: "total" },
-    ];
-    // Table rows
-    const tableRows = loadedData.purchases.map((purchase) => ({
-      shopName: purchase.shopName,
-      stockName: purchase.stockName,
-      quantity: purchase.quantity.toString(),
-      price: purchase.price.toString(),
-      total: (purchase.quantity * purchase.price).toString(),
-    }));
-    // Set table headers font
-    doc.autoTable(tableColumn, tableRows, {
-      startY: 50,
-      margin: { top: 50 },
-      styles: { font: "NikoshGrameen", fontStyle: "normal" },
-      columnStyles: {
-        0: { fontStyle: "normal" },
-        1: { fontStyle: "normal" },
-        2: { fontStyle: "normal" },
-        3: { fontStyle: "normal" },
-        4: { fontStyle: "normal" },
-      },
-    });
-    // Additional texts
-    doc.text(
-      `মোট টাকা (টাকা): ${loadedData.purchases.reduce(
-        (total, item) => total + item.total,
-        0
-      )}`,
-      14,
-      doc.autoTable.previous.finalY + 10
-    );
-    doc.text(
-      `কমিশন (টাকা): ${commission}`,
-      14,
-      doc.autoTable.previous.finalY + 20
-    );
-    doc.text(`খাজনা (টাকা): ${khajna}`, 14, doc.autoTable.previous.finalY + 30);
-    doc.text(
-      `ফাইনাল এমাউন্ট (টাকা): ${finalAmount}`,
-      14,
-      doc.autoTable.previous.finalY + 40
-    );
-    doc.save("farmer-slip.pdf");
+  const handleOk = async () => {
+    if (khajna === 0) {
+      const isConfirmed = window.confirm(
+        "Khajna is 0. Are you sure you want to proceed?"
+      );
+      if (!isConfirmed) {
+        return;
+      }
+    }
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/transaction/save-daily`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            commission,
+            khajna,
+            name: individualCardDetails.farmerName,
+            amount: finalAmount,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to save daily transaction");
+      }
+      setIsOkClicked(true);
+    } catch (error) {
+      console.error("Error saving daily transaction:", error);
+      alert("An error occurred while saving daily transaction");
+    }
+    try {
+      const updateResponse = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/card-details-update-secondary`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            id: individualCardDetails?._id,
+            khajna,
+            commission,
+            totalAmountToBeGiven: finalAmount,
+          }),
+        }
+      );
+      if (!updateResponse.ok) {
+        throw new Error("Error updating card details!");
+      }
+      alert("Commissions and khajnas saved successfully and updated!");
+    } catch (error) {
+      console.error("Error occurred updating card details!");
+      alert("Error occurred updating card details");
+    }
   };
-  console.log("individual Card Details", individualCardDetails);
+
   return (
     <>
       <div className="col-md-7">
@@ -166,8 +162,25 @@ const FarmerAndDokanSlip = ({ individualCardDetails, loadedData }) => {
           </table>
         </div>
 
-        <button className="btn btn-primary mt-2 mb-2" onClick={handleDownload}>
+        <button
+          className="btn btn-primary m-2"
+          onClick={() =>
+            handleDownload(
+              individualCardDetails,
+              selectedDate,
+              commission,
+              khajna,
+              finalAmount
+            )
+          }
+          disabled={!isOkClicked}
+          title={!isOkClicked ? "Not accessible right now" : ""}
+          style={{ pointerEvents: !isOkClicked ? "none" : "auto" }}
+        >
           পিডিএফ ডাউনলোড করুন
+        </button>
+        <button className="btn btn-primary m-2" onClick={handleOk}>
+          All Okay!
         </button>
       </div>
     </>
