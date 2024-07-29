@@ -1,27 +1,24 @@
 const DailyTransaction = require("../models/DailyTransaction");
+const date = new Date();
+const normalizedDate = new Date(
+  Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
+);
 
 exports.saveDailyTransaction = async (req, res) => {
   try {
-    console.log("req.body ", req.body);
     const commission = Number(req.body.commission);
     const khajna = Number(req.body.khajna);
-    const date = new Date();
-    const normalizedDate = new Date(date.setHours(0, 0, 0, 0)); // Normalize the date
 
     let transaction = await DailyTransaction.findOne({ date: normalizedDate });
 
-    if (transaction) {
-      transaction.credit.commissions += commission;
-      transaction.credit.khajnas += khajna;
-    } else {
-      transaction = new DailyTransaction({
-        date: normalizedDate,
-        credit: {
-          commissions: commission,
-          khajnas: khajna,
-        },
-      });
+    if (!transaction) {
+      return res
+        .status(404)
+        .json({ message: "Transaction not found for the day!" });
     }
+    transaction.credit.commissions += commission;
+    transaction.credit.khajnas += khajna;
+    
     if (req.body.name && req.body.amount) {
       transaction.debit.farmersPayment.push({
         name: req.body.name,
@@ -40,17 +37,16 @@ exports.saveDailyTransaction = async (req, res) => {
 
 exports.getDailyTransaction = async (req, res) => {
   try {
-    const date = new Date();
-    const normalizedDate = new Date(date.setHours(0, 0, 0, 0)); // Normalize the date
-
-    let transaction = await DailyTransaction.findOne({ date: normalizedDate });
+    const { date } = req.params;
+    console.log("date", date);
+    let transaction = await DailyTransaction.findOne({ date });
 
     if (!transaction) {
       return res
         .status(404)
         .json({ message: "Transaction not found for the day!" });
     }
-
+    console.log(transaction);
     res.status(200).json(transaction);
   } catch (error) {
     res.status(500).json({ message: "Failed to save DailyTransaction", error });
@@ -65,9 +61,7 @@ exports.dharEntry = async (req, res) => {
         .status(400)
         .json({ message: "Farmer name and amount are required" });
     }
-    const date = new Date();
-    const normalizedDate = new Date(date.setHours(0, 0, 0, 0)); // Normalize the date
-
+   
     let transaction = await DailyTransaction.findOne({ date: normalizedDate });
     if (!transaction) {
       return res
@@ -75,8 +69,6 @@ exports.dharEntry = async (req, res) => {
         .json({ message: "Transaction not found for the day!" });
     }
 
-    // Add the new dhar entry
-    console.log(transaction.debit);
     transaction.debit.dhar.push({ name: farmerName, amount: amount });
 
     await transaction.save();
@@ -97,8 +89,6 @@ exports.dharRepay = async (req, res) => {
         .status(400)
         .json({ message: "Farmer name and amount are required" });
     }
-    const date = new Date();
-    const normalizedDate = new Date(date.setHours(0, 0, 0, 0)); // Normalize the date
 
     let transaction = await DailyTransaction.findOne({ date: normalizedDate });
     if (!transaction) {
@@ -128,8 +118,6 @@ exports.dokanPayment = async (req, res) => {
         .status(400)
         .json({ message: "Shop name and amount are required" });
     }
-    const date = new Date();
-    const normalizedDate = new Date(date.setHours(0, 0, 0, 0)); // Normalize the date
 
     let transaction = await DailyTransaction.findOne({ date: normalizedDate });
     if (!transaction) {
@@ -149,5 +137,23 @@ exports.dokanPayment = async (req, res) => {
     res
       .status(500)
       .json({ message: "Failed to save dokan payment details", error });
+  }
+};
+
+exports.createDaily = async (req, res) => {
+  try {
+    let transaction = await DailyTransaction.findOne({ date: normalizedDate });
+    transaction = new DailyTransaction({
+      date: normalizedDate,
+    });
+
+    await transaction.save();
+    res
+      .status(200)
+      .json({ message: "DailyTransaction created successfully", transaction });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Failed to create DailyTransaction", error });
   }
 };

@@ -117,6 +117,7 @@ exports.updateCardDetails = async (req, res) => {
     cardDetails.khajna = khajna;
     (cardDetails.commission = commission),
       (cardDetails.totalAmountToBeGiven = totalAmountToBeGiven);
+    cardDetails.doneStatus = true;
     await cardDetails.save();
     res.json({ message: "Card details updated successfully!", cardDetails });
   } catch (error) {

@@ -9,6 +9,7 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
   const [commission, setCommission] = useState(0);
   const [khajna, setKhajna] = useState(0);
   const [finalAmount, setFinalAmount] = useState(0);
+  const [isAlreadySaved, setIsAlreadySaved] = useState(false);
 
   const handleKhajnaChange = (event) => {
     const khajnaValue = event.target.value;
@@ -82,6 +83,8 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
       if (!updateResponse.ok) {
         throw new Error("Error updating card details!");
       }
+      const data = await updateResponse.json();
+      setIsAlreadySaved(data.doneStatus);
       alert("Commissions and khajnas saved successfully and updated!");
     } catch (error) {
       console.error("Error occurred updating card details!");
@@ -132,11 +135,15 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
                   কমিশন (টাকা):
                 </td>
                 <td className="commission font-weight-bold">
-                  <input
-                    type="number"
-                    value={commission}
-                    onChange={handleCommissionChange}
-                  />
+                  {individualCardDetails.doneStatus ? (
+                    individualCardDetails.commission
+                  ) : (
+                    <input
+                      type="number"
+                      value={commission}
+                      onChange={handleCommissionChange}
+                    />
+                  )}
                 </td>
               </tr>
               <tr>
@@ -145,11 +152,15 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
                 </td>
 
                 <td className="commission font-weight-bold">
-                  <input
-                    type="number"
-                    value={khajna}
-                    onChange={handleKhajnaChange}
-                  />
+                  {individualCardDetails.doneStatus ? (
+                    individualCardDetails.commission
+                  ) : (
+                    <input
+                      type="number"
+                      value={khajna}
+                      onChange={handleKhajnaChange}
+                    />
+                  )}
                 </td>
               </tr>
               <tr>
@@ -179,9 +190,13 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
         >
           পিডিএফ ডাউনলোড করুন
         </button>
-        <button className="btn btn-primary m-2" onClick={handleOk}>
-          All Okay!
-        </button>
+        {individualCardDetails.doneStatus ? (
+          ""
+        ) : (
+          <button className="btn btn-primary m-2" onClick={handleOk}>
+            All Okay!
+          </button>
+        )}
       </div>
     </>
   );

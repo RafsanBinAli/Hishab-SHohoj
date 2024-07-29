@@ -9,6 +9,7 @@ var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var transactionRouter = require("./routes/transaction")
 const dotenv = require('dotenv').config()
+require('./config/cronJob'); 
 const connectDB = require("./config/Database")
 var app = express();
 

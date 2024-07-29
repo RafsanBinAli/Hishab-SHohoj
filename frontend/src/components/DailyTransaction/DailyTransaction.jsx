@@ -3,6 +3,17 @@ import "./DailyTransaction.css";
 import LastCalculation from "./LastCalculation";
 
 const DailyTransaction = () => {
+  const formatDate = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); 
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  const dateNow = new Date();
+  const normalizedDate = new Date(
+    Date.UTC(dateNow.getFullYear(), dateNow.getMonth(), dateNow.getDate())
+  );
   const [transactionDetails, setTransactionDetails] = useState(null);
   const [onnannoData, setOnnannoData] = useState([
     { name: "চা-নাস্তা", amount: 0 },
@@ -39,26 +50,25 @@ const DailyTransaction = () => {
   const totalKhoroch = totalKrishokerTk + totalDhar;
   const remainingBalance = totalJoma - totalKhoroch;
 
-  const getCurrentDate = () => {
-    const date = new Date();
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
-  };
+  // const getCurrentDate = () => {
+  //   const normalizedDate = new Date(
+  //     Date.UTC(dateNow.getFullYear(), dateNow.getMonth(), dateNow.getDate())
+  //   );
+  //   return normalizedDate;
+  // };
 
-  const [selectedDate, setSelectedDate] = useState("");
+  const [selectedDate, setSelectedDate] = useState(formatDate(normalizedDate));
 
-  useEffect(() => {
-    const today = getCurrentDate();
-    setSelectedDate(today);
-  }, []);
+  // useEffect(() => {
+  //   const today = getCurrentDate();
+  //   setSelectedDate(today);
+  // }, []);
 
   useEffect(() => {
     const fetchTransactionDetails = async () => {
       try {
         const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/transaction/get-daily`
+          `${process.env.REACT_APP_BACKEND_URL}/transaction/get-daily/${selectedDate}`
         );
         if (!response.ok) {
           throw new Error("Unable to fetch data");
@@ -113,27 +123,33 @@ const DailyTransaction = () => {
                     <td colSpan="2">
                       <div
                         className={
-                          transactionDetails?.credit.dokanPayment.length > 3 ? "scrollable-cell" : ""
+                          transactionDetails?.credit.dokanPayment.length > 3
+                            ? "scrollable-cell"
+                            : ""
                         }
                       >
                         <table className="table table-bordered">
                           <tbody>
-                            {transactionDetails?.credit.dokanPayment.map((item, index) => (
-                              <tr key={index}>
-                                <td>{item.name}</td>
-                                <td>{item.amount}</td>
-                              </tr>
-                            ))}
+                            {transactionDetails?.credit.dokanPayment.map(
+                              (item, index) => (
+                                <tr key={index}>
+                                  <td>{item.name}</td>
+                                  <td>{item.amount}</td>
+                                </tr>
+                              )
+                            )}
                           </tbody>
                         </table>
                       </div>
                     </td>
-                    <td>{transactionDetails?.credit?.dokanPayment
+                    <td>
+                      {transactionDetails?.credit?.dokanPayment
                         ? transactionDetails.credit.dokanPayment.reduce(
                             (total, item) => total + item.amount,
                             0
                           )
-                        : 0}</td>
+                        : 0}
+                    </td>
                   </tr>
                   <tr>
                     <td className="font-weight-bold">খাজনা</td>
@@ -199,27 +215,33 @@ const DailyTransaction = () => {
                     <td colSpan="2">
                       <div
                         className={
-                          transactionDetails?.debit.farmersPayment.length > 3 ? "scrollable-cell" : ""
+                          transactionDetails?.debit.farmersPayment.length > 3
+                            ? "scrollable-cell"
+                            : ""
                         }
                       >
                         <table className="table table-bordered">
                           <tbody>
-                            {transactionDetails?.debit.farmersPayment.map((item, index) => (
-                              <tr key={index}>
-                                <td>{item.name}</td>
-                                <td>{item.amount}</td>
-                              </tr>
-                            ))}
+                            {transactionDetails?.debit.farmersPayment.map(
+                              (item, index) => (
+                                <tr key={index}>
+                                  <td>{item.name}</td>
+                                  <td>{item.amount}</td>
+                                </tr>
+                              )
+                            )}
                           </tbody>
                         </table>
                       </div>
                     </td>
-                    <td>{transactionDetails?.debit?.farmersPayment
+                    <td>
+                      {transactionDetails?.debit?.farmersPayment
                         ? transactionDetails.debit.farmersPayment.reduce(
                             (total, item) => total + item.amount,
                             0
                           )
-                        : 0}</td>
+                        : 0}
+                    </td>
                   </tr>
                   <tr>
                     <td className="font-weight-bold">ধার (খরচ)</td>

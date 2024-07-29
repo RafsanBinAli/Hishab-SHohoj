@@ -1,7 +1,6 @@
 import FarmerDetails from "./FarmerDetails";
 import FarmerAndDokanSlip from "./FarmerAndDokanSlip";
 const FarmerSlipDetails = ({
-  loadedData,
   individualFarmerData,
   individualCardDetails,
 }) => {
