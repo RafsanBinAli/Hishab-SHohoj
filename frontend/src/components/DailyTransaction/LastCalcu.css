@@ -1,0 +1,97 @@
+/* General Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Arial', sans-serif;
+}
+
+.calcu-row {
+  display: flex;
+  justify-content: center;
+  padding: 20px 10px;
+}
+
+.calcu-col-md-6 {
+  width: 100%;
+  max-width: 600px;
+}
+
+.calcu-card {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.2s ease-in-out;
+}
+
+.calcu-card:hover {
+  transform: translateY(-5px);
+}
+
+.calcu-card-header {
+  background-color: #007bff;
+  color: #ffffff;
+  padding: 15px;
+  font-size: 1.25rem;
+  border-bottom: 1px solid #007bff;
+}
+
+.calcu-card-body {
+  padding: 20px;
+  text-align: center;
+}
+
+.calcu-font-weight-bold {
+  font-weight: bold;
+  margin: 10px 0;
+  color: #333;
+}
+
+.calcu-daily-cash-stack-form {
+  margin-top: 20px;
+}
+
+.calcu-daily-cash-stack-label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 1rem;
+  color: #555;
+}
+
+.calcu-daily-cash-stack-input {
+  width: 50%;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  transition: border-color 0.2s ease-in-out;
+}
+
+.calcu-daily-cash-stack-input:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.calcu-daily-cash-stack-submit {
+  width: 50%;
+  padding: 10px;
+  font-size: 1rem;
+  color: #ffffff;
+  background-color: #007bff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.calcu-daily-cash-stack-submit:hover {
+  background-color: #0056b3;
+}
+
+@media (max-width: 768px) {
+  .calcu-card {
+    margin: 0 10px;
+  }
+}

@@ -131,12 +131,12 @@ const SlipDetails = () => {
         <div className="slip-card">
           <div className="card">
             <div className="card-body">
-              <h5 className="card-title">{slipDetails.shopName}</h5>
+              <h5 className="card-title">{slipDetails?.shopName}</h5>
               <p className="card-text">
-                Total Due before: {shopDetails.totalDue}
+                Total Due before: {shopDetails?.totalDue}
               </p>
               <p className="card-text">
-                Total Amount: {slipDetails.totalAmount}
+                Total Amount: {slipDetails?.totalAmount}
               </p>
               <table className="table table-striped slip-table">
                 <thead>
@@ -150,7 +150,7 @@ const SlipDetails = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {slipDetails.purchases.map((purchase, index) => (
+                  {slipDetails?.purchases.map((purchase, index) => (
                     <tr key={index} className="slip-row">
                       <td>{purchase.farmerName}</td>
                       <td>{purchase.stockName}</td>

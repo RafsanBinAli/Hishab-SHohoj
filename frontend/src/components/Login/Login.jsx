@@ -25,7 +25,7 @@ const Login = ({ setIsUserLoggedIn })=> {
         localStorage.setItem("isUserLoggedIn", "true");
         localStorage.setItem("userAuthToken", data.token);
         setIsUserLoggedIn(true);  // Update the state to re-render the Navbar
-        navigate("/home");
+        navigate("/");
         alert("Login Successful");
       } else {
         alert("Invalid Username or Password");

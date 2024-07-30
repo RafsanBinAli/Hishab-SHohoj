@@ -3,66 +3,88 @@ import "./DailyTransaction.css";
 import LastCalculation from "./LastCalculation";
 
 const DailyTransaction = () => {
-  const formatDate = (date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0'); 
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  };
-
+  const [dailyCashStack, setDailyCashStack] = useState(0);
+  const [transactionDetails, setTransactionDetails] = useState(null);
   const dateNow = new Date();
   const normalizedDate = new Date(
     Date.UTC(dateNow.getFullYear(), dateNow.getMonth(), dateNow.getDate())
   );
-  const [transactionDetails, setTransactionDetails] = useState(null);
-  const [onnannoData, setOnnannoData] = useState([
-    { name: "চা-নাস্তা", amount: 0 },
-    { name: "রিক্সা ভাডা ও অন্যান্য", amount: 0 },
-  ]);
-  const dummyData = {
-    joma: [
-      { name: "Rahim", amount: 1000 },
-      { name: "Karim", amount: 1200 },
-      { name: "Kalam", amount: 1100 },
-      { name: "Abu", amount: 1500 },
-    ],
-    krishokerTk: [
-      { name: "abc", amount: 1000 },
-      { name: "def", amount: 900 },
-      { name: "ghi", amount: 800 },
-      { name: "jkl", amount: 700 },
-    ],
-    dhar: [
-      { name: "abc", amount: 500 },
-      { name: "def", amount: 400 },
-      { name: "ghi", amount: 300 },
-    ],
+  const formatDate = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
   };
-
-  const calculateTotal = (category) => {
-    return dummyData[category].reduce((total, item) => total + item.amount, 0);
-  };
-
-  const totalJoma = calculateTotal("joma");
-  const totalKrishokerTk = calculateTotal("krishokerTk");
-  const totalDhar = calculateTotal("dhar");
-
-  const totalKhoroch = totalKrishokerTk + totalDhar;
-  const remainingBalance = totalJoma - totalKhoroch;
-
-  // const getCurrentDate = () => {
-  //   const normalizedDate = new Date(
-  //     Date.UTC(dateNow.getFullYear(), dateNow.getMonth(), dateNow.getDate())
-  //   );
-  //   return normalizedDate;
-  // };
-
   const [selectedDate, setSelectedDate] = useState(formatDate(normalizedDate));
+  const [otherCost, setOtherCost] = useState(0);
 
-  // useEffect(() => {
-  //   const today = getCurrentDate();
-  //   setSelectedDate(today);
-  // }, []);
+  const handleInputChange = (event) => {
+    setDailyCashStack(Number(event.target.value));
+  };
+  const handleOtherCostSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/transaction/update-other-cost`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            otherCost,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorText = await response.text(); // Get error details from the response
+        throw new Error(`Unable to fetch data: ${errorText}`);
+      }
+
+      const data = await response.json();
+
+      setTransactionDetails(data.transaction);
+
+      console.log("Data updated successfully:", data);
+    } catch (error) {
+      console.log("Error occurred:", error.message);
+    }
+  };
+
+  const handleDailyCashStack = async (event) => {
+    event.preventDefault();
+
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/transaction/update-daily-cash-stack`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            dailyCashStack,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorText = await response.text(); // Get error details from the response
+        throw new Error(`Unable to fetch data: ${errorText}`);
+      }
+
+      const data = await response.json();
+
+      setTransactionDetails(data.transaction);
+
+      console.log("Data updated successfully:", data);
+    } catch (error) {
+      console.log("Error occurred:", error.message);
+    }
+
+    console.log("Daily Cash Stack:", dailyCashStack);
+  };
 
   useEffect(() => {
     const fetchTransactionDetails = async () => {
@@ -83,10 +105,8 @@ const DailyTransaction = () => {
     fetchTransactionDetails();
   }, [selectedDate]);
 
-  const handleOnnannoAmountChange = (index, event) => {
-    const updatedOnnannoData = [...onnannoData];
-    updatedOnnannoData[index].amount = parseInt(event.target.value, 10) || 0;
-    setOnnannoData(updatedOnnannoData);
+  const handleOtherCost = (event) => {
+    setOtherCost(event.target.value);
   };
 
   return (
@@ -144,7 +164,7 @@ const DailyTransaction = () => {
                     </td>
                     <td>
                       {transactionDetails?.credit?.dokanPayment
-                        ? transactionDetails.credit.dokanPayment.reduce(
+                        ? transactionDetails?.credit.dokanPayment.reduce(
                             (total, item) => total + item.amount,
                             0
                           )
@@ -181,7 +201,7 @@ const DailyTransaction = () => {
                       <div
                         className={
                           transactionDetails?.cebit?.dharReturns &&
-                          transactionDetails.credit.dharReturns.length > 3
+                          transactionDetails?.credit.dharReturns.length > 3
                             ? "scrollable-cell"
                             : ""
                         }
@@ -189,7 +209,7 @@ const DailyTransaction = () => {
                         <table className="table table-bordered">
                           <tbody>
                             {transactionDetails?.credit?.dharReturns &&
-                              transactionDetails.credit.dharReturns.map(
+                              transactionDetails?.credit.dharReturns.map(
                                 (item, index) => (
                                   <tr key={index}>
                                     <td>{item.name}</td>
@@ -203,7 +223,7 @@ const DailyTransaction = () => {
                     </td>
                     <td>
                       {transactionDetails?.credit?.dharReturns
-                        ? transactionDetails.credit.dharReturns.reduce(
+                        ? transactionDetails?.credit.dharReturns.reduce(
                             (total, item) => total + item.amount,
                             0
                           )
@@ -236,7 +256,7 @@ const DailyTransaction = () => {
                     </td>
                     <td>
                       {transactionDetails?.debit?.farmersPayment
-                        ? transactionDetails.debit.farmersPayment.reduce(
+                        ? transactionDetails?.debit.farmersPayment.reduce(
                             (total, item) => total + item.amount,
                             0
                           )
@@ -249,7 +269,7 @@ const DailyTransaction = () => {
                       <div
                         className={
                           transactionDetails?.debit?.dhar &&
-                          transactionDetails.debit.dhar.length > 3
+                          transactionDetails?.debit.dhar.length > 3
                             ? "scrollable-cell"
                             : ""
                         }
@@ -257,7 +277,7 @@ const DailyTransaction = () => {
                         <table className="table table-bordered">
                           <tbody>
                             {transactionDetails?.debit?.dhar &&
-                              transactionDetails.debit.dhar.map(
+                              transactionDetails?.debit.dhar.map(
                                 (item, index) => (
                                   <tr key={index}>
                                     <td>{item.name}</td>
@@ -271,7 +291,7 @@ const DailyTransaction = () => {
                     </td>
                     <td>
                       {transactionDetails?.debit?.dhar
-                        ? transactionDetails.debit.dhar.reduce(
+                        ? transactionDetails?.debit.dhar.reduce(
                             (total, item) => total + item.amount,
                             0
                           )
@@ -282,38 +302,60 @@ const DailyTransaction = () => {
                   <tr>
                     <td className="font-weight-bold">অন্যান্য (খরচ)</td>
                     <td colSpan="2">
-                      <div>
-                        <table className="table table-bordered">
-                          <tbody>
-                            {onnannoData.map((item, index) => (
-                              <tr key={index}>
-                                <td>{item.name}</td>
-                                <td>
-                                  <input
-                                    type="number"
-                                    value={item.amount}
-                                    onChange={(e) =>
-                                      handleOnnannoAmountChange(index, e)
-                                    }
-                                  />
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
+                      {transactionDetails?.otherCostEditStatus === true ? (
+                        <span>{transactionDetails?.debit.otherCost}</span>
+                      ) : (
+                        <>
+                          <input
+                            type="number"
+                            className="calcu-daily-cash-stack-input form-control"
+                            value={otherCost}
+                            onChange={(e) => handleOtherCost(e)}
+                          />
+                          <button
+                            type="button"
+                            className="calcu-daily-cash-stack-submit btn btn-primary"
+                            onClick={handleOtherCostSubmit}
+                          >
+                            সংরক্ষণ করুন
+                          </button>
+                        </>
+                      )}
                     </td>
-                    <td></td>
+                    <td>{transactionDetails?.debit.otherCost} </td>
+                  </tr>
+
+                  <tr>
+                    <td className="calcu-font-weight-bold">দৈনিক নগদ জমা:</td>
+                    <td colSpan="2">
+                      {transactionDetails?.dailyCashStackStatus === true ? (
+                        <span>{transactionDetails?.dailyCashStack}</span>
+                      ) : (
+                        <>
+                          <input
+                            type="number"
+                            id="dailyCashStack"
+                            className="calcu-daily-cash-stack-input form-control"
+                            value={dailyCashStack}
+                            onChange={handleInputChange}
+                          />
+                          <button
+                            type="button"
+                            className="calcu-daily-cash-stack-submit btn btn-primary"
+                            onClick={handleDailyCashStack}
+                          >
+                            সংরক্ষণ করুন
+                          </button>
+                        </>
+                      )}
+                    </td>
+                    <td>{transactionDetails?.dailyCashStack}</td>
                   </tr>
                 </tbody>
               </table>
             </div>
           </div>
-          <LastCalculation
-            totalJoma={totalJoma}
-            totalKhoroch={totalKhoroch}
-            remainingBalance={remainingBalance}
-          />
+          <LastCalculation transactionDetails={transactionDetails} />
         </div>
       </div>
     </div>

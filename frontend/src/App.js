@@ -37,7 +37,8 @@ function App() {
 
   useEffect(() => {
     const handleStorageChange = () => {
-      setIsUserLoggedIn(localStorage.getItem("isUserLoggedIn") === "true");
+      const status = localStorage.getItem("isUserLoggedIn");
+      setIsUserLoggedIn(!!status);
     };
 
     window.addEventListener("storage", handleStorageChange);
@@ -50,6 +51,9 @@ function App() {
   const PrivateRoute = ({ element, ...rest }) => {
     return isUserLoggedIn ? element : <Navigate to="/login" replace />;
   };
+  const PublicRoute = ({ element }) => {
+    return !isUserLoggedIn ? element : <Navigate to="/" replace />;
+  };
 
   return (
     <Router>
@@ -58,18 +62,18 @@ function App() {
 
         <Routes>
           <Route
-            path="/"
-            element={<Login setIsUserLoggedIn={setIsUserLoggedIn} />}
-          />
-          <Route
             path="/login"
-            element={<Login setIsUserLoggedIn={setIsUserLoggedIn} />}
+            element={
+              <PublicRoute
+                element={<Login setIsUserLoggedIn={setIsUserLoggedIn} />}
+              />
+            }
           />
           <Route
             path="/signup-new-member"
             element={<PrivateRoute element={<Signup />} />}
           />
-          <Route path="/home" element={<PrivateRoute element={<CardDetail />} />} />
+          <Route path="/" element={<PrivateRoute element={<CardDetail />} />} />
           <Route
             path="/farmers"
             element={<PrivateRoute element={<Farmer />} />}

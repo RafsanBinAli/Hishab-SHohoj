@@ -184,9 +184,13 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
               finalAmount
             )
           }
-          disabled={!isOkClicked}
-          title={!isOkClicked ? "Not accessible right now" : ""}
-          style={{ pointerEvents: !isOkClicked ? "none" : "auto" }}
+          disabled={!individualCardDetails.doneStatus}
+          title={
+            !individualCardDetails.doneStatus ? "Not accessible right now" : ""
+          }
+          style={{
+            pointerEvents: !individualCardDetails.doneStatus ? "none" : "auto",
+          }}
         >
           পিডিএফ ডাউনলোড করুন
         </button>
