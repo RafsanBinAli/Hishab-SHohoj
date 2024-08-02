@@ -13,7 +13,7 @@ const Navbar = ({ setIsUserLoggedIn }) => {
     setIsOpen(false);
     localStorage.removeItem("isUserLoggedIn");
     localStorage.removeItem("userAuthToken");
-    setIsUserLoggedIn(false); 
+    setIsUserLoggedIn(false);
   };
 
   const handleToggle = () => {
@@ -93,7 +93,7 @@ const Navbar = ({ setIsUserLoggedIn }) => {
                 to="/farmers"
                 onClick={() => setIsOpen(false)}
               >
-                 কৃষক
+                কৃষক
               </Link>
             </li>
             <li className="nav-item">
@@ -130,6 +130,15 @@ const Navbar = ({ setIsUserLoggedIn }) => {
                 onClick={() => setIsOpen(false)}
               >
                 টোটাল হিসাব
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link
+                className="nav-link"
+                to="/final-hishab"
+                onClick={() => setIsOpen(false)}
+              >
+                Final হিসাব
               </Link>
             </li>
             <li className="nav-item">

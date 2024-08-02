@@ -64,9 +64,9 @@ const Farmer = () => {
   return (
     <div className="container mt-4">
       <div className="row">
-        <div className="col-md-6">
+        <div className="card col-md-6">
           <div className="add-user-form">
-            <h2 className="mb-4">নতুন কৃষকের তথ্য দিন</h2>
+            <h2 className="card-title mb-4">নতুন কৃষকের তথ্য দিন</h2>
             <form>
               <div className="form-group">
                 <label htmlFor="name">কৃষকের নাম</label>
@@ -121,9 +121,8 @@ const Farmer = () => {
               </button>
             </form>
           </div>
-         
         </div>
-        <FarmerList farmers={users}/>
+        <FarmerList farmers={users} />
       </div>
     </div>
   );

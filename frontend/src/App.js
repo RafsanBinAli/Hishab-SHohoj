@@ -21,6 +21,7 @@ import Login from "./components/Login/Login";
 import Signup from "./components/Signup/Signup";
 import DharDetails from "./components/DharDetails/DharDetails";
 import Farmer from "./components/Farmer/Farmer";
+import FinalPage from "./components/FinalPage/FinalPage";
 
 require("dotenv").config();
 
@@ -113,6 +114,10 @@ function App() {
           <Route
             path="/dhar-details/:id"
             element={<PrivateRoute element={<DharDetails />} />}
+          />
+          <Route
+            path="/final-hishab"
+            element={<PrivateRoute element={<FinalPage />} />}
           />
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>

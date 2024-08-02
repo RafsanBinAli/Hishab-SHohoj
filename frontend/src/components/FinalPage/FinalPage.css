@@ -1,0 +1,107 @@
+.final-page-container {
+    background-color: #f8f9fa;
+    padding: 20px;
+    max-width: 1320px;
+  }
+  
+  .table-title,
+  .summary-title {
+    font-family: "NikoshGrameen", sans-serif;
+    font-size: 1.5rem;
+    color: #343a40;
+    margin-bottom: 15px;
+  }
+  
+  .date-picker-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  
+  .date-label {
+    font-weight: bold;
+    font-size: 1rem;
+    margin-right: 10px;
+  }
+  
+  .date-input {
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    padding: 5px 10px;
+  }
+  
+  .table-style {
+    background-color: #ffffff;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+  }
+  
+  .table-style thead th {
+    background-color: #2d742d;
+    color: #ffffff;
+    border: none;
+  }
+  
+  .table-style tbody tr:nth-child(odd) {
+    background-color: #f2f2f2;
+  }
+  
+  .table-style tbody tr:hover {
+    background-color: #e2e6ea;
+  }
+  
+  .table-style tbody tr:last-child td {
+    font-weight: bold;
+  }
+  
+  /* Responsive Styles */
+  @media (max-width: 768px) {
+    .final-page-container {
+      padding: 15px;
+    }
+    
+    .table-title,
+    .summary-title {
+      font-size: 1.25rem;
+    }
+  
+    .date-picker-wrapper {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  
+    .date-label {
+      margin-bottom: 5px;
+    }
+  
+    .date-input {
+      width: 100%;
+    }
+
+    .final{
+        margin-left: 30px;
+    }
+
+  }
+  
+  @media (max-width: 576px) {
+    .table-title,
+    .summary-title {
+      font-size: 1rem;
+    }
+  
+    .date-picker-wrapper {
+      flex-direction: column;
+    }
+  
+    .date-label {
+      font-size: 0.875rem;
+    }
+  
+    .date-input {
+      padding: 4px 8px;
+    }
+  }
+  
