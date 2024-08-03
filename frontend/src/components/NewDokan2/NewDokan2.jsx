@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ShopList from "./ShopList";
+import MessageModal from "../Modal/MessageModal"; // Import the MessageModal component
 import "./NewDokan2.css";
 
 const NewDokan2 = () => {
@@ -9,10 +10,13 @@ const NewDokan2 = () => {
     shopName: "",
     address: "",
     phoneNumber: "",
-    imageUrl: "", // To store the image URL
+    imageUrl: "",
   });
-
-  const [imagePreview, setImagePreview] = useState(null); // To preview the uploaded image
+  const [imagePreview, setImagePreview] = useState(null);
+  const [modalShow, setModalShow] = useState(false);
+  const [modalTitle, setModalTitle] = useState("");
+  const [modalMessage, setModalMessage] = useState("");
+  const [redirectTo, setRedirectTo] = useState(null);
 
   const handleInputChange = (e) => {
     setFormData({
@@ -24,12 +28,11 @@ const NewDokan2 = () => {
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      setLoading(true); // Set loading to true when image upload starts
+      setLoading(true);
       const imageData = new FormData();
       imageData.append("image", file);
 
       try {
-        // Upload image to ImageBB or your preferred image hosting service
         const response = await fetch(
           "https://api.imgbb.com/1/upload?key=c9af6d674adfdc89791fbbddc0ca6ff6",
           {
@@ -45,14 +48,14 @@ const NewDokan2 = () => {
         const data = await response.json();
         setFormData({
           ...formData,
-          imageUrl: data.data.url, // Set the image URL from response
+          imageUrl: data.data.url,
         });
 
-        setImagePreview(URL.createObjectURL(file)); // Preview the uploaded image
+        setImagePreview(URL.createObjectURL(file));
       } catch (error) {
         console.error("Error uploading image:", error);
       } finally {
-        setLoading(false); // Set loading to false when image upload completes
+        setLoading(false);
       }
     }
   };
@@ -76,19 +79,33 @@ const NewDokan2 = () => {
       }
 
       const newShop = await response.json();
-      alert("নতুন দোকান রেজিট্রেশন সম্পূর্ন হয়েছে !");
+
+      // Set success message and redirect URL
+      setModalTitle("Success");
+      setModalMessage("নতুন দোকান রেজিট্রেশন সম্পূর্ন হয়েছে !");
+      setRedirectTo("/dokans"); // Set the desired redirect page, if any
+      setModalShow(true);
 
       setFormData({
         shopName: "",
         address: "",
         phoneNumber: "",
-        imageUrl: "", // Clear imageUrl after submission
+        imageUrl: "",
       });
 
-      setImagePreview(null); // Clear image preview
-      window.location.reload();
+      setImagePreview(null);
     } catch (error) {
-      console.error("Error registering shop:", error);
+      // Set error message
+      setModalTitle("Error");
+      setModalMessage(error.message);
+      setModalShow(true);
+    }
+  };
+
+  const handleModalConfirm = () => {
+    setModalShow(false);
+    if (redirectTo) {
+      window.location.href = redirectTo; // Redirect to the specified page
     }
   };
 
@@ -97,7 +114,7 @@ const NewDokan2 = () => {
       try {
         const response = await fetch(
           `${process.env.REACT_APP_BACKEND_URL}/get-all-shops`
-        ); // Replace with your API endpoint
+        );
         const data = await response.json();
         setShops(data);
       } catch (error) {
@@ -196,6 +213,13 @@ const NewDokan2 = () => {
       <div className="shop-list-container">
         <ShopList shops={shops} />
       </div>
+      <MessageModal
+        show={modalShow}
+        onHide={() => setModalShow(false)}
+        title={modalTitle}
+        message={modalMessage}
+        onConfirm={handleModalConfirm}
+      />
     </div>
   );
 };

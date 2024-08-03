@@ -1,0 +1,87 @@
+/* MessageModal.css */
+
+/* Base styles for the modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1050;
+    overflow: hidden;
+  }
+  
+  .modal-content {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 500px;
+    padding: 20px;
+    text-align: center;
+    position: relative;
+  }
+  
+  .modal-header,
+  .modal-body,
+  .modal-footer {
+    margin-bottom: 10px;
+  }
+  
+  .modal-header {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+  .modal-body {
+    font-size: 1rem;
+    margin-bottom: 20px;
+  }
+  
+  .modal-footer {
+    display: flex;
+    justify-content: space-around;
+  }
+  
+  .modal-footer button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+  }
+  
+  .modal-footer button.confirm {
+    background-color: #007bff;
+    color: #fff;
+  }
+  
+  .modal-footer button.cancel {
+    background-color: #f8f9fa;
+    color: #000;
+  }
+  
+  /* Responsive styling */
+  @media (max-width: 576px) {
+    .modal-content {
+      padding: 15px;
+    }
+  
+    .modal-header {
+      font-size: 1.2rem;
+    }
+  
+    .modal-body {
+      font-size: 0.9rem;
+    }
+  
+    .modal-footer button {
+      padding: 8px 15px;
+      font-size: 0.9rem;
+    }
+  }
+  

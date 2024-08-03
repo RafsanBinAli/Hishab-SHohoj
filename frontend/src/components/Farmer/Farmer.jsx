@@ -1,6 +1,9 @@
+// Farmer.js
 import React, { useEffect, useState } from "react";
 import "./Farmer.css";
 import FarmerList from "./FarmerList";
+import MessageModal from "../Modal/MessageModal"; // Import the MessageModal component
+
 const Farmer = () => {
   const [users, setUsers] = useState([]);
   const [newUserInfo, setNewUserInfo] = useState({
@@ -9,6 +12,10 @@ const Farmer = () => {
     village: "",
     fathersName: "",
   });
+  const [modalShow, setModalShow] = useState(false);
+  const [modalTitle, setModalTitle] = useState("");
+  const [modalMessage, setModalMessage] = useState("");
+  const [redirectTo, setRedirectTo] = useState(null);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -55,9 +62,23 @@ const Farmer = () => {
         throw new Error(errorMessage.error || "Network response was not ok");
       }
 
-      alert("নতুন কৃষক সংযুক্ত হয়েছে!");
+      // Set success message and redirect URL
+      setModalTitle("Success");
+      setModalMessage("নতুন কৃষক সংযুক্ত হয়েছে!");
+      setRedirectTo("/farmers"); // Set the desired redirect page
+      setModalShow(true);
     } catch (error) {
-      alert(error.message);
+      // Set error message
+      setModalTitle("Error");
+      setModalMessage(error.message);
+      setModalShow(true);
+    }
+  };
+
+  const handleModalConfirm = () => {
+    setModalShow(false);
+    if (redirectTo) {
+      window.location.href = redirectTo; // Redirect to the specified page
     }
   };
 
@@ -124,6 +145,13 @@ const Farmer = () => {
         </div>
         <FarmerList farmers={users} />
       </div>
+      <MessageModal
+        show={modalShow}
+        onHide={() => setModalShow(false)}
+        title={modalTitle}
+        message={modalMessage}
+        onConfirm={handleModalConfirm}
+      />
     </div>
   );
 };
