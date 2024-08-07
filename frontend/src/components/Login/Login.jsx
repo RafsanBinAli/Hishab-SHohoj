@@ -1,36 +1,62 @@
 import React, { useState } from "react";
-import "./Login.css";
 import { useNavigate } from "react-router-dom";
+import MessageModal from "../Modal/MessageModal"; // Adjust the import path as needed
+import "./Login.css";
 
-const Login = ({ setIsUserLoggedIn })=> {
-  const [username, setusername] = useState("");
+const Login = ({ setIsUserLoggedIn }) => {
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [modalTitle, setModalTitle] = useState("");
+  const [modalMessage, setModalMessage] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/users/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        username: username,
-        password: password,
-      }),
-    });
-    const data = await response.json();
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/users/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username,
+            password,
+          }),
+        }
+      );
+      const data = await response.json();
 
-    if (response.ok) {
+      if (response.ok) {
         localStorage.setItem("isUserLoggedIn", "true");
         localStorage.setItem("userAuthToken", data.token);
-        setIsUserLoggedIn(true);  // Update the state to re-render the Navbar
-        navigate("/");
-        alert("Login Successful");
+        setIsUserLoggedIn(true); // Update the state to re-render the Navbar
+        setModalTitle("Success");
+        setModalMessage("Login Successful");
+        setShowModal(true);
+        setTimeout(() => navigate("/"), 2000); // Redirect after 2 seconds
       } else {
-        alert("Invalid Username or Password");
+        setModalTitle("Error");
+        setModalMessage(data.message || "Invalid Username or Password");
+        setShowModal(true);
       }
+    } catch (error) {
+      console.error("Error logging in:", error);
+      setModalTitle("Error");
+      setModalMessage("Failed to login. Please try again later.");
+      setShowModal(true);
+    }
   };
+
+  const handleModalConfirm = () => {
+    setShowModal(false);
+    if (modalTitle === "Success") {
+      navigate("/"); // Redirect if login is successful
+    }
+  };
+
   return (
     <div className="limiter">
       <div className="container-login100">
@@ -55,7 +81,7 @@ const Login = ({ setIsUserLoggedIn })=> {
                 name="username"
                 value={username}
                 placeholder="username"
-                onChange={(e) => setusername(e.target.value)} // Ensure this line is correctly updating the state
+                onChange={(e) => setUsername(e.target.value)}
               />
               <span className="focus-input100"></span>
               <span className="symbol-input100">
@@ -88,6 +114,13 @@ const Login = ({ setIsUserLoggedIn })=> {
           </form>
         </div>
       </div>
+      <MessageModal
+        show={showModal}
+        onHide={() => setShowModal(false)}
+        title={modalTitle}
+        message={modalMessage}
+        onConfirm={handleModalConfirm}
+      />
     </div>
   );
 };

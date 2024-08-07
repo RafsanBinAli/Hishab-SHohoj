@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import "./Signup.css";
 import { useNavigate } from "react-router-dom";
+import MessageModal from "../Modal/MessageModal"; // Adjust the import path as needed
+import "./Signup.css";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -11,50 +12,63 @@ const Signup = () => {
     password: "",
     confirmPassword: "",
   });
+  const [showModal, setShowModal] = useState(false);
+  const [modalTitle, setModalTitle] = useState("");
+  const [modalMessage, setModalMessage] = useState("");
   const navigate = useNavigate();
 
-  // Function to handle form submission
   const handleSubmit = async (event) => {
     event.preventDefault();
-    // Check if passwords match
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match");
+      setModalTitle("Error");
+      setModalMessage("Passwords do not match");
+      setShowModal(true);
       return;
     }
-    // Send form data to backend for registration
+
     try {
-        const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/users/signup`,
-          {
-            method: "POST",
-            headers: {
-              "Authorization": `Bearer ${localStorage.getItem("userAuthToken")}`, // Adding the userAuthToken to headers
-            },
-            body: new URLSearchParams(formData), // Using URLSearchParams to handle FormData
-          }
-        );
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/users/signup`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("userAuthToken")}`, // Adding the userAuthToken to headers
+            "Content-Type": "application/x-www-form-urlencoded", // Adjusted content type
+          },
+          body: new URLSearchParams(formData).toString(), // Properly format the form data
+        }
+      );
       const data = await response.json();
       if (response.ok) {
-        // Registration successful
-        alert("Registration successful");
-        // Redirect user to login page or any other page as needed
-        navigate("/home");
+        setModalTitle("Success");
+        setModalMessage("Registration successful");
+        setShowModal(true);
+        setTimeout(() => navigate("/home"), 2000); // Redirect after 2 seconds
       } else {
-        console.log(data.message)
-        alert(data.message)
+        setModalTitle("Error");
+        setModalMessage(data.message || "Registration failed");
+        setShowModal(true);
       }
     } catch (error) {
       console.error("Error registering user:", error);
-      alert("Failed to register user. Please try again later.");
+      setModalTitle("Error");
+      setModalMessage("Failed to register user. Please try again later.");
+      setShowModal(true);
     }
   };
 
-  // Function to handle input change
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
+  };
+
+  const handleModalConfirm = () => {
+    setShowModal(false);
+    if (modalTitle === "Success") {
+      navigate("/home");
+    }
   };
 
   return (
@@ -135,6 +149,13 @@ const Signup = () => {
           </div>
         </form>
       </div>
+      <MessageModal
+        show={showModal}
+        onHide={() => setShowModal(false)}
+        title={modalTitle}
+        message={modalMessage}
+        onConfirm={handleModalConfirm}
+      />
     </div>
   );
 };

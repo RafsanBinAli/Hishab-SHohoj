@@ -93,7 +93,7 @@ const CardDetail = () => {
       }));
       let id = individualCardDetails?._id;
       if (id === undefined) {
-        console.log("farmer Name: ",individualFarmerData.name)
+        console.log("farmer Name: ", individualFarmerData.name);
         const createCardDetailsResponse = await fetch(
           `${process.env.REACT_APP_BACKEND_URL}/create-deal`,
           {
@@ -107,10 +107,10 @@ const CardDetail = () => {
         if (!createCardDetailsResponse.ok) {
           throw new Error("Failed to create new Card!");
         }
-        const data= await createCardDetailsResponse.json()
+        const data = await createCardDetailsResponse.json();
         setIndividualCardDetails(data);
-        console.log("response", createCardDetailsResponse)
-        id=data._id
+        console.log("response", createCardDetailsResponse);
+        id = data._id;
       }
       const updateCardResponse = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/update-card-details/${id}`,
@@ -227,7 +227,6 @@ const CardDetail = () => {
       (card) => card.farmerName == value
     );
     setIndividualCardDetails(selectedCard);
-    
   };
 
   return (

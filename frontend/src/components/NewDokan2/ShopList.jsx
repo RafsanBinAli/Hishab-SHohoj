@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import Loader from "../Loader/Loader"; // Import the Loader component
 
-const ShopList = ({ shops }) => {
+const ShopList = ({ shops, loading }) => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleSearch = (e) => {
@@ -14,7 +15,7 @@ const ShopList = ({ shops }) => {
   return (
     <div className="card">
       <div className="card-body">
-        <h2 className="card-title mb-4">দোকানের লিস্ট </h2>
+        <h2 className="card-title mb-4">দোকানের লিস্ট</h2>
         <input
           type="text"
           className="form-control mb-3"
@@ -27,9 +28,9 @@ const ShopList = ({ shops }) => {
             <thead>
               <tr>
                 <th>#</th>
-                <th>দোকানের নাম </th>
-                <th>ঠিকানা </th>
-                <th>মোবাইল নম্বর </th>
+                <th>দোকানের নাম</th>
+                <th>ঠিকানা</th>
+                <th>মোবাইল নম্বর</th>
                 <th>ছবি</th>
               </tr>
             </thead>

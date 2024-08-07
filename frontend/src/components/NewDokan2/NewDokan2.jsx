@@ -1,11 +1,14 @@
+// NewDokan2.js
 import React, { useState, useEffect } from "react";
 import ShopList from "./ShopList";
 import MessageModal from "../Modal/MessageModal"; // Import the MessageModal component
+import Loader from "../Loader/Loader"; // Import the Loader component
 import "./NewDokan2.css";
 
 const NewDokan2 = () => {
   const [shops, setShops] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [imageLoading, setImageLoading] = useState(false); // Add image loading state
   const [formData, setFormData] = useState({
     shopName: "",
     address: "",
@@ -28,7 +31,7 @@ const NewDokan2 = () => {
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      setLoading(true);
+      setImageLoading(true);
       const imageData = new FormData();
       imageData.append("image", file);
 
@@ -55,13 +58,14 @@ const NewDokan2 = () => {
       } catch (error) {
         console.error("Error uploading image:", error);
       } finally {
-        setLoading(false);
+        setImageLoading(false);
       }
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/create-shop`,
@@ -99,6 +103,8 @@ const NewDokan2 = () => {
       setModalTitle("Error");
       setModalMessage(error.message);
       setModalShow(true);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -111,6 +117,7 @@ const NewDokan2 = () => {
 
   useEffect(() => {
     const fetchShops = async () => {
+      setLoading(true);
       try {
         const response = await fetch(
           `${process.env.REACT_APP_BACKEND_URL}/get-all-shops`
@@ -119,11 +126,17 @@ const NewDokan2 = () => {
         setShops(data);
       } catch (error) {
         console.error("Error fetching shop data:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchShops();
   }, []);
+
+  if (loading) {
+    return <Loader />; // Show loader while data is being fetched
+  }
 
   return (
     <div className="container mt-4 p-2">
@@ -197,10 +210,8 @@ const NewDokan2 = () => {
                   />
                 </div>
               )}
-              {loading ? (
-                <button type="button" className="btn btn-primary" disabled>
-                  Loading...
-                </button>
+              {loading || imageLoading ? (
+                <Loader /> // Show loader while loading
               ) : (
                 <button type="submit" className="btn btn-primary">
                   রেজিস্টার
@@ -211,7 +222,7 @@ const NewDokan2 = () => {
         </div>
       </div>
       <div className="shop-list-container">
-        <ShopList shops={shops} />
+        <ShopList shops={shops} loading={loading} /> {/* Pass loading state */}
       </div>
       <MessageModal
         show={modalShow}

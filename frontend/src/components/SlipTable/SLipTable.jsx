@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import "./SlipTable.css"; // Custom CSS for styling, adjust as per your design needs
+import Loader from "../Loader/Loader";
 
 const SlipTable = () => {
   const [slips, setSlips] = useState([]);
   const [paidInputs, setPaidInputs] = useState({});
   const [savedRows, setSavedRows] = useState({});
-  const [clicked, setClicked] = useState(false);
   const [selectedDate, setSelectedDate] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const getCurrentDate = () => {
     const date = new Date();
@@ -23,6 +24,7 @@ const SlipTable = () => {
 
   useEffect(() => {
     const fetchSlips = async () => {
+      setLoading(true);
       try {
         const response = await fetch(
           `${process.env.REACT_APP_BACKEND_URL}/slip/${selectedDate}`
@@ -34,6 +36,8 @@ const SlipTable = () => {
         setSlips(data);
       } catch (error) {
         console.error("Error fetching slips:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -53,7 +57,7 @@ const SlipTable = () => {
   };
 
   const handleSave = async (slip) => {
-    setClicked(true);
+    setLoading(true);
     const paidAmount = paidInputs[slip.shopName] || 0;
     const due = slip.totalAmount - paidAmount;
 
@@ -94,6 +98,7 @@ const SlipTable = () => {
       if (!updatePurchaseResponse.ok) {
         throw new Error("Failed to update slip's remainingTotal");
       }
+
       const transactionResponse = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/transaction/dokan-payment`,
         {
@@ -107,83 +112,92 @@ const SlipTable = () => {
           }),
         }
       );
-      if(!transactionResponse.ok){
-        throw new Error("Error Setting dokan payment")
+
+      if (!transactionResponse.ok) {
+        throw new Error("Error setting dokan payment");
       }
 
       alert("Slip & Transaction saved successfully");
       setSavedRows({ ...savedRows, [slip.shopName]: true });
     } catch (error) {
       console.error("Error saving slip:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="slip-table-container">
-      <h2 className="table-title font-weight-bold">দোকানের আজকের হিসাব</h2>
-      <div className="text-center mb-4">
-        <label htmlFor="datePicker" className="font-weight-bold">
-          তারিখ:
-        </label>
-        <input
-          type="date"
-          id="datePicker"
-          value={selectedDate}
-          onChange={(e) => setSelectedDate(e.target.value)}
-          className="ml-2"
-        />
-      </div>
-      <div className="table-responsive">
-        <table className="table">
-          <thead>
-            <tr>
-              <th>দোকানের নাম</th>
-              <th>মোট টাকা</th>
-              <th>পরিশোধ</th>
-              <th>বাকি</th>
-              <th>স্ট্যাটাস</th>
-            </tr>
-          </thead>
-          <tbody>
-            {slips.map((slip, index) => (
-              <tr key={index}>
-                <td>{slip.shopName}</td>
-                <td>{slip.totalAmount}</td>
-                <td>
-                  {slip.isEdited ? (
-                    slip.paidAmount
-                  ) : (
-                    <input
-                      type="number"
-                      value={paidInputs[slip.shopName] || ""}
-                      onChange={(e) =>
-                        handlePaidChange(e, slip.shopName, slip.totalAmount)
-                      }
-                      className="paid-input"
-                      disabled={savedRows[slip.shopName]}
-                    />
-                  )}
-                </td>
-                <td>
-                  {slip.isEdited
-                    ? slip.totalAmount - slip.paidAmount
-                    : slip.totalAmount - (paidInputs[slip.shopName] || 0)}
-                </td>
-                <td>
-                  {!savedRows[slip.shopName] && !slip.isEdited && (
-                    <button
-                      className="save-button"
-                      onClick={() => handleSave(slip)}
-                    >
-                      সেভ করুন
-                    </button>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      {loading ? (
+        <Loader />
+      ) : (
+        <>
+          <h2 className="table-title font-weight-bold">দোকানের আজকের হিসাব</h2>
+          <div className="text-center mb-4">
+            <label htmlFor="datePicker" className="font-weight-bold">
+              তারিখ:
+            </label>
+            <input
+              type="date"
+              id="datePicker"
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
+              className="ml-2"
+            />
+          </div>
+          <div className="table-responsive">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>দোকানের নাম</th>
+                  <th>মোট টাকা</th>
+                  <th>পরিশোধ</th>
+                  <th>বাকি</th>
+                  <th>স্ট্যাটাস</th>
+                </tr>
+              </thead>
+              <tbody>
+                {slips.map((slip, index) => (
+                  <tr key={index}>
+                    <td>{slip.shopName}</td>
+                    <td>{slip.totalAmount}</td>
+                    <td>
+                      {slip.isEdited ? (
+                        slip.paidAmount
+                      ) : (
+                        <input
+                          type="number"
+                          value={paidInputs[slip.shopName] || ""}
+                          onChange={(e) =>
+                            handlePaidChange(e, slip.shopName, slip.totalAmount)
+                          }
+                          className="paid-input"
+                          disabled={savedRows[slip.shopName]}
+                        />
+                      )}
+                    </td>
+                    <td>
+                      {slip.isEdited
+                        ? slip.totalAmount - slip.paidAmount
+                        : slip.totalAmount - (paidInputs[slip.shopName] || 0)}
+                    </td>
+                    <td>
+                      {!savedRows[slip.shopName] && !slip.isEdited && (
+                        <button
+                          className="save-button"
+                          onClick={() => handleSave(slip)}
+                        >
+                          সেভ করুন
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
     </div>
   );
 };

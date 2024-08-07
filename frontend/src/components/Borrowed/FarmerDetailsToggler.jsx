@@ -315,7 +315,7 @@ const FarmerDetailsToggler = () => {
             <div className="saveBtn">
               <div className="headingBtn"></div>
               <button
-                onClick={handleSavePaymentClick}
+                onClick={handleSaveDebtClick}
                 disabled={!newFarmerData.farmerName}
               >
                 সংরক্ষণ করুন
@@ -396,7 +396,7 @@ const FarmerDetailsToggler = () => {
             <div className="saveBtn">
               <div className="headingBtn"></div>
               <button
-                onClick={handleSaveDebtClick}
+                onClick={handleSavePaymentClick}
                 disabled={!newFarmerData.farmerName}
               >
                 সংরক্ষণ করুন

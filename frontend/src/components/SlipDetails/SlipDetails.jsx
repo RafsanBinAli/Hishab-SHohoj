@@ -8,15 +8,18 @@ import { format } from "date-fns";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import banglaFont from "../../font/NikoshGrameen.ttf"; // Replace with your font file path
+import Loader from "../Loader/Loader"; // Import the Loader component
 
 const SlipDetails = () => {
   const { shopName } = useParams(); // Get shopName from URL parameter
   const [selectedDate, setSelectedDate] = useState(new Date()); // Initialize with today's date
   const [slipDetails, setSlipDetails] = useState(null);
-  const [shopDetails,setShopDetails]=useState(null)
+  const [shopDetails, setShopDetails] = useState(null);
+  const [loading, setLoading] = useState(true); // Initialize loading state
 
   useEffect(() => {
     const fetchSlipDetails = async () => {
+      setLoading(true); // Start loading
       try {
         const formattedDate = format(selectedDate, "yyyy-MM-dd"); // Format date as yyyy-MM-dd
         const response = await fetch(
@@ -29,28 +32,30 @@ const SlipDetails = () => {
         setSlipDetails(data);
       } catch (error) {
         console.error("Error fetching slip details:", error);
-        // Handle error state or alert user
+      } finally {
+        setLoading(false); // Stop loading
       }
     };
 
     fetchSlipDetails();
   }, [selectedDate, shopName]);
+
   useEffect(() => {
-    const getShopDetails = async()=>{
-    try {
-     
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/get-shop-details/${shopName}`)
-      if(!response.ok){
-        throw new Error("Failed to fetch shop details");
+    const getShopDetails = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_BACKEND_URL}/get-shop-details/${shopName}`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch shop details");
+        }
+        const data = await response.json();
+        console.log(data);
+        setShopDetails(data);
+      } catch (error) {
+        console.error("Error fetching shop details:", error);
       }
-      const data = await response.json();
-      console.log(data)
-      setShopDetails(data);
-     }
-     catch (error) {
-      console.log("error occured", error);
-    }
-  }
+    };
     getShopDetails();
   }, [shopName]);
 
@@ -127,7 +132,9 @@ const SlipDetails = () => {
           placeholderText="Select a date"
         />
       </div>
-      {slipDetails ? (
+      {loading ? (
+        <Loader /> // Show loader while data is being fetched
+      ) : slipDetails ? (
         <div className="slip-card">
           <div className="card">
             <div className="card-body">
@@ -169,7 +176,9 @@ const SlipDetails = () => {
           </div>
         </div>
       ) : (
-        <p className="loading-text">Loading slip details...</p>
+        <p className="loading-text">
+          No slip details found for the selected date.
+        </p>
       )}
     </div>
   );
