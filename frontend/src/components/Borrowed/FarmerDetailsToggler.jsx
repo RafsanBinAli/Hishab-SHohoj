@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./Borrowed.css";
+import MessageModal from "../Modal/MessageModal";
 
 const FarmerDetailsToggler = () => {
   const [showNewDebtForm, setShowNewDebtForm] = useState(false);
@@ -8,15 +9,26 @@ const FarmerDetailsToggler = () => {
   const [farmerList, setFarmerList] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
+  const [modalShow, setModalShow] = useState(false);
+  const [modalTitle, setModalTitle] = useState("");
+  const [modalMessage, setModalMessage] = useState("");
+  const [redirectTo, setRedirectTo] = useState(null);
+
+  const [newFarmerData, setNewFarmerData] = useState({
+    farmerName: "",
+    totalDue: "",
+    payGet: "",
+    newDhar: "",
+    remainingDue: "",
+  });
+
   useEffect(() => {
     const fetchFarmerData = async () => {
       try {
         const response = await fetch(
           `${process.env.REACT_APP_BACKEND_URL}/get-all-farmers`
         );
-        if (!response.ok) {
-          throw new Error("Failed to fetch farmer data");
-        }
+        if (!response.ok) throw new Error("Failed to fetch farmer data");
         const data = await response.json();
         setFarmerList(data);
       } catch (error) {
@@ -26,29 +38,32 @@ const FarmerDetailsToggler = () => {
     fetchFarmerData();
   }, []);
 
-  const [newFarmerData, setNewFarmerData] = useState({
-    farmerName: "",
-    totalDue: "",
-    totalPaid: "",
-    remainingDue: "",
-    payGet: "",
-    newDhar: "",
-    editHistory: [],
-  });
+  const showModal = (title, message) => {
+    setModalTitle(title);
+    setModalMessage(message);
+    setModalShow(true);
+  };
+
+  const hideModal = () => {
+    setModalShow(false);
+    setModalTitle("");
+    setModalMessage("");
+  };
 
   const handleSaveDebtClick = async () => {
     if (newFarmerData.newDhar <= 0) {
-      alert("Invalid value for ধার দান. Please enter a valid amount.");
+      showModal(
+        "Error",
+        "Invalid value for ধার দান. Please enter a valid amount."
+      );
       return;
     }
-  
+
     try {
       const userAuthToken = localStorage.getItem("userAuthToken");
-      if (!userAuthToken) {
-        throw new Error("User is not authenticated. Please log in again.");
-      }
-  
-      const updateFarmerResponse = await fetch(
+      if (!userAuthToken) throw new Error("User is not authenticated.");
+
+      const updateResponse = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/update-farmers/${newFarmerData.farmerName}`,
         {
           method: "PUT",
@@ -56,66 +71,59 @@ const FarmerDetailsToggler = () => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${userAuthToken}`,
           },
-          body: JSON.stringify({
-            newDhar: newFarmerData.newDhar,
-          }),
+          body: JSON.stringify({ newDhar: newFarmerData.newDhar }),
         }
       );
-  
-      if (!updateFarmerResponse.ok) {
+      if (!updateResponse.ok)
         throw new Error("Failed to update farmer's details");
-      }
-  
-      const updatedFarmer = await updateFarmerResponse.json();
-  
-      const updatedFarmerList = farmerList.map((farmer) =>
-        farmer.name === newFarmerData.farmerName
-          ? {
-              ...farmer,
-              totalDue: updatedFarmer.totalDue,
-              editHistory: updatedFarmer.editHistory,
-            }
-          : farmer
+
+      const updatedFarmer = await updateResponse.json();
+      setFarmerList(
+        farmerList.map((farmer) =>
+          farmer.name === newFarmerData.farmerName
+            ? {
+                ...farmer,
+                totalDue: updatedFarmer.totalDue,
+                editHistory: updatedFarmer.editHistory,
+              }
+            : farmer
+        )
       );
-  
-      setFarmerList(updatedFarmerList);
-  
+
       const transactionResponse = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/transaction/dhar-entry`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             farmerName: newFarmerData.farmerName,
             amount: newFarmerData.newDhar,
           }),
         }
       );
-  
-      if (!transactionResponse.ok) {
+      if (!transactionResponse.ok)
         throw new Error("Failed to update transaction details");
-      }
-  
-      alert("ধারের ডাটা সংরক্ষণ হয়েছে!");
-      console.log("Debt data saved:", updatedFarmer);
+
+      showModal("Success", "ধারের ডাটা সংরক্ষণ হয়েছে!");
     } catch (error) {
-      console.error("Error saving debt data:", error);
-      alert(error.message || "Failed to save debt data");
+      showModal("Error", error.message || "Failed to save debt data");
     }
   };
-  
 
   const handleSavePaymentClick = async () => {
     if (newFarmerData.payGet <= 0) {
-      alert("Invalid value for টাকা গ্রহণ/ধার দান. সঠিক তথ্য প্রদান করুন.");
+      showModal(
+        "Error",
+        "Invalid value for টাকা গ্রহণ/ধার দান. সঠিক তথ্য প্রদান করুন."
+      );
       return;
     }
 
     try {
       const userAuthToken = localStorage.getItem("userAuthToken");
-      const response = await fetch(
+      if (!userAuthToken) throw new Error("User is not authenticated.");
+
+      const updateResponse = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/update-farmers/${newFarmerData.farmerName}`,
         {
           method: "PUT",
@@ -123,51 +131,44 @@ const FarmerDetailsToggler = () => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${userAuthToken}`,
           },
-          body: JSON.stringify({
-            payGet: newFarmerData.payGet,
-          }),
+          body: JSON.stringify({ payGet: newFarmerData.payGet }),
         }
       );
-
-      if (!response.ok) {
+      if (!updateResponse.ok)
         throw new Error("Failed to update farmer's details");
-      }
 
-      const updatedFarmer = await response.json();
-      const updatedFarmerList = farmerList.map((farmer) =>
-        farmer.name === newFarmerData.farmerName
-          ? {
-              ...farmer,
-              totalDue: updatedFarmer.totalDue,
-              totalPaid: updatedFarmer.totalPaid,
-              editHistory: updatedFarmer.editHistory,
-            }
-          : farmer
+      const updatedFarmer = await updateResponse.json();
+      setFarmerList(
+        farmerList.map((farmer) =>
+          farmer.name === newFarmerData.farmerName
+            ? {
+                ...farmer,
+                totalDue: updatedFarmer.totalDue,
+                totalPaid: updatedFarmer.totalPaid,
+                editHistory: updatedFarmer.editHistory,
+              }
+            : farmer
+        )
       );
 
-      setFarmerList(updatedFarmerList);
       const transactionResponse = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/transaction/dhar-repay`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             farmerName: newFarmerData.farmerName,
             amount: newFarmerData.payGet,
           }),
         }
       );
-  
-      if (!transactionResponse.ok) {
+      if (!transactionResponse.ok)
         throw new Error("Failed to update transaction details");
-      }
-      alert("পরিশোধের ডাটা সংরক্ষণ হয়েছে!");
-      console.log("Payment data saved:", updatedFarmer);
+
+      showModal("Success", "পরিশোধের ডাটা সংরক্ষণ হয়েছে!");
+      setRedirectTo("/borrow");
     } catch (error) {
-      console.error("Error saving payment data:", error);
-      alert(error.message || "Failed to save payment data");
+      showModal("Error", error.message || "Failed to save payment data");
     }
   };
 
@@ -179,9 +180,9 @@ const FarmerDetailsToggler = () => {
     setNewFarmerData({
       farmerName: farmer.name,
       totalDue: farmer.totalDue,
-      totalPaid: "",
-      remainingDue: farmer.totalDue,
       payGet: "",
+      newDhar: "",
+      remainingDue: farmer.totalDue,
     });
     setFilteredFarmers([]);
   };
@@ -190,25 +191,25 @@ const FarmerDetailsToggler = () => {
     const { name, value } = e.target;
 
     setNewFarmerData((prevData) => {
-      const updatedData = {
-        ...prevData,
-        [name]: value,
-      };
+      const updatedData = { ...prevData, [name]: value };
 
       if (name === "newDhar") {
-        updatedData.remainingDue =
-          parseFloat(updatedData.totalDue || 0) + parseFloat(value || 0);
+        updatedData.remainingDue = (
+          parseFloat(prevData.totalDue || 0) + parseFloat(value || 0)
+        ).toFixed(2);
       } else if (name === "payGet") {
-        updatedData.remainingDue =
-          parseFloat(updatedData.totalDue || 0) - parseFloat(value || 0);
+        updatedData.remainingDue = (
+          parseFloat(prevData.totalDue || 0) - parseFloat(value || 0)
+        ).toFixed(2);
       }
 
       if (name === "farmerName") {
         const searchTerm = value.toLowerCase();
-        const filtered = farmerList.filter((farmer) =>
-          farmer.name.toLowerCase().includes(searchTerm)
+        setFilteredFarmers(
+          farmerList.filter((farmer) =>
+            farmer.name.toLowerCase().includes(searchTerm)
+          )
         );
-        setFilteredFarmers(filtered);
       }
 
       return updatedData;
@@ -216,13 +217,20 @@ const FarmerDetailsToggler = () => {
   };
 
   const toggleNewDebtForm = () => {
-    setShowNewDebtForm(!showNewDebtForm);
+    setShowNewDebtForm((prev) => !prev);
     setShowNewPaymentForm(false);
   };
 
   const toggleNewPaymentForm = () => {
-    setShowNewPaymentForm(!showNewPaymentForm);
+    setShowNewPaymentForm((prev) => !prev);
     setShowNewDebtForm(false);
+  };
+
+  const handleModalConfirm = () => {
+    setModalShow(false);
+    if (redirectTo) {
+      window.location.href = redirectTo; // Redirect to the specified page
+    }
   };
 
   return (
@@ -246,31 +254,28 @@ const FarmerDetailsToggler = () => {
               <div className="headings">
                 <label className="farmerName">কৃষকের নাম</label>
               </div>
-              <div>
-                <input
-                  type="text"
-                  name="farmerName"
-                  className="farmer-name"
-                  value={newFarmerData.farmerName}
-                  onChange={handleNewFarmerInputChange}
-                  placeholder="কৃষকের নাম"
-                />
-                {filteredFarmers.length > 0 && (
-                  <ul className="list-group-f">
-                    {filteredFarmers.map((farmer) => (
-                      <li
-                        key={farmer._id}
-                        className="list-group-item"
-                        onClick={() => handleFarmerSelection(farmer)}
-                      >
-                        {farmer.name}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
+              <input
+                type="text"
+                name="farmerName"
+                className="farmer-name"
+                value={newFarmerData.farmerName}
+                onChange={handleNewFarmerInputChange}
+                placeholder="কৃষকের নাম"
+              />
+              {filteredFarmers.length > 0 && (
+                <ul className="list-group-f">
+                  {filteredFarmers.map((farmer) => (
+                    <li
+                      key={farmer._id}
+                      className="list-group-item"
+                      onClick={() => handleFarmerSelection(farmer)}
+                    >
+                      {farmer.name}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
-
             <div>
               <div className="headings">
                 <label className="totalDue">পূর্বের ধার</label>
@@ -280,13 +285,12 @@ const FarmerDetailsToggler = () => {
                 name="totalDue"
                 value={newFarmerData.totalDue}
                 placeholder="পূর্বের ধার"
-                disabled={!newFarmerData.farmerName}
+                disabled
               />
             </div>
-
             <div>
               <div className="headings">
-                <label className="payGet">ধার দান</label>
+                <label className="newDhar">ধার দান</label>
               </div>
               <input
                 type="number"
@@ -294,28 +298,24 @@ const FarmerDetailsToggler = () => {
                 value={newFarmerData.newDhar}
                 onChange={handleNewFarmerInputChange}
                 placeholder="ধার দান"
-                disabled={!newFarmerData.farmerName}
               />
             </div>
-
             <div>
               <div className="headings">
-                <label className="remainingDue">মোট ধার</label>
+                <label className="remainingDue">বাকি</label>
               </div>
-
               <input
                 type="number"
                 name="remainingDue"
                 value={newFarmerData.remainingDue}
-                placeholder="মোট ধার"
+                placeholder="বাকি"
                 disabled
               />
             </div>
-
             <div className="saveBtn">
               <div className="headingBtn"></div>
               <button
-                onClick={handleSaveDebtClick}
+                onClick={handleSavePaymentClick}
                 disabled={!newFarmerData.farmerName}
               >
                 সংরক্ষণ করুন
@@ -330,37 +330,33 @@ const FarmerDetailsToggler = () => {
           <h2 className="farmer-header-demo font-weight-bold">
             নতুন পরিশোধের তথ্য সংযুক্ত করুন
           </h2>
-
           <div className="new-farmer-inputs">
             <div>
               <div className="headings">
                 <label className="farmerName">কৃষকের নাম</label>
               </div>
-              <div>
-                <input
-                  type="text"
-                  name="farmerName"
-                  className="farmer-name"
-                  value={newFarmerData.farmerName}
-                  onChange={handleNewFarmerInputChange}
-                  placeholder="কৃষকের নাম"
-                />
-                {filteredFarmers.length > 0 && (
-                  <ul className="list-group-f">
-                    {filteredFarmers.map((farmer) => (
-                      <li
-                        key={farmer._id}
-                        className="list-group-item"
-                        onClick={() => handleFarmerSelection(farmer)}
-                      >
-                        {farmer.name}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
+              <input
+                type="text"
+                name="farmerName"
+                className="farmer-name"
+                value={newFarmerData.farmerName}
+                onChange={handleNewFarmerInputChange}
+                placeholder="কৃষকের নাম"
+              />
+              {filteredFarmers.length > 0 && (
+                <ul className="list-group-f">
+                  {filteredFarmers.map((farmer) => (
+                    <li
+                      key={farmer._id}
+                      className="list-group-item"
+                      onClick={() => handleFarmerSelection(farmer)}
+                    >
+                      {farmer.name}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
-
             <div>
               <div className="headings">
                 <label className="totalDue">পূর্বের ধার</label>
@@ -370,41 +366,37 @@ const FarmerDetailsToggler = () => {
                 name="totalDue"
                 value={newFarmerData.totalDue}
                 placeholder="পূর্বের ধার"
-                disabled={!newFarmerData.farmerName}
+                disabled
               />
             </div>
-
             <div>
               <div className="headings">
-                <label className="payGet">টাকা গ্রহণ</label>
+                <label className="payGet">টাকা গ্রহণ/ধার দান</label>
               </div>
               <input
                 type="number"
                 name="payGet"
                 value={newFarmerData.payGet}
                 onChange={handleNewFarmerInputChange}
-                placeholder="টাকা গ্রহণ"
-                disabled={!newFarmerData.farmerName}
+                placeholder="টাকা গ্রহণ/ধার দান"
               />
             </div>
-
             <div>
               <div className="headings">
-                <label className="remainingDue">বাকী টাকা</label>
+                <label className="remainingDue">বাকি</label>
               </div>
               <input
                 type="number"
                 name="remainingDue"
                 value={newFarmerData.remainingDue}
-                placeholder="বাকী টাকা"
+                placeholder="বাকি"
                 disabled
               />
             </div>
-
             <div className="saveBtn">
               <div className="headingBtn"></div>
               <button
-                onClick={handleSavePaymentClick}
+                onClick={handleSaveDebtClick}
                 disabled={!newFarmerData.farmerName}
               >
                 সংরক্ষণ করুন
@@ -413,6 +405,14 @@ const FarmerDetailsToggler = () => {
           </div>
         </div>
       )}
+
+      <MessageModal
+        show={modalShow}
+        onHide={() => setModalShow(false)}
+        title={modalTitle}
+        message={modalMessage}
+        onConfirm={handleModalConfirm}
+      />
     </div>
   );
 };
