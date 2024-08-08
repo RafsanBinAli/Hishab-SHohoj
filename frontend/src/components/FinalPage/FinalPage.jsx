@@ -234,7 +234,7 @@ const FinalPage = () => {
               <tr>
                 <td>মোট</td>
                 <td className="font-weight-bold">
-                  {rangeData.commission + rangeData.nijerKhoroch}
+                  {rangeData.commission - rangeData.nijerKhoroch}
                 </td>
               </tr>
             </tbody>

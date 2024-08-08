@@ -150,10 +150,13 @@ const SlipTable = () => {
               <thead>
                 <tr>
                   <th>দোকানের নাম</th>
-                  <th>মোট টাকা</th>
-                  <th>পরিশোধ</th>
-                  <th>বাকি</th>
-                  <th>স্ট্যাটাস</th>
+                  <th>ajker sliper টাকা</th>
+                  <th>ager baki টাকা</th>
+                  <th>mot paoana tk</th>
+                  <th>porishod tk</th>
+                  <th>ekhon porishod</th>
+                  <th>baki tk</th>
+                  <th> Status</th>
                 </tr>
               </thead>
               <tbody>
@@ -161,10 +164,15 @@ const SlipTable = () => {
                   <tr key={index}>
                     <td>{slip.shopName}</td>
                     <td>{slip.totalAmount}</td>
+                    <td> {slip.totalAmount}</td>
                     <td>
-                      {slip.isEdited ? (
-                        slip.paidAmount
-                      ) : (
+                      {slip.totalAmount + slip.totalAmount}
+                    </td>
+                    <td>
+                      { slip.paidAmount}
+                    </td>
+                    <td>
+                      
                         <input
                           type="number"
                           value={paidInputs[slip.shopName] || ""}
@@ -174,7 +182,7 @@ const SlipTable = () => {
                           className="paid-input"
                           disabled={savedRows[slip.shopName]}
                         />
-                      )}
+                      
                     </td>
                     <td>
                       {slip.isEdited
@@ -182,14 +190,14 @@ const SlipTable = () => {
                         : slip.totalAmount - (paidInputs[slip.shopName] || 0)}
                     </td>
                     <td>
-                      {!savedRows[slip.shopName] && !slip.isEdited && (
+                     
                         <button
                           className="save-button"
                           onClick={() => handleSave(slip)}
                         >
                           সেভ করুন
                         </button>
-                      )}
+                     
                     </td>
                   </tr>
                 ))}

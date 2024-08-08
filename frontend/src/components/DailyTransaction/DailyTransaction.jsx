@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import "./DailyTransaction.css";
 import LastCalculation from "./LastCalculation";
+import TransactionButton from "./TransactionButtons";
 
 const DailyTransaction = () => {
-  const [dailyCashStack, setDailyCashStack] = useState(0);
   const [transactionDetails, setTransactionDetails] = useState(null);
   const dateNow = new Date();
   const normalizedDate = new Date(
@@ -16,75 +16,6 @@ const DailyTransaction = () => {
     return `${year}-${month}-${day}`;
   };
   const [selectedDate, setSelectedDate] = useState(formatDate(normalizedDate));
-  const [otherCost, setOtherCost] = useState(0);
-
-  const handleInputChange = (event) => {
-    setDailyCashStack(Number(event.target.value));
-  };
-  const handleOtherCostSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/transaction/update-other-cost`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            otherCost,
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        const errorText = await response.text(); // Get error details from the response
-        throw new Error(`Unable to fetch data: ${errorText}`);
-      }
-
-      const data = await response.json();
-
-      setTransactionDetails(data.transaction);
-
-      console.log("Data updated successfully:", data);
-    } catch (error) {
-      console.log("Error occurred:", error.message);
-    }
-  };
-
-  const handleDailyCashStack = async (event) => {
-    event.preventDefault();
-
-    try {
-      const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/transaction/update-daily-cash-stack`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            dailyCashStack,
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        const errorText = await response.text(); // Get error details from the response
-        throw new Error(`Unable to fetch data: ${errorText}`);
-      }
-
-      const data = await response.json();
-
-      setTransactionDetails(data.transaction);
-
-      console.log("Data updated successfully:", data);
-    } catch (error) {
-      console.log("Error occurred:", error.message);
-    }
-
-    console.log("Daily Cash Stack:", dailyCashStack);
-  };
 
   useEffect(() => {
     const fetchTransactionDetails = async () => {
@@ -105,10 +36,6 @@ const DailyTransaction = () => {
     fetchTransactionDetails();
   }, [selectedDate]);
 
-  const handleOtherCost = (event) => {
-    setOtherCost(event.target.value);
-  };
-
   return (
     <div className="container-dailyTransaction mt-4">
       <h2 className="text-center my-4 py-2 font-weight-bold">আজকের হিসাব</h2>
@@ -124,6 +51,10 @@ const DailyTransaction = () => {
           className="ml-2"
         />
       </div>
+      <TransactionButton
+        transactionDetails={transactionDetails}
+        setTransactionDetails={setTransactionDetails}
+      />
       <div className="row mb-4">
         <div className="col-md-12">
           <div className="card">
@@ -171,30 +102,7 @@ const DailyTransaction = () => {
                         : 0}
                     </td>
                   </tr>
-                  <tr>
-                    <td className="font-weight-bold">খাজনা</td>
-                    <td colSpan="2">
-                      <div>
-                        <table className="table table-bordered">
-                          <tbody>{transactionDetails?.credit.khajnas}</tbody>
-                        </table>
-                      </div>
-                    </td>
-                    <td>{transactionDetails?.credit.khajnas}</td>
-                  </tr>
-                  <tr>
-                    <td className="font-weight-bold">কমিশন</td>
-                    <td colSpan="2">
-                      <div>
-                        <table className="table table-bordered">
-                          <tbody>
-                            {transactionDetails?.credit.commissions}
-                          </tbody>
-                        </table>
-                      </div>
-                    </td>
-                    <td>{transactionDetails?.credit.commissions}</td>
-                  </tr>
+
                   <tr>
                     <td className="font-weight-bold">ধার (porishod)</td>
                     <td colSpan="2">
@@ -301,54 +209,10 @@ const DailyTransaction = () => {
 
                   <tr>
                     <td className="font-weight-bold">অন্যান্য (খরচ)</td>
-                    <td colSpan="2">
-                      {transactionDetails?.otherCostEditStatus === true ? (
-                        <span>{transactionDetails?.debit.otherCost}</span>
-                      ) : (
-                        <>
-                          <input
-                            type="number"
-                            className="calcu-daily-cash-stack-input form-control"
-                            value={otherCost}
-                            onChange={(e) => handleOtherCost(e)}
-                          />
-                          <button
-                            type="button"
-                            className="calcu-daily-cash-stack-submit btn btn-primary"
-                            onClick={handleOtherCostSubmit}
-                          >
-                            সংরক্ষণ করুন
-                          </button>
-                        </>
-                      )}
-                    </td>
                     <td>{transactionDetails?.debit.otherCost} </td>
                   </tr>
-
                   <tr>
                     <td className="calcu-font-weight-bold">দৈনিক নগদ জমা:</td>
-                    <td colSpan="2">
-                      {transactionDetails?.dailyCashStackStatus === true ? (
-                        <span>{transactionDetails?.dailyCashStack}</span>
-                      ) : (
-                        <>
-                          <input
-                            type="number"
-                            id="dailyCashStack"
-                            className="calcu-daily-cash-stack-input form-control"
-                            value={dailyCashStack}
-                            onChange={handleInputChange}
-                          />
-                          <button
-                            type="button"
-                            className="calcu-daily-cash-stack-submit btn btn-primary"
-                            onClick={handleDailyCashStack}
-                          >
-                            সংরক্ষণ করুন
-                          </button>
-                        </>
-                      )}
-                    </td>
                     <td>{transactionDetails?.dailyCashStack}</td>
                   </tr>
                 </tbody>

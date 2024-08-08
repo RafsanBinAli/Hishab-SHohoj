@@ -8,8 +8,8 @@
 
 .calcu-row {
   display: flex;
-  justify-content: center;
-  padding: 20px 10px;
+  
+  
 }
 
 .calcu-col-md-6 {
@@ -74,17 +74,7 @@
   outline: none;
 }
 
-.calcu-daily-cash-stack-submit {
-  width: 50%;
-  padding: 10px;
-  font-size: 1rem;
-  color: #ffffff;
-  background-color: #007bff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
-}
+
 
 .calcu-daily-cash-stack-submit:hover {
   background-color: #0056b3;
@@ -93,5 +83,65 @@
 @media (max-width: 768px) {
   .calcu-card {
     margin: 0 10px;
+  }
+}
+
+/* Container Styles */
+.row {
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+/* Input Field Styles */
+.calcu-daily-cash-stack-input {
+  width: auto;
+  padding: 0.5rem;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.calcu-daily-cash-stack-input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  outline: none;
+}
+
+/* Button Styles */
+.calcu-daily-cash-stack-submit {
+  width: 150px; /* Example of a fixed width */
+  background-color: #007bff;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  margin-left: 10px;
+}
+
+
+
+.calcu-daily-cash-stack-submit:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+}
+
+.calcu-daily-cash-stack-submit:active {
+  background-color: #004085;
+  transform: translateY(0);
+}
+
+
+
+@media (max-width: 768px) {
+  .calcu-daily-cash-stack-input,
+  .calcu-daily-cash-stack-submit {
+    width: 100%; /* Full width on smaller screens */
+    margin: 0.5rem 0;
+  }
+
+  .calcu-daily-cash-stack-submit {
+    margin-left: 0;
   }
 }
