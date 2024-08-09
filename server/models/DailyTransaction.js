@@ -87,17 +87,21 @@ const transactionSchema = new Schema({
     type: Number,
     default: 0,
   },
-  otherCostEditStatus: {
-    type: Boolean,
-    default: false,
+  totalDebtsOfShops: {
+    type: Number,
+    default: 0,
   },
-  dailyCashStackStatus: {
-    type: Boolean,
-    default: false,
+  totalDebtsOfFarmers: {
+    type: Number,
+    default: 0,
+  },
+  totalDebts: {
+    type: Number,
+    default: 0,
   },
 });
 
-// Pre-save middleware to calculate totalProfit, totalCost, and netProfit
+// Pre-save middleware to calculate totalProfit, totalCost, netProfit, and totalDebts
 transactionSchema.pre("save", function (next) {
   const totalProfit =
     this.credit.dharReturns.reduce((sum, item) => sum + item.amount, 0) +
@@ -112,9 +116,12 @@ transactionSchema.pre("save", function (next) {
 
   const netProfit = totalProfit - totalCost;
 
+  const totalDebts = this.totalDebtsOfShops + this.totalDebtsOfFarmers;
+
   this.totalProfit = totalProfit;
   this.totalCost = totalCost;
   this.netProfit = netProfit;
+  this.totalDebts = totalDebts;
 
   next();
 });

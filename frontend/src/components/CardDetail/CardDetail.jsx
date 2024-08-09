@@ -74,12 +74,12 @@ const CardDetail = () => {
     setFormRows(newFormRows);
   };
 
-  // const handleAddRow = () => {
-  //   setFormRows([
-  //     ...formRows,
-  //     {farmerName:"", shopName: "", stockName: "", quantity: "", price: "" },
-  //   ]);
-  // };
+  const handleAddRow = () => {
+    setFormRows([
+      ...formRows,
+      {farmerName:"", shopName: "", stockName: "", quantity: "", price: "" },
+    ]);
+  };
 
   const handleSave = async () => {
     try {
@@ -292,23 +292,7 @@ const CardDetail = () => {
                   </select>
                 </td>
 
-                {/* <td>
-                  <select
-                    className="form-control"
-                    name="stockName"
-                    value={row.stockName}
-                    onChange={(e) => handleInputChange(index, e)}
-                  >
-                    <option value="">সিলেক্ট স্টক</option>
-
-                    {loadedData &&
-                      loadedData.stock.map((stockItem, idx) => (
-                        <option key={idx} value={stockItem.stockName}>
-                          {stockItem.stockName}
-                        </option>
-                      ))}
-                  </select>
-                </td> */}
+               
                 <td>
                   <input
                     type="text"
@@ -338,13 +322,13 @@ const CardDetail = () => {
                   />
                 </td>
 
-                {/* <td>
+                <td>
                   {index === formRows.length - 1 && (
                     <button className="btn btn-primary" onClick={handleAddRow}>
                       নতুন সারি
                     </button>
                   )}
-                </td> */}
+                </td>
               </tr>
             ))}
           </tbody>

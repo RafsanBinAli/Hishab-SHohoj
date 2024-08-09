@@ -125,3 +125,15 @@ exports.updateCardDetails = async (req, res) => {
     res.status(500).json({ message: "Error updating card details", error });
   }
 };
+
+exports.getIncompleteMarketDeals = async (req, res) => {
+  try {
+   
+    const filter = { doneStatus: false };
+    const deals = await NewDeal.find(filter);
+    res.status(200).json(deals);
+  } catch (error) {
+    console.error("Error fetching incomplete market deals:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};

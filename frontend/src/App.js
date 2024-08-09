@@ -22,6 +22,9 @@ import Signup from "./components/Signup/Signup";
 import DharDetails from "./components/DharDetails/DharDetails";
 import Farmer from "./components/Farmer/Farmer";
 import FinalPage from "./components/FinalPage/FinalPage";
+import FarmerSlip from "./components/FarmerSlip/FarmerSlip";
+import FarmerSlipDetails from "./components/CardDetail/FarmerSlipDetails";
+import FarmerSlipDetailsPaidUnpaid from "./components/FarmerSlip/FarmerSlipDetailsPaidUnpaid";
 
 require("dotenv").config();
 
@@ -99,6 +102,15 @@ function App() {
             path="/slip"
             element={<PrivateRoute element={<DokanerSlip />} />}
           />
+          <Route
+            path="/slip/farmer"
+            element={<PrivateRoute element={<FarmerSlip />} />}
+          />
+          <Route
+            path="/slip/farmer/details/:id"
+            element={<PrivateRoute element={<FarmerSlipDetailsPaidUnpaid />} />}
+          />
+
           <Route
             path="/slip-details/:shopName/:id"
             element={<PrivateRoute element={<SlipDetails />} />}

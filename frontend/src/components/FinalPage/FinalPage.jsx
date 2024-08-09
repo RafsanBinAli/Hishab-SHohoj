@@ -3,59 +3,11 @@ import { Container, Row, Col, Table } from "react-bootstrap";
 import "react-datepicker/dist/react-datepicker.css";
 import "./FinalPage.css";
 
-// Extended dummy data for different date ranges
-const dummyData = {
-  "2024-08-01": {
-    motBaki: 1000,
-    motDhar: 2000,
-    motCash: 3000,
-    nijerDhar: 4000,
-    commission: 500,
-    nijerKhoroch: 600,
-  },
-  "2024-08-02": {
-    motBaki: 1500,
-    motDhar: 2500,
-    motCash: 3500,
-    nijerDhar: 4500,
-    commission: 550,
-    nijerKhoroch: 650,
-  },
-  "2024-08-03": {
-    motBaki: 2000,
-    motDhar: 3000,
-    motCash: 4000,
-    nijerDhar: 5000,
-    commission: 600,
-    nijerKhoroch: 700,
-  },
-  "2024-08-04": {
-    motBaki: 2500,
-    motDhar: 3500,
-    motCash: 4500,
-    nijerDhar: 5500,
-    commission: 650,
-    nijerKhoroch: 750,
-  },
-  "2024-08-05": {
-    motBaki: 3000,
-    motDhar: 4000,
-    motCash: 5000,
-    nijerDhar: 6000,
-    commission: 700,
-    nijerKhoroch: 800,
-  },
-};
-
 const FinalPage = () => {
   const [startDate1, setStartDate1] = useState(new Date());
   const [startDate2, setStartDate2] = useState(new Date());
-
-  // Function to get dummy data based on selected date
-  const getDataForDate = (date) => {
-    const dateString = formatDate(date);
-    return dummyData[dateString] || {};
-  };
+  const [transactionDetails1, setTransactionDetails1] = useState({});
+  const [transactionDetails2, setTransactionDetails2] = useState({});
 
   // Function to format date as YYYY-MM-DD
   const formatDate = (date) => {
@@ -65,40 +17,31 @@ const FinalPage = () => {
     return `${year}-${month}-${day}`;
   };
 
-  // Get data for selected dates
-  const data1 = getDataForDate(startDate1);
-  const data2 = getDataForDate(startDate2);
-
-  // Aggregate data for date range
-  const getRangeData = () => {
-    let aggregatedData = {
-      motBaki: 0,
-      motDhar: 0,
-      motCash: 0,
-      nijerDhar: 0,
-      commission: 0,
-      nijerKhoroch: 0,
+  useEffect(() => {
+    const fetchTransactionDetails = async (
+      selectedDate,
+      setTransactionDetails
+    ) => {
+      try {
+        const response = await fetch(
+          `${
+            process.env.REACT_APP_BACKEND_URL
+          }/transaction/get-daily/${formatDate(selectedDate)}`
+        );
+        if (!response.ok) {
+          throw new Error("Unable to fetch data");
+        }
+        const data = await response.json();
+        setTransactionDetails(data);
+        console.log("Transaction data:", data);
+      } catch (error) {
+        console.log("Error occurred:", error);
+      }
     };
 
-    Object.keys(dummyData).forEach((date) => {
-      const currentDate = new Date(date);
-      if (currentDate >= startDate1 && currentDate <= startDate2) {
-        aggregatedData = {
-          motBaki: aggregatedData.motBaki + dummyData[date].motBaki,
-          motDhar: aggregatedData.motDhar + dummyData[date].motDhar,
-          motCash: aggregatedData.motCash + dummyData[date].motCash,
-          nijerDhar: aggregatedData.nijerDhar + dummyData[date].nijerDhar,
-          commission: aggregatedData.commission + dummyData[date].commission,
-          nijerKhoroch:
-            aggregatedData.nijerKhoroch + dummyData[date].nijerKhoroch,
-        };
-      }
-    });
-
-    return aggregatedData;
-  };
-
-  const rangeData = getRangeData();
+    fetchTransactionDetails(startDate1, setTransactionDetails1);
+    fetchTransactionDetails(startDate2, setTransactionDetails2);
+  }, [startDate1, startDate2]);
 
   return (
     <Container fluid className="final-page-container">
@@ -125,28 +68,28 @@ const FinalPage = () => {
             </thead>
             <tbody>
               <tr>
-                <td>মোট বাকি</td>
-                <td>{data1.motBaki}</td>
+                <td>মোট Dokan বাকি</td>
+                <td>{transactionDetails1.totalDebtsOfShops || 0}</td>
               </tr>
               <tr>
-                <td>মোট ধার</td>
-                <td>{data1.motDhar}</td>
+                <td>মোট Farmer ধার</td>
+                <td>{transactionDetails1.totalDebtsOfFarmers || 0}</td>
               </tr>
               <tr>
                 <td>মোট ক্যাশ</td>
-                <td>{data1.motCash}</td>
+                <td>{transactionDetails1.motCash || 0}</td>
               </tr>
               <tr>
                 <td>নিজের ধার</td>
-                <td>{data1.nijerDhar}</td>
+                <td>{transactionDetails1.nijerDhar || 0}</td>
               </tr>
               <tr>
                 <td>মোট</td>
                 <td>
-                  {data1.motBaki +
-                    data1.motDhar +
-                    data1.motCash +
-                    data1.nijerDhar}
+                  {(transactionDetails1.totalDebtsOfShops || 0) +
+                    (transactionDetails1.totalDebtsOfFarmers || 0) +
+                    (transactionDetails1.motCash || 0) +
+                    (transactionDetails1.nijerDhar || 0)}
                 </td>
               </tr>
             </tbody>
@@ -175,28 +118,28 @@ const FinalPage = () => {
             </thead>
             <tbody>
               <tr>
-                <td>মোট বাকি</td>
-                <td>{data2.motBaki}</td>
+                <td>মোট Dokan বাকি</td>
+                <td>{transactionDetails2.totalDebtsOfShops || 0}</td>
               </tr>
               <tr>
-                <td>মোট ধার</td>
-                <td>{data2.motDhar}</td>
+                <td>মোট Farmer ধার</td>
+                <td>{transactionDetails2.totalDebtsOfFarmers || 0}</td>
               </tr>
               <tr>
                 <td>মোট ক্যাশ</td>
-                <td>{data2.motCash}</td>
+                <td>{transactionDetails2.motCash || 0}</td>
               </tr>
               <tr>
                 <td>নিজের ধার</td>
-                <td>{data2.nijerDhar}</td>
+                <td>{transactionDetails2.nijerDhar || 0}</td>
               </tr>
               <tr>
                 <td>মোট</td>
                 <td>
-                  {data2.motBaki +
-                    data2.motDhar +
-                    data2.motCash +
-                    data2.nijerDhar}
+                  {(transactionDetails2.totalDebtsOfShops || 0) +
+                    (transactionDetails2.totalDebtsOfFarmers || 0) +
+                    (transactionDetails2.motCash || 0) +
+                    (transactionDetails2.nijerDhar || 0)}
                 </td>
               </tr>
             </tbody>
@@ -225,16 +168,25 @@ const FinalPage = () => {
             <tbody>
               <tr>
                 <td>কমিশন ও খাজনা</td>
-                <td>{rangeData.commission}</td>
+                <td>
+                  {(transactionDetails1.commission || 0) +
+                    (transactionDetails2.commission || 0)}
+                </td>
               </tr>
               <tr>
                 <td>নিজের খরচ</td>
-                <td>{rangeData.nijerKhoroch}</td>
+                <td>
+                  {(transactionDetails1.nijerKhoroch || 0) +
+                    (transactionDetails2.nijerKhoroch || 0)}
+                </td>
               </tr>
               <tr>
                 <td>মোট</td>
                 <td className="font-weight-bold">
-                  {rangeData.commission - rangeData.nijerKhoroch}
+                  {(transactionDetails1.commission || 0) +
+                    (transactionDetails2.commission || 0) -
+                    (transactionDetails1.nijerKhoroch || 0) -
+                    (transactionDetails2.nijerKhoroch || 0)}
                 </td>
               </tr>
             </tbody>

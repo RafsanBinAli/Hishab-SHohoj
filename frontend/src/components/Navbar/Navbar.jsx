@@ -132,15 +132,7 @@ const Navbar = ({ setIsUserLoggedIn }) => {
                 টোটাল হিসাব
               </Link>
             </li>
-            <li className="nav-item">
-              <Link
-                className="nav-link"
-                to="/final-hishab"
-                onClick={() => setIsOpen(false)}
-              >
-                Final হিসাব
-              </Link>
-            </li>
+            
             <li className="nav-item">
               <Link
                 className="nav-link"

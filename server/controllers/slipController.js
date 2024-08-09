@@ -1,7 +1,5 @@
 const Slip = require("../models/slip");
 
-const { findSlip, createSlip } = require("../services/slipService");
-
 exports.findOrCreateSlip = async (req, res) => {
   const { shopName } = req.body;
 
@@ -33,9 +31,9 @@ exports.findOrCreateSlip = async (req, res) => {
         },
       },
       {
-        new: true, // Return the updated document if found or created
-        upsert: true, // Create a new document if not found
-        setDefaultsOnInsert: true, // Ensure defaults are set when inserting a new document
+        new: true, 
+        upsert: true, 
+        setDefaultsOnInsert: true, 
       }
     );
 
@@ -98,8 +96,7 @@ exports.getSlipDetails = async (req, res) => {
 };
 
 exports.findSlipByDate = async (req, res) => {
-  const { date } = req.params; // Assuming date is provided in ISO format (e.g., "2024-07-07T00:00:00.000Z")
-  console.log(date);
+  const { date } = req.params; 
   try {
     const slips = await Slip.find({
       createdAt: date,
@@ -119,27 +116,15 @@ exports.findSlipByDate = async (req, res) => {
 };
 
 exports.updateSlipPaidAmount = async (req, res) => {
-  const { slipId, paidAmount, edit } = req.body;
-
+  const { slipId, paidAmount } = req.body;
   try {
-    // Find the slip by _id
     let slip = await Slip.findById(slipId);
-
     if (!slip) {
       return res.status(404).json({ message: "Slip not found" });
     }
 
-    // Update paidAmount
-    slip.paidAmount+= paidAmount;
-
-    // Update isEdited based on edit flag (if needed)
-    if (edit) {
-      slip.isEdited = true;
-    }
-
-    // Save the updated slip
+    slip.paidAmount += paidAmount;
     await slip.save();
-
     res.status(200).json({ message: "Slip updated successfully", slip });
   } catch (error) {
     console.error("Error updating slip's paidAmount:", error);

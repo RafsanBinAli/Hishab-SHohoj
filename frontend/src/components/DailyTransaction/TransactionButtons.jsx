@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./LastCalcu.css";
+import { Link } from "react-router-dom";
 const TransactionButton = ({ transactionDetails, setTransactionDetails }) => {
   const [otherCost, setOtherCost] = useState(0);
   const [dailyCashStack, setDailyCashStack] = useState(0);
@@ -72,58 +73,61 @@ const TransactionButton = ({ transactionDetails, setTransactionDetails }) => {
     <>
       <div className="calcu-row mb-4">
         <div className="col-md-12" style={{ width: "50%" }}>
-         
-            <div className="mb-3">
-              <label htmlFor="otherCost" className="font-weight-bold">
-                অন্যান্য খরচ:
-              </label>
-              <input
-                type="number"
-                id="otherCost"
-                className="calcu-daily-cash-stack-input form-control d-inline-block"
-                value={otherCost}
-                onChange={(e) => handleOtherCost(e)}
-                style={{
-                  width: "auto",
-                  marginLeft: "10px",
-                  marginRight: "10px",
-                }}
-              />
-              <button
-                type="button"
-                className="calcu-daily-cash-stack-submit btn btn-primary"
-                onClick={handleOtherCostSubmit}
-              >
-                সংরক্ষণ করুন
-              </button>
-            </div>
-          
-            <div className="mb-3">
-              <label htmlFor="dailyCashStack" className="font-weight-bold">
-                দৈনিক নগদ জমা:
-              </label>
-              <input
-                type="number"
-                id="dailyCashStack"
-                className="calcu-daily-cash-stack-input form-control d-inline-block"
-                value={dailyCashStack}
-                onChange={handleDailyCashStackChange}
-                style={{
-                  width: "auto",
-                  marginLeft: "10px",
-                  marginRight: "10px",
-                }}
-              />
-              <button
-                type="button"
-                className="calcu-daily-cash-stack-submit btn btn-primary"
-                onClick={handleDailyCashStack}
-              >
-                সংরক্ষণ করুন
-              </button>
-            </div>
-         
+          <div className="mb-3">
+            <label htmlFor="otherCost" className="font-weight-bold">
+              অন্যান্য খরচ:
+            </label>
+            <input
+              type="number"
+              id="otherCost"
+              className="calcu-daily-cash-stack-input form-control d-inline-block"
+              value={otherCost}
+              onChange={(e) => handleOtherCost(e)}
+              style={{
+                width: "auto",
+                marginLeft: "10px",
+                marginRight: "10px",
+              }}
+            />
+            <button
+              type="button"
+              className="calcu-daily-cash-stack-submit btn btn-primary"
+              onClick={handleOtherCostSubmit}
+            >
+              সংরক্ষণ করুন
+            </button>
+          </div>
+
+          <div className="mb-3">
+            <label htmlFor="dailyCashStack" className="font-weight-bold">
+              দৈনিক নগদ জমা:
+            </label>
+            <input
+              type="number"
+              id="dailyCashStack"
+              className="calcu-daily-cash-stack-input form-control d-inline-block"
+              value={dailyCashStack}
+              onChange={handleDailyCashStackChange}
+              style={{
+                width: "auto",
+                marginLeft: "10px",
+                marginRight: "10px",
+              }}
+            />
+            <button
+              type="button"
+              className="calcu-daily-cash-stack-submit btn btn-primary"
+              onClick={handleDailyCashStack}
+            >
+              সংরক্ষণ করুন
+            </button>
+          </div>
         </div>
+        <Link to="/final-hishab " style={{ marginLeft: "auto" }}>
+          <button  className="btn btn-primary">
+            Final Hishab
+          </button>
+        </Link>
       </div>
     </>
   );
