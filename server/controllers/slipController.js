@@ -130,7 +130,7 @@ exports.updateSlipPaidAmount = async (req, res) => {
     }
 
     // Update paidAmount
-    slip.paidAmount = paidAmount;
+    slip.paidAmount+= paidAmount;
 
     // Update isEdited based on edit flag (if needed)
     if (edit) {

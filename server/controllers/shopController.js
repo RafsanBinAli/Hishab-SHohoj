@@ -33,17 +33,15 @@ exports.updateTotalDue = async (req, res) => {
     console.log("shopname: ", shopName);
     console.log("totalDue", totalDue);
 
-    // Find the shop by name
     const shop = await Shop.findOne({ shopName });
 
     if (!shop) {
       return res.status(404).json({ message: "Shop not found" });
     }
+   
+    
+    shop.totalDue = totalDue;
 
-    // Update the totalDue field
-    shop.totalDue += totalDue;
-
-    // Save the updated shop
     const updatedShop = await shop.save();
     console.log(updatedShop);
     res.status(200).json(updatedShop);

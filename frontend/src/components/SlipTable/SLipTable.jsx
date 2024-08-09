@@ -1,25 +1,31 @@
 import React, { useState, useEffect } from "react";
-import "./SlipTable.css"; // Custom CSS for styling, adjust as per your design needs
+import "./SlipTable.css";
 import Loader from "../Loader/Loader";
-
+import { getCurrentDate } from "../../functions/getCurrentDate";
 const SlipTable = () => {
   const [slips, setSlips] = useState([]);
+  const [allDokanDetails, setAllDokanDetails] = useState([]);
   const [paidInputs, setPaidInputs] = useState({});
   const [savedRows, setSavedRows] = useState({});
   const [selectedDate, setSelectedDate] = useState("");
   const [loading, setLoading] = useState(false);
-
-  const getCurrentDate = () => {
-    const date = new Date();
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
-  };
+  const [noInfo, setNoInfo] = useState(false);
 
   useEffect(() => {
     const today = getCurrentDate();
     setSelectedDate(today);
+    const fetchAllDokanDetails = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_BACKEND_URL}/get-all-shops`
+        );
+        const data = await response.json();
+        setAllDokanDetails(data);
+      } catch (error) {
+        console.log("Error in fetching dokan details!");
+      }
+    };
+    fetchAllDokanDetails();
   }, []);
 
   useEffect(() => {
@@ -29,13 +35,20 @@ const SlipTable = () => {
         const response = await fetch(
           `${process.env.REACT_APP_BACKEND_URL}/slip/${selectedDate}`
         );
+        if (response.status === 404) {
+          setNoInfo(true);
+          setSlips([]);
+          return;
+        }
         if (!response.ok) {
           throw new Error("Failed to fetch slips");
         }
         const data = await response.json();
         setSlips(data);
+        setNoInfo(data.length === 0); 
       } catch (error) {
         console.error("Error fetching slips:", error);
+        setNoInfo(true);
       } finally {
         setLoading(false);
       }
@@ -49,17 +62,16 @@ const SlipTable = () => {
   const handlePaidChange = (event, shopName, totalAmount) => {
     const { value } = event.target;
     const paidValue = Number(value);
-    if (paidValue <= totalAmount) {
-      setPaidInputs({ ...paidInputs, [shopName]: paidValue });
-    } else {
-      alert(`Paid amount cannot be greater than Total Amount (${totalAmount})`);
-    }
+    setPaidInputs({ ...paidInputs, [shopName]: paidValue });
   };
 
   const handleSave = async (slip) => {
+    if (slip.paidAmount === slip.totalAmount) {
+      alert("সকল টাকা পরিশোধ করা হয়েছে");
+      return;
+    }
     setLoading(true);
     const paidAmount = paidInputs[slip.shopName] || 0;
-    const due = slip.totalAmount - paidAmount;
 
     try {
       const updateShopResponse = await fetch(
@@ -71,7 +83,10 @@ const SlipTable = () => {
           },
           body: JSON.stringify({
             shopName: slip.shopName,
-            totalDue: due,
+            totalDue:
+              getTotalDue(slip.shopName) - paidAmount > 0
+                ? getTotalDue(slip.shopName) - paidAmount
+                : 0,
           }),
         }
       );
@@ -80,23 +95,25 @@ const SlipTable = () => {
         throw new Error("Failed to update shop's totalDue");
       }
 
-      const updatePurchaseResponse = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/slip/update-editStatus-paid`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            slipId: slip._id,
-            paidAmount,
-            edit: true,
-          }),
-        }
-      );
+      if (paidAmount > getTotalDue(slip.shopName)) {
+        const updatePurchaseResponse = await fetch(
+          `${process.env.REACT_APP_BACKEND_URL}/slip/update-editStatus-paid`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              slipId: slip._id,
+              paidAmount: paidAmount - getTotalDue(slip.shopName),
+              edit: true,
+            }),
+          }
+        );
 
-      if (!updatePurchaseResponse.ok) {
-        throw new Error("Failed to update slip's remainingTotal");
+        if (!updatePurchaseResponse.ok) {
+          throw new Error("Failed to update slip's remainingTotal");
+        }
       }
 
       const transactionResponse = await fetch(
@@ -126,6 +143,11 @@ const SlipTable = () => {
     }
   };
 
+  const getTotalDue = (shopName) => {
+    const shop = allDokanDetails.find((dokan) => dokan.shopName === shopName);
+    return shop ? shop.totalDue : 0;
+  };
+
   return (
     <div className="slip-table-container">
       {loading ? (
@@ -145,34 +167,35 @@ const SlipTable = () => {
               className="ml-2"
             />
           </div>
-          <div className="table-responsive">
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>দোকানের নাম</th>
-                  <th>ajker sliper টাকা</th>
-                  <th>ager baki টাকা</th>
-                  <th>mot paoana tk</th>
-                  <th>porishod tk</th>
-                  <th>ekhon porishod</th>
-                  <th>baki tk</th>
-                  <th> Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {slips.map((slip, index) => (
-                  <tr key={index}>
-                    <td>{slip.shopName}</td>
-                    <td>{slip.totalAmount}</td>
-                    <td> {slip.totalAmount}</td>
-                    <td>
-                      {slip.totalAmount + slip.totalAmount}
-                    </td>
-                    <td>
-                      { slip.paidAmount}
-                    </td>
-                    <td>
-                      
+          {noInfo ? (
+            <div className="no-info">No information available for this date.</div>
+          ) : (
+            <div className="table-responsive">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>দোকানের নাম</th>
+                    <th>আজকের স্লিপের টাকা</th>
+                    <th>আজকের স্লিপের পরিশোধ টাকা</th>
+                    <th>আগের বাকি টাকা</th>
+                    <th>পরিশোধ করতে হবে টাকা</th>
+                    <th>পরিশোধ</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {slips.map((slip, index) => (
+                    <tr key={index}>
+                      <td>{slip.shopName}</td>
+                      <td>{slip.totalAmount}</td>
+                      <td>{slip.paidAmount}</td>
+                      <td>{getTotalDue(slip.shopName)}</td>
+                      <td>
+                        {slip.totalAmount +
+                          getTotalDue(slip.shopName) -
+                          slip.paidAmount}
+                      </td>
+                      <td>
                         <input
                           type="number"
                           value={paidInputs[slip.shopName] || ""}
@@ -180,34 +203,26 @@ const SlipTable = () => {
                             handlePaidChange(e, slip.shopName, slip.totalAmount)
                           }
                           className="paid-input"
-                          disabled={savedRows[slip.shopName]}
                         />
-                      
-                    </td>
-                    <td>
-                      {slip.isEdited
-                        ? slip.totalAmount - slip.paidAmount
-                        : slip.totalAmount - (paidInputs[slip.shopName] || 0)}
-                    </td>
-                    <td>
-                     
+                      </td>
+                      <td>
                         <button
                           className="save-button"
                           onClick={() => handleSave(slip)}
                         >
                           সেভ করুন
                         </button>
-                     
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </>
       )}
     </div>
   );
 };
-
-export default SlipTable;
+  export default SlipTable;
+  
