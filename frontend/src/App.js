@@ -25,6 +25,7 @@ import FinalPage from "./components/FinalPage/FinalPage";
 import FarmerSlip from "./components/FarmerSlip/FarmerSlip";
 import FarmerSlipDetails from "./components/CardDetail/FarmerSlipDetails";
 import FarmerSlipDetailsPaidUnpaid from "./components/FarmerSlip/FarmerSlipDetailsPaidUnpaid";
+import AllFarmerSlip from "./components/AllFarmerSlip/AllFarmerSlip";
 
 require("dotenv").config();
 
@@ -110,7 +111,11 @@ function App() {
             path="/slip/farmer/details/:id"
             element={<PrivateRoute element={<FarmerSlipDetailsPaidUnpaid />} />}
           />
-
+          
+          <Route
+            path="/slip/farmer/all-deals"
+            element={<PrivateRoute element={<AllFarmerSlip />} />}
+          />
           <Route
             path="/slip-details/:shopName/:id"
             element={<PrivateRoute element={<SlipDetails />} />}

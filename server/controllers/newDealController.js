@@ -137,3 +137,31 @@ exports.getIncompleteMarketDeals = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+exports.getDealsOfParticularDay = async (req, res) => {
+  const { date } = req.query;
+  console.log("date",date)
+  if (!date) {
+    return res.status(400).json({ error: 'Date query parameter is required' });
+  }
+
+  try {
+    const dateObj = new Date(date);
+
+    if (isNaN(dateObj.getTime())) {
+      return res.status(400).json({ error: 'Invalid date format' });
+    }
+
+    const deals = await NewDeal.find({
+      createdAt: {
+        $gte: new Date(dateObj.setHours(0, 0, 0, 0)),
+        $lt: new Date(dateObj.setHours(23, 59, 59, 999)) 
+      }
+    });
+
+    res.json(deals);
+  } catch (error) {
+    console.error('Error fetching deals:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};

@@ -1,0 +1,115 @@
+/* General styles */
+.all-deals {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    background-color: #f9f9f9;
+  }
+  
+  .all-deals-title {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  .all-deals-calendar {
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  /* Loader */
+  .all-deals-loader {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #007bff;
+  }
+  
+  /* Container for deals */
+  .all-deals-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+  }
+  
+  /* Card styles */
+  .all-deals-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto;
+    transition: box-shadow 0.3s ease;
+  }
+  
+  .all-deals-card:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Card header */
+  .all-deals-card-header {
+    background: #c2cfdd;
+    color: black;
+    padding: 15px;
+    text-align: center;
+  }
+  
+  .all-deals-farmer-name {
+    font-size: 1.5rem;
+    margin: 0;
+  }
+  
+  /* Card body */
+  .all-deals-card-body {
+    padding: 15px;
+  }
+  
+  .all-deals-deal-amount,
+  .all-deals-deal-created-at {
+    font-size: 1rem;
+    margin: 10px 0;
+  }
+  
+  .amount {
+    font-weight: bold;
+    color: black;
+  }
+  
+  .created-at {
+    color: #555;
+  }
+  
+  /* Details button */
+  .all-deals-btn-details {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    background-color: #28a745;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+  }
+  
+  .all-deals-btn-details:hover {
+    background-color: #218838;
+  }
+  
+  /* No deals message */
+  .all-deals-no-deals {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #777;
+  }
+  
+  /* Responsive styles */
+  @media (max-width: 768px) {
+    .all-deals-card {
+      max-width: 100%;
+    }
+  }
+  

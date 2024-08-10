@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./CardDetail.css";
 import FarmerSlipDetails from "./FarmerSlipDetails";
-
+import { fetchShops, fetchFarmers, fetchCardDetails } from "../../utils/dataService";
 const CardDetail = () => {
   const [loadedData, setLoadedData] = useState(null);
   const [shops, setShops] = useState([]);
@@ -12,59 +12,20 @@ const CardDetail = () => {
   const [formRows, setFormRows] = useState([
     { farmerName: "", shopName: "", stockName: "", quantity: "", price: "" },
   ]);
+  
 
   useEffect(() => {
-    const fetchShops = async () => {
-      try {
-        const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/get-all-shops`
-        );
+    const initializeData = async () => {
+      const shopsData = await fetchShops();
+      const farmersData = await fetchFarmers();
+      const cardDetailsData = await fetchCardDetails();
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch shops");
-        }
-        const data = await response.json();
-        setShops(data);
-      } catch (error) {
-        console.error("Error fetching shops:", error);
-      }
-    };
-    const fetchFarmers = async () => {
-      try {
-        const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/get-all-farmers`
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch users");
-        }
-        const data = await response.json();
-        data.sort((a, b) => a.name.localeCompare(b.name));
-
-        setFarmers(data);
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      }
-    };
-    const fetchCardDetails = async () => {
-      try {
-        const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/get-all-market-details-ofToday`
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch all the card details");
-        }
-
-        const data = await response.json();
-        console.log(data);
-        setAllCardDetails(data);
-      } catch (error) {
-        console.log("Error fetching all card details", error);
-      }
+      setShops(shopsData);
+      setFarmers(farmersData);
+      setAllCardDetails(cardDetailsData);
     };
 
-    fetchShops();
-    fetchFarmers();
-    fetchCardDetails();
+    initializeData();
   }, []);
 
   const handleInputChange = (index, event) => {
@@ -75,13 +36,24 @@ const CardDetail = () => {
   };
 
   const handleAddRow = () => {
-    setFormRows([
-      ...formRows,
-      {farmerName:"", shopName: "", stockName: "", quantity: "", price: "" },
-    ]);
+    setFormRows((prevRows) => {
+      const lastRow = prevRows[prevRows.length - 1];
+      const newRow = {
+        farmerName: lastRow ? lastRow.farmerName : "", 
+        shopName: "",
+        stockName: "",
+        quantity: "",
+        price: "",
+      };
+      return [...prevRows, newRow];
+    });
   };
 
   const handleSave = async () => {
+    if (formRows.some(row => !row.farmerName || !row.shopName || !row.stockName || !row.quantity || !row.price)) {
+      alert("Please fill out all fields before saving.");
+      return;
+    }
     try {
       const newPurchases = formRows.map((row) => ({
         farmerName: row.farmerName,
@@ -127,8 +99,7 @@ const CardDetail = () => {
       }
       console.log("Card details updated successfully");
 
-      const slipsMap = new Map(); // Use Map instead of Set
-
+      const slipsMap = new Map(); 
       const findOrCreateSlipResponses = await Promise.all(
         newPurchases.map(async (purchase) => {
           try {

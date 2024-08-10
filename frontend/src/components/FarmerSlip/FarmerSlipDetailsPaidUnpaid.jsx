@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import Loader from "../Loader/Loader";
+import handleDownload from "../../functions/handleDownload";
 
 const FarmerSlipDetailsPaidUnpaid = () => {
   const { id } = useParams();
@@ -8,14 +9,20 @@ const FarmerSlipDetailsPaidUnpaid = () => {
   const [loading, setLoading] = useState(true);
   const [commission, setCommission] = useState(0);
   const [khajna, setKhajna] = useState(0);
-
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
   const totalAmount = slipDetails?.purchases.reduce(
     (acc, purchase) => acc + purchase.quantity * purchase.price,
     0
   );
+  var finalAmount = totalAmount - commission - khajna;
 
   useEffect(() => {
-    console.log("useEffect running with id:", id);
     const fetchDeal = async () => {
       setLoading(true);
       try {
@@ -27,6 +34,7 @@ const FarmerSlipDetailsPaidUnpaid = () => {
         }
         const data = await response.json();
         setSlipDetails(data);
+        console.log(data);
       } catch (error) {
         console.error("Error fetching deal:", error);
       } finally {
@@ -58,7 +66,7 @@ const FarmerSlipDetailsPaidUnpaid = () => {
             commission,
             khajna,
             name: slipDetails?.farmerName,
-            amount: totalAmount-khajna-commission,
+            amount: totalAmount - khajna - commission,
           }),
         }
       );
@@ -66,13 +74,10 @@ const FarmerSlipDetailsPaidUnpaid = () => {
       if (!response.ok) {
         throw new Error("Failed to save daily transaction");
       }
-      
     } catch (error) {
       console.error("Error saving daily transaction:", error);
       alert("An error occurred while saving daily transaction");
     }
-
-
 
     try {
       const updateResponse = await fetch(
@@ -86,7 +91,7 @@ const FarmerSlipDetailsPaidUnpaid = () => {
             id: slipDetails?._id,
             khajna,
             commission,
-            totalAmountToBeGiven: totalAmount-khajna-commission,
+            totalAmountToBeGiven: totalAmount - khajna - commission,
           }),
         }
       );
@@ -94,17 +99,13 @@ const FarmerSlipDetailsPaidUnpaid = () => {
         throw new Error("Error updating card details!");
       }
       const data = await updateResponse.json();
-      
+
       alert("Commissions and khajnas saved successfully and updated!");
     } catch (error) {
       console.error("Error occurred updating card details!");
       alert("Error occurred updating card details");
     }
   };
-
-  
-
-  const subtotal = totalAmount - commission - khajna;
 
   if (loading) {
     return <Loader />;
@@ -141,50 +142,90 @@ const FarmerSlipDetailsPaidUnpaid = () => {
                   </tr>
                 ))}
                 <tr>
-                  <td colSpan="4" className="text-right font-weight-bold">Total Amount</td>
+                  <td colSpan="4" className="text-right font-weight-bold">
+                    Total Amount
+                  </td>
                   <td>{totalAmount} টাকা</td>
                 </tr>
                 <tr>
                   <td colSpan="4" className="text-right font-weight-bold">
-                    <label htmlFor="commission">Commission:</label>
+                    {slipDetails.doneStatus ? (
+                      <span>Commission:</span>
+                    ) : (
+                      <label htmlFor="commission">Commission:</label>
+                    )}
                   </td>
                   <td>
-                    <input
-                      type="number"
-                      className="form-control"
-                      id="commission"
-                      value={commission}
-                      onChange={(e) => setCommission(Number(e.target.value))}
-                    />
+                    {slipDetails.doneStatus ? (
+                      <span>{slipDetails?.commission} টাকা</span>
+                    ) : (
+                      <input
+                        type="number"
+                        className="form-control"
+                        id="commission"
+                        value={commission}
+                        onChange={(e) => setCommission(Number(e.target.value))}
+                      />
+                    )}
                   </td>
                 </tr>
                 <tr>
                   <td colSpan="4" className="text-right font-weight-bold">
-                    <label htmlFor="khajna">Khajna:</label>
+                    {slipDetails.doneStatus ? (
+                      <span>Khajna:</span>
+                    ) : (
+                      <label htmlFor="khajna">Khajna:</label>
+                    )}
                   </td>
                   <td>
-                    <input
-                      type="number"
-                      className="form-control"
-                      id="khajna"
-                      value={khajna}
-                      onChange={(e) => setKhajna(Number(e.target.value))}
-                    />
+                    {slipDetails.doneStatus ? (
+                      <span>{slipDetails?.khajna} টাকা</span>
+                    ) : (
+                      <input
+                        type="number"
+                        className="form-control"
+                        id="khajna"
+                        value={khajna}
+                        onChange={(e) => setKhajna(Number(e.target.value))}
+                      />
+                    )}
                   </td>
                 </tr>
                 <tr>
-                  <td colSpan="4" className="text-right font-weight-bold">Subtotal</td>
-                  <td>{subtotal} টাকা</td>
+                  <td colSpan="4" className="text-right font-weight-bold">
+                    Subtotal
+                  </td>
+                  <td>
+                    {slipDetails?.totalAmountToBeGiven !== 0
+                      ? slipDetails.totalAmountToBeGiven
+                      : finalAmount}
+                    টাকা
+                  </td>
                 </tr>
               </tbody>
             </table>
+            {slipDetails.doneStatus && (
+              <button
+                className="btn btn-primary m-2"
+                onClick={() =>
+                  handleDownload({
+                    individualCardDetails: slipDetails,
+                    selectedDate: formatDate(slipDetails.createdAt),
+                    commission: slipDetails.commission,
+                    khajna: slipDetails.khajna,
+                    finalAmount: slipDetails.totalAmountToBeGiven,
+                  })
+                }
+              >
+                পিডিএফ ডাউনলোড করুন
+              </button>
+            )}
 
-            <button
-              className="btn btn-primary mt-3"
-              onClick={handlePayNow}
-            >
-              Pay Now
-            </button>
+            {!slipDetails.doneStatus && (
+              <button className="btn btn-primary mt-3" onClick={handlePayNow}>
+                Pay Now
+              </button>
+            )}
           </div>
         </div>
       </div>

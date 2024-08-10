@@ -20,7 +20,7 @@ router.get("/get-card-details/:id", newDealController.getCardDetailsById);
 router.put("/update-card-details/:id", newDealController.updateDealPurchases);
 router.post("/card-details-update-secondary",newDealController.updateCardDetails);
 router.get("/get-unpaid-deals",newDealController.getIncompleteMarketDeals)
-
+router.get("/get-deals-particular-day",newDealController.getDealsOfParticularDay)
 
 router.post('/create-shop', shopController.createShop);
 router.get('/get-all-shops',shopController.getShops);

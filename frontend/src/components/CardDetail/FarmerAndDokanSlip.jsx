@@ -5,11 +5,10 @@ import NikoshGrameen from "../NikoshGrameen";
 const FarmerAndDokanSlip = ({ individualCardDetails }) => {
   console.log("Individual Card Details:", individualCardDetails);
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [isOkClicked, setIsOkClicked] = useState(false);
   const [commission, setCommission] = useState(0);
   const [khajna, setKhajna] = useState(0);
   const [finalAmount, setFinalAmount] = useState(0);
-  const [isAlreadySaved, setIsAlreadySaved] = useState(false);
+  
 
   const handleKhajnaChange = (event) => {
     const khajnaValue = event.target.value;
@@ -30,7 +29,7 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
     setFinalAmount(totalAmount - commission - khajna);
   }, [commission, khajna, individualCardDetails]);
 
-  const handleOk = async () => {
+  const handlePayNow= async () => {
     if (khajna === 0) {
       const isConfirmed = window.confirm(
         "Khajna is 0. Are you sure you want to proceed?"
@@ -59,7 +58,7 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
       if (!response.ok) {
         throw new Error("Failed to save daily transaction");
       }
-      setIsOkClicked(true);
+      
     } catch (error) {
       console.error("Error saving daily transaction:", error);
       alert("An error occurred while saving daily transaction");
@@ -84,7 +83,7 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
         throw new Error("Error updating card details!");
       }
       const data = await updateResponse.json();
-      setIsAlreadySaved(data.doneStatus);
+      
       alert("Commissions and khajnas saved successfully and updated!");
     } catch (error) {
       console.error("Error occurred updating card details!");
@@ -153,7 +152,7 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
 
                 <td className="commission font-weight-bold">
                   {individualCardDetails.doneStatus ? (
-                    individualCardDetails.commission
+                    individualCardDetails.khajna
                   ) : (
                     <input
                       type="number"
@@ -167,38 +166,33 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
                 <td colSpan="4" className="text-right font-weight-bold">
                   চূড়ান্ত মোট (টাকা):
                 </td>
-                <td className="font-weight-bold">{finalAmount}</td>
+                <td className="font-weight-bold">{individualCardDetails.totalAmountToBeGiven}</td>
               </tr>
             </tbody>
           </table>
         </div>
 
-        <button
-          className="btn btn-primary m-2"
-          onClick={() =>
-            handleDownload(
-              individualCardDetails,
-              selectedDate,
-              commission,
-              khajna,
-              finalAmount
-            )
-          }
-          disabled={!individualCardDetails.doneStatus}
-          title={
-            !individualCardDetails.doneStatus ? "Not accessible right now" : ""
-          }
-          style={{
-            pointerEvents: !individualCardDetails.doneStatus ? "none" : "auto",
-          }}
-        >
-          পিডিএফ ডাউনলোড করুন
-        </button>
-        {individualCardDetails.doneStatus ? (
-          ""
-        ) : (
-          <button className="btn btn-primary m-2" onClick={handleOk}>
-            All Okay!
+        {individualCardDetails?.doneStatus && (
+              <button
+                className="btn btn-primary m-2"
+                onClick={() =>
+                  handleDownload({
+                    individualCardDetails,
+                    selectedDate,
+                    commission,
+                    khajna,
+                    finalAmount,
+                  })
+                }
+              >
+                পিডিএফ ডাউনলোড করুন
+              </button>
+            )}
+        {!individualCardDetails.doneStatus && (
+          
+        
+          <button className="btn btn-primary m-2" onClick={handlePayNow}>
+            Pay now!
           </button>
         )}
       </div>

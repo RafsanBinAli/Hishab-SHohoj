@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./FarmerSlip.css"; // Import your custom CSS file
 
 const FarmerSlip = () => {
   const [deals, setDeals] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchDeals = async () => {
@@ -27,12 +28,18 @@ const FarmerSlip = () => {
 
     fetchDeals();
   }, []);
+  const handleShowAllDeals = () => {
+    navigate('/slip/farmer/all-deals');
+  };
 
   return (
     <div className="farmer-slip">
       <div className="farmer-slip-header">
         <h1 className="farmer-slip-title">Unpaid Deals</h1>
-        <button className="farmer-slip-btn-show-every-deals">
+        <button
+          className="farmer-slip-btn-show-every-deals"
+          onClick={handleShowAllDeals}
+        >
           Show Every Deal
         </button>
       </div>
