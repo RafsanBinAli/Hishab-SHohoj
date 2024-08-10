@@ -73,7 +73,7 @@ const TransactionButton = ({ transactionDetails, setTransactionDetails }) => {
     <>
       <div className="calcu-row mb-4">
         <div className="col-md-12" style={{ width: "50%" }}>
-          <div className="mb-3">
+        <div className="mb-3">
             <label htmlFor="otherCost" className="font-weight-bold">
               অন্যান্য খরচ:
             </label>
@@ -123,13 +123,11 @@ const TransactionButton = ({ transactionDetails, setTransactionDetails }) => {
             </button>
           </div>
         </div>
-        <div className="final-hishab-button-container">
-          <Link to="/final-hishab">
-            <button className="btn btn-primary final-hishab-button">
-              Final Hishab
-            </button>
-          </Link>
-        </div>
+        <Link to="/final-hishab " style={{ marginLeft: "auto" }}>
+          <button  className="btn btn-primary">
+            Final Hishab
+          </button>
+        </Link>
       </div>
     </>
   );
