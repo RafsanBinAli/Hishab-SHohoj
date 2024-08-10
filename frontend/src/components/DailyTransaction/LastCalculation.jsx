@@ -10,14 +10,14 @@ const LastCalculation = ({ transactionDetails }) => {
 
   return (
     <>
-      <div className="calcu-row mb-4">
+      <div className="calcu-row final-summary-container">
         <div className="calcu-col-md-6 mx-auto">
           <div className="calcu-card">
             <div className="calcu-card-header text-center font-weight-bold">
               সারাংশ
             </div>
             <div className="calcu-card-body text-center">
-            <p className="calcu-font-weight-bold">
+              <p className="calcu-font-weight-bold">
                 মোট জমা: {transactionDetails?.totalProfit} টাকা
               </p>
 
@@ -27,7 +27,7 @@ const LastCalculation = ({ transactionDetails }) => {
               <p className="calcu-font-weight-bold">
                 মোট খরচ: {transactionDetails?.totalCost} টাকা
               </p>
-              
+
               <p className="calcu-font-weight-bold">মোট লাভ: {totalLav} টাকা</p>
             </div>
           </div>

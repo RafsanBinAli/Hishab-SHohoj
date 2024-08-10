@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import "./DokanerSlip.css"; 
-import Loader from "../Loader/Loader"; 
+import "./DokanerSlip.css";
+import Loader from "../Loader/Loader";
 
 const DokanerSlip = () => {
   const [shops, setShops] = useState([]);
-  const [loading, setLoading] = useState(true); 
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchShops = async () => {
-      setLoading(true); 
+      setLoading(true);
       try {
         const response = await fetch(
           `${process.env.REACT_APP_BACKEND_URL}/get-all-shops`
@@ -22,7 +22,7 @@ const DokanerSlip = () => {
       } catch (error) {
         console.error("Error fetching shops:", error);
       } finally {
-        setLoading(false); 
+        setLoading(false);
       }
     };
 
@@ -31,14 +31,14 @@ const DokanerSlip = () => {
 
   return (
     <div className="dokaner-slip-container">
-      <div className="mt-4 text-center">
-            <Link to="/slip/farmer" className="btn btn-success" >
-              কৃষকের স্লিপ
-            </Link>
-          </div>
+      <div className="mt-4 mb-4 text-center farmer-slip-btn">
+        <Link to="/slip/farmer" className="btn btn-success">
+          কৃষকের স্লিপ
+        </Link>
+      </div>
       <h2 className="dokaner-slip-title font-weight-bold">দোকানদারের স্লিপ</h2>
       {loading ? (
-        <Loader /> 
+        <Loader />
       ) : (
         <div>
           <div className="dokaner-slip-table">
@@ -68,7 +68,6 @@ const DokanerSlip = () => {
               </table>
             </div>
           </div>
-          
         </div>
       )}
     </div>

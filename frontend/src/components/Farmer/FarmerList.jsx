@@ -1,16 +1,25 @@
-import React, { useState } from "react";
+// FarmerList.js
+import React, { useState, useEffect } from "react";
+import Loader from "../Loader/Loader"; // Import the Loader component
 
 const FarmerList = ({ farmers }) => {
-//   console.log(farmers);
   const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (farmers.length > 0) {
+      setLoading(false); // Stop loading once data is available
+    }
+  }, [farmers]);
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
   };
 
-  const filteredfarmers = farmers.filter((shop) =>
-    shop.name.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredFarmers = farmers.filter((farmer) =>
+    farmer.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
   return (
     <>
       <div className="card">
@@ -24,41 +33,46 @@ const FarmerList = ({ farmers }) => {
             onChange={handleSearch}
           />
           <div className="table-responsive">
-            <table className="table table-bordered table-striped">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>কৃষকের নাম </th>
-                  <th>ঠিকানা </th>
-                  <th>মোবাইল নম্বর </th>
-                  <th>ছবি</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredfarmers.map((shop, index) => (
-                  <tr key={index}>
-                    <td>{index + 1}</td>
-                    <td>{shop.name}</td>
-                    <td>{shop.village}</td>
-                    <td>{shop.phoneNumber}</td>
-                    <td>
-                      {shop.imageUrl && (
-                        <img
-                          src={shop.imageUrl}
-                          alt="Shop"
-                          className="img-thumbnail"
-                          style={{ maxHeight: "50px", maxWidth: "50px" }}
-                        />
-                      )}
-                    </td>
+            {loading ? (
+              <Loader /> // Show loader while data is being fetched
+            ) : (
+              <table className="table table-bordered table-striped">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>কৃষকের নাম </th>
+                    <th>ঠিকানা </th>
+                    <th>মোবাইল নম্বর </th>
+                    <th>ছবি</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {filteredFarmers.map((farmer, index) => (
+                    <tr key={index}>
+                      <td>{index + 1}</td>
+                      <td>{farmer.name}</td>
+                      <td>{farmer.village}</td>
+                      <td>{farmer.phoneNumber}</td>
+                      <td>
+                        {farmer.imageUrl && (
+                          <img
+                            src={farmer.imageUrl}
+                            alt="Farmer"
+                            className="img-thumbnail"
+                            style={{ maxHeight: "50px", maxWidth: "50px" }}
+                          />
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </div>
         </div>
       </div>
     </>
   );
 };
+
 export default FarmerList;

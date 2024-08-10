@@ -123,11 +123,13 @@ const TransactionButton = ({ transactionDetails, setTransactionDetails }) => {
             </button>
           </div>
         </div>
-        <Link to="/final-hishab " style={{ marginLeft: "auto" }}>
-          <button  className="btn btn-primary">
-            Final Hishab
-          </button>
-        </Link>
+        <div className="final-hishab-button-container">
+          <Link to="/final-hishab">
+            <button className="btn btn-primary final-hishab-button">
+              Final Hishab
+            </button>
+          </Link>
+        </div>
       </div>
     </>
   );

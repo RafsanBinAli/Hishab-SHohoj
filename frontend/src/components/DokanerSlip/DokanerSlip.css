@@ -6,7 +6,21 @@
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   max-width: 1320px;
-  margin-left: 11rem;
+  margin-left: auto;
+  margin-right: auto; /* Center container horizontally */
+}
+
+.farmer-slip-btn {
+  display: flex;
+  justify-content: flex-end; /* Align button to the right */
+  margin-bottom: 20px; /* Add margin to separate from the title */
+}
+
+.farmer-slip-btn .btn-success {
+  padding: 14px 28px;  /* Increase padding for a larger button */
+  font-size: 1.2rem;    /* Increase font size */
+  width: 100%;          /* Make the button full width for responsiveness */
+  max-width: 300px;     /* Set a maximum width for larger screens */
 }
 
 .dokaner-slip-title {
@@ -61,8 +75,20 @@
 }
 
 @media (max-width: 768px) {
-  .dokaner-slip-container{
-    margin-left: 0;
+  .dokaner-slip-container {
     padding: 15px;
+  }
+  
+  .farmer-slip-btn {
+    justify-content: center;  /* Center the button on smaller screens */
+  }
+
+  .farmer-slip-btn .btn-success {
+    width: auto;   /* Allow the button to adjust its width on smaller screens */
+    max-width: 100%;
+  }
+
+  .dokaner-slip-title {
+    font-size: 1.5rem;
   }
 }

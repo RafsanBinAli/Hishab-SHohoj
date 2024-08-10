@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Loader from "../Loader/Loader"; // Import the Loader component
 
 const ShopList = ({ shops, loading }) => {
@@ -23,39 +23,43 @@ const ShopList = ({ shops, loading }) => {
           value={searchTerm}
           onChange={handleSearch}
         />
-        <div className="table-responsive">
-          <table className="table table-bordered table-striped">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>দোকানের নাম</th>
-                <th>ঠিকানা</th>
-                <th>মোবাইল নম্বর</th>
-                <th>ছবি</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredShops.map((shop, index) => (
-                <tr key={index}>
-                  <td>{index + 1}</td>
-                  <td>{shop.shopName}</td>
-                  <td>{shop.address}</td>
-                  <td>{shop.phoneNumber}</td>
-                  <td>
-                    {shop.imageUrl && (
-                      <img
-                        src={shop.imageUrl}
-                        alt="Shop"
-                        className="img-thumbnail"
-                        style={{ maxHeight: "50px", maxWidth: "50px" }}
-                      />
-                    )}
-                  </td>
+        {loading ? (
+          <Loader /> // Show loader while data is being fetched
+        ) : (
+          <div className="table-responsive">
+            <table className="table table-bordered table-striped">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>দোকানের নাম</th>
+                  <th>ঠিকানা</th>
+                  <th>মোবাইল নম্বর</th>
+                  <th>ছবি</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {filteredShops.map((shop, index) => (
+                  <tr key={index}>
+                    <td>{index + 1}</td>
+                    <td>{shop.shopName}</td>
+                    <td>{shop.address}</td>
+                    <td>{shop.phoneNumber}</td>
+                    <td>
+                      {shop.imageUrl && (
+                        <img
+                          src={shop.imageUrl}
+                          alt="Shop"
+                          className="img-thumbnail"
+                          style={{ maxHeight: "50px", maxWidth: "50px" }}
+                        />
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );

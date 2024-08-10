@@ -6,15 +6,19 @@
   font-family: 'Arial', sans-serif;
 }
 
+/* Responsive Flex Row */
 .calcu-row {
   display: flex;
-  
-  
+  flex-wrap: wrap; /* Allow wrapping for smaller screens */
+  justify-content: center;
+  gap: 20px; /* Add space between columns */
 }
 
+/* Responsive Column */
 .calcu-col-md-6 {
   width: 100%;
   max-width: 600px;
+  padding: 0 15px; /* Add padding for smaller screens */
 }
 
 .calcu-card {
@@ -23,6 +27,7 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   transition: transform 0.2s ease-in-out;
+  margin-bottom: 20px; /* Add margin at the bottom */
 }
 
 .calcu-card:hover {
@@ -60,7 +65,7 @@
 }
 
 .calcu-daily-cash-stack-input {
-  width: 50%;
+  width: 100%; /* Full width on all screens */
   padding: 10px;
   font-size: 1rem;
   border: 1px solid #ccc;
@@ -74,53 +79,19 @@
   outline: none;
 }
 
-
-
-.calcu-daily-cash-stack-submit:hover {
-  background-color: #0056b3;
-}
-
-@media (max-width: 768px) {
-  .calcu-card {
-    margin: 0 10px;
-  }
-}
-
-/* Container Styles */
-.row {
-  justify-content: center;
-  margin-bottom: 1.5rem;
-}
-
-/* Input Field Styles */
-.calcu-daily-cash-stack-input {
-  width: auto;
-  padding: 0.5rem;
-  border-radius: 5px;
-  border: 1px solid #ddd;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.calcu-daily-cash-stack-input:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-  outline: none;
-}
-
-/* Button Styles */
+/* Responsive Button Styles */
 .calcu-daily-cash-stack-submit {
-  width: 150px; /* Example of a fixed width */
+  width: 100%; /* Full width for smaller screens */
+  max-width: 150px; /* Limit the max width */
   background-color: #007bff;
   color: #fff;
-  padding: 0.5rem 1rem;
+  padding: 10px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s ease;
-  margin-left: 10px;
+  margin-left: auto; /* Align to the right by default */
 }
-
-
 
 .calcu-daily-cash-stack-submit:hover {
   background-color: #0056b3;
@@ -132,16 +103,56 @@
   transform: translateY(0);
 }
 
+.final-hishab-button-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+  margin-left: auto;
+  margin-right: 2rem;
+}
 
+.final-hishab-button {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
 
+/* Media Queries for Smaller Screens */
 @media (max-width: 768px) {
+  .calcu-card {
+    margin: 0 10px;
+  }
+
+  .calcu-row {
+    flex-direction: column; /* Stack items vertically on smaller screens */
+  }
+
+  .calcu-col-md-6 {
+    max-width: 100%; /* Full width column on smaller screens */
+    padding: 0; /* Remove padding for smaller screens */
+  }
+
   .calcu-daily-cash-stack-input,
   .calcu-daily-cash-stack-submit {
     width: 100%; /* Full width on smaller screens */
-    margin: 0.5rem 0;
+    margin: 0.5rem 0; /* Add some spacing between input and button */
   }
 
   .calcu-daily-cash-stack-submit {
+    margin-left: 0; /* Remove left margin for full-width buttons */
+  }
+
+  .final-hishab-button-container {
+    justify-content: center;
     margin-left: 0;
+    margin-top: 20px;
+  }
+
+  .final-hishab-button {
+    width: 100%; /* Full width button on smaller screens */
+  }
+
+  .final-summary-container {
+    margin-bottom: 20px; /* Ensure proper bottom margin for final summary */
   }
 }

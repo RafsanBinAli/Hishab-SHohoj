@@ -1,16 +1,20 @@
 .container-dailyTransaction {
   padding: 0 15px;
   max-width: 1320px;
-  margin-left: 11rem;
+  margin-left: 13rem;
+}
+
+h2.text-center.my-4.py-2.font-weight-bold {
+  font-size: 2rem; /* Increase font size */
+  font-weight: 900; /* Make it bolder */
+  color: #050505; /* Change text color */
+  background-color: #f8f9fa; /* Add background color */
+  padding: 10px;
+  border-radius: 10px; /* Add border radius for rounded corners */
 }
 
 .container-dailyTransaction .card {
   margin-bottom: 20px;
-}
-
-.container-dailyTransaction .card-header {
-  background-color: #f0f0f0;
-  padding: 10px;
 }
 
 .container-dailyTransaction .card-body {
@@ -33,67 +37,21 @@
   text-overflow: ellipsis; /* Adds ellipsis if text overflows */
 }
 
-.container-dailyTransaction .row {
-  margin-left: 0;
-  margin-right: 0;
-}
-
-.container-dailyTransaction .table-responsive {
-  overflow-x: auto;
-}
-
-.container-dailyTransaction .scrollable-cell {
-  max-height: 120px; /* Adjust the height as needed */
- /* overflow-y: auto;
-  overflow-x: hidden; */
-}
-
-.container-dailyTransaction .scrollable-cell > table {
-  width: 100%;
-  margin-bottom: 0;
-}
-
-.container-dailyTransaction .scrollable-cell > table tbody {
-  display: block;
-  max-height: 120px;
-  overflow-y: auto;
-}
-
-.container-dailyTransaction .scrollable-cell > table tbody tr {
-  display: table;
-  width: 100%;
-  table-layout: fixed;
-}
-
-.container-dailyTransaction .scrollable-cell > table tbody tr td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: center;
-}
-
-.container-dailyTransaction .row-item {
-  border-bottom: 1px solid #040404; /* Add border to each row */
-  padding: 8px 0;
-}
-
-.container-dailyTransaction .row-item:last-child {
-  border-bottom: none;
-}
-
-@media (max-width: 768px) {
+@media (max-width: 992px) {
   .container-dailyTransaction {
     padding: 0 12px;
     margin-left: 0;
+  }
+
+  .row {
+    display: flex;
+    flex-direction: column;
   }
 
   .container-dailyTransaction .table td,
   .container-dailyTransaction .table th {
     padding: 6px;
     font-size: 0.875rem;
-  }
-
-  .container-dailyTransaction .scrollable-cell {
-    max-height: 100px; /* Adjust for smaller screens */
   }
 }
 
@@ -107,9 +65,5 @@
   .container-dailyTransaction .table th {
     padding: 4px;
     font-size: 0.75rem;
-  }
-
-  .container-dailyTransaction .scrollable-cell {
-    max-height: 80px; /* Adjust for smaller screens */
   }
 }
