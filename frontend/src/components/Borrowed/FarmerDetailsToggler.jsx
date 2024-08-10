@@ -289,7 +289,7 @@ const FarmerDetailsToggler = () => {
               />
             </div>
             <div>
-              <div className="headings">
+              <div className="">
                 <label className="newDhar">ধার দান</label>
               </div>
               <input

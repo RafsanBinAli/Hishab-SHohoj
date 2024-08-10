@@ -16,6 +16,15 @@
   font-size: 2rem;
   font-weight: bolder;
 }
+.borrowed-container.text-center.my-4.py-2.font-weight-bold {
+  font-size: 2rem; /* Increase font size */
+  font-weight: 900; /* Make it bolder */
+  color: #050505; /* Change text color */
+  
+  background-color: #f8f9fa; /* Add background color */
+  padding: 10px;
+  border-radius: 10px; /* Add border radius for rounded corners */
+}
 
 .farmer-header-demo{
   color: #000000;
