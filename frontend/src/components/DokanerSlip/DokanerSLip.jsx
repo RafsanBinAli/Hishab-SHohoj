@@ -18,7 +18,13 @@ const DokanerSlip = () => {
           throw new Error("Failed to fetch shops");
         }
         const data = await response.json();
-        setShops(data);
+
+        // Sort shops alphabetically by shopName
+        const sortedShops = data.sort((a, b) =>
+          a.shopName.localeCompare(b.shopName)
+        );
+
+        setShops(sortedShops);
       } catch (error) {
         console.error("Error fetching shops:", error);
       } finally {

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import "./SlipTable.css";
 import Loader from "../Loader/Loader";
 import { getCurrentDate } from "../../functions/getCurrentDate";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
+
 const SlipTable = () => {
   const [slips, setSlips] = useState([]);
   const [allDokanDetails, setAllDokanDetails] = useState([]);
@@ -10,6 +12,8 @@ const SlipTable = () => {
   const [selectedDate, setSelectedDate] = useState("");
   const [loading, setLoading] = useState(false);
   const [noInfo, setNoInfo] = useState(false);
+
+  const navigate = useNavigate(); // Initialize useNavigate
 
   useEffect(() => {
     const today = getCurrentDate();
@@ -45,7 +49,7 @@ const SlipTable = () => {
         }
         const data = await response.json();
         setSlips(data);
-        setNoInfo(data.length === 0); 
+        setNoInfo(data.length === 0);
       } catch (error) {
         console.error("Error fetching slips:", error);
         setNoInfo(true);
@@ -136,6 +140,9 @@ const SlipTable = () => {
 
       alert("Slip & Transaction saved successfully");
       setSavedRows({ ...savedRows, [slip.shopName]: true });
+
+      // Navigate to the same page after saving
+      navigate(0); // 0 refreshes the current page
     } catch (error) {
       console.error("Error saving slip:", error);
     } finally {
@@ -168,7 +175,9 @@ const SlipTable = () => {
             />
           </div>
           {noInfo ? (
-            <div className="no-info">No information available for this date.</div>
+            <div className="no-info">
+              No information available for this date.
+            </div>
           ) : (
             <div className="table-responsive">
               <table className="table">
@@ -224,5 +233,5 @@ const SlipTable = () => {
     </div>
   );
 };
-  export default SlipTable;
-  
+
+export default SlipTable;

@@ -1,141 +1,51 @@
 .container2 {
-    display: flex;
-    justify-content: space-between;
-  }
-  
-  .row {
-    display: flex;
-    width: 100%;
-  }
-  .row2 {
-    display: flex;
-    width: 100%;
-  }
-  .row3 {
-    display: flex;
-    width: 100%;
-  }
-  
-  .col-md-6 {
-    flex: 1;
-    padding: 20px;
-    margin-bottom: 50px;
-  }
-  
-  .form-group {
-    margin-bottom: 15px;
-  }
-  .container2 {
-    display: flex;
-    justify-content: space-between;
-  }
-  
-  .row {
-    display: flex;
-    width: 100%;
-  }
-  .row2 {
-    display: flex;
-    width: 100%;
-  }
-  .row3 {
-    display: flex;
-    width: 100%;
-  }
-  
-  .col-md-6 {
-    flex: 1;
-    padding: 20px;
-    margin-bottom: 50px;
-  }
-  
-  .form-group {
-    margin-bottom: 15px;
-  }
-  
-  .form-control {
-    width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  label {
-    font-weight: bold;
-  }
-  .list-group {
-    position: absolute;
-    z-index: 1000; /* Ensure it appears above other content */
-    width: 34.5%;
-    max-height: 200px;
-    overflow-y: auto;
-    background-color: #893e3e; /* Background color */
-    border: 1px solid #040404; /* Border style */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Optional: Box shadow for a slight elevation effect */
-  }
-  
-  .list-group-item {
-    cursor: pointer;
-    padding: 10px;
-  }
-  
-  .list-group-item:hover {
-    background-color: #b35858; /* Hover background color */
-  }
-  
-  .border-line {
-    width: 2px;
-    background-color: #ccc;
-    margin: 0 20px;
-  }
-  
-  .btn-add-user {
-    margin-top: 20px;
+  width: 100%;
+  padding: 0 15px;
+  margin: auto;
+  max-width: 1200px;
+}
+
+.card2 {
+  max-width: 500px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: auto;
+}
+
+.card-body2 {
+  padding: 20px;
+}
+
+.farmer-list-container {
+  border: 1px solid #000000;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+  padding: 20px;
+  margin-top: 20px;
+}
+
+@media (max-width: 768px) {
+  .card2 {
+    max-width: 100%;
   }
 
-  
-  
-  .form-control {
-    width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  label {
-    font-weight: bold;
-  }
-  .list-group {
-    position: absolute;
-    z-index: 1000; /* Ensure it appears above other content */
-    width: 34.5%;
-    max-height: 200px;
-    overflow-y: auto;
-    background-color: #893e3e; /* Background color */
-    border: 1px solid #040404; /* Border style */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Optional: Box shadow for a slight elevation effect */
-  }
-  
-  .list-group-item {
-    cursor: pointer;
-    padding: 10px;
-  }
-  
-  .list-group-item:hover {
-    background-color: #b35858; /* Hover background color */
-  }
-  
-  .border-line {
-    width: 2px;
-    background-color: #ccc;
-    margin: 0 20px;
-  }
-  
-  .btn-add-user {
-    margin-top: 20px;
+  .card-body2 {
+    padding: 15px;
   }
 
-  
-  
+  .farmer-list-container {
+    padding: 15px;
+  }
+}
+
+@media (max-width: 576px) {
+  .card-body2 {
+    padding: 10px;
+  }
+
+  .farmer-list-container {
+    padding: 10px;
+  }
+}

@@ -82,9 +82,9 @@ const Farmer = () => {
 
   return (
     <div className="container mt-4">
-      <div className="row">
-        <div className="card col-md-6">
-          <div className="add-user-form">
+      <div className="d-flex justify-content-center mb-4">
+        <div className="card2">
+          <div className="card-body2">
             <h2 className="card-title mb-4">নতুন কৃষকের তথ্য দিন</h2>
             <form>
               <div className="form-group">
@@ -131,6 +131,7 @@ const Farmer = () => {
                   onChange={handleUserInputChange}
                 />
               </div>
+
               <button
                 type="button"
                 className="btn btn-primary"
@@ -141,8 +142,12 @@ const Farmer = () => {
             </form>
           </div>
         </div>
+      </div>
+
+      <div className="farmer-list-container">
         <FarmerList farmers={users} />
       </div>
+
       <MessageModal
         show={modalShow}
         onHide={() => setModalShow(false)}
