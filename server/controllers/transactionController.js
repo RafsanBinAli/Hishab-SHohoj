@@ -4,7 +4,7 @@ const normalizedDate = new Date(
   Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
 );
 const Shop = require("../models/shop");
-const Farmer = require("../models/Farmer")
+const Farmer = require("../models/Farmer");
 
 exports.saveDailyTransaction = async (req, res) => {
   try {
@@ -195,6 +195,8 @@ exports.updateOtherCost = async (req, res) => {
   }
 };
 
+
+
 exports.createDaily = async (req, res) => {
   try {
     let transactionToday = await DailyTransaction.findOne({
@@ -206,17 +208,22 @@ exports.createDaily = async (req, res) => {
         .json({ message: "Already exists transaction for the day!" });
     }
     const allShops = await Shop.find({});
-    const totalDebtsOfShops = allShops.reduce((sum, shop) => sum + shop.totalDue, 0);
+    const totalDebtsOfShops = allShops.reduce(
+      (sum, shop) => sum + shop.totalDue,
+      0
+    );
 
     const allFarmers = await Farmer.find({});
-    const totalDebtsOfFarmers = allFarmers.reduce((sum, farmer) => sum + farmer.totalDue, 0);
+    const totalDebtsOfFarmers = allFarmers.reduce(
+      (sum, farmer) => sum + farmer.totalDue,
+      0
+    );
 
     transaction = new DailyTransaction({
       date: normalizedDate,
       totalDebtsOfShops,
       totalDebtsOfFarmers,
     });
-
 
     await transaction.save();
     res
@@ -226,5 +233,48 @@ exports.createDaily = async (req, res) => {
     res
       .status(500)
       .json({ message: "Failed to create DailyTransaction", error });
+  }
+};
+
+exports.updateMyOwnDebt = async (req, res) => {
+  try {
+    const { amount, type } = req.body;
+    let transactionToday = await DailyTransaction.findOne({
+      date: normalizedDate,
+    });
+
+    if (!transactionToday) {
+      return res
+        .status(404)
+        .json({ message: "Transaction not found for the day!" });
+    }
+
+    if (type === "debt") {
+      transactionToday.myOwnDebt.push({ amount, date: normalizedDate });
+      transactionToday.totalMyOwnDebt = transactionToday.myOwnDebt.reduce(
+        (sum, debt) => sum + debt.amount,
+        0
+      );
+    } else if (type === "repayment") {
+      transactionToday.myOwnDebtRepay.push({ amount, date: normalizedDate });
+      transactionToday.totalMyOwnDebtRepay = transactionToday.myOwnDebtRepay.reduce(
+        (sum, repayment) => sum + repayment.amount,
+        0
+      );
+    } else {
+      return res.status(400).json({ message: "Invalid type provided!" });
+    }
+
+    await transactionToday.save();
+
+    res.status(200).json({
+      message: `My own ${type} updated successfully!`,
+      transaction: transactionToday,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: `Failed to update my own ${type}!`,
+      error: error.message,
+    });
   }
 };

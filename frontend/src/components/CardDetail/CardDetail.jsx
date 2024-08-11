@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import "./CardDetail.css";
 import FarmerSlipDetails from "./FarmerSlipDetails";
-import { fetchShops, fetchFarmers, fetchCardDetails } from "../../utils/dataService";
+import {
+  fetchShops,
+  fetchFarmers,
+  fetchCardDetails,
+} from "../../utils/dataService";
 const CardDetail = () => {
   const [loadedData, setLoadedData] = useState(null);
   const [shops, setShops] = useState([]);
@@ -12,7 +16,6 @@ const CardDetail = () => {
   const [formRows, setFormRows] = useState([
     { farmerName: "", shopName: "", stockName: "", quantity: "", price: "" },
   ]);
-  
 
   useEffect(() => {
     const initializeData = async () => {
@@ -39,7 +42,7 @@ const CardDetail = () => {
     setFormRows((prevRows) => {
       const lastRow = prevRows[prevRows.length - 1];
       const newRow = {
-        farmerName: lastRow ? lastRow.farmerName : "", 
+        farmerName: lastRow ? lastRow.farmerName : "",
         shopName: "",
         stockName: "",
         quantity: "",
@@ -50,135 +53,151 @@ const CardDetail = () => {
   };
 
   const handleSave = async () => {
-    if (formRows.some(row => !row.farmerName || !row.shopName || !row.stockName || !row.quantity || !row.price)) {
+    if (
+      formRows.some(
+        (row) =>
+          !row.farmerName ||
+          !row.shopName ||
+          !row.stockName ||
+          !row.quantity ||
+          !row.price
+      )
+    ) {
       alert("Please fill out all fields before saving.");
       return;
     }
-    try {
-      const newPurchases = formRows.map((row) => ({
-        farmerName: row.farmerName,
-        shopName: row.shopName,
-        stockName: row.stockName,
-        quantity: row.quantity,
-        price: row.price,
-        total: row.quantity * row.price,
-      }));
-      let id = individualCardDetails?._id;
-      if (id === undefined) {
-        console.log("farmer Name: ", individualFarmerData.name);
-        const createCardDetailsResponse = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/create-deal`,
+    if (individualCardDetails?.doneStatus) {
+      alert("Already saved once, can't update it!");
+      setFormRows([
+        { farmerName: "", shopName: "", stockName: "", quantity: "", price: "" },
+      ]);
+      return;
+    }
+      try {
+        const newPurchases = formRows.map((row) => ({
+          farmerName: row.farmerName,
+          shopName: row.shopName,
+          stockName: row.stockName,
+          quantity: row.quantity,
+          price: row.price,
+          total: row.quantity * row.price,
+        }));
+        let id = individualCardDetails?._id;
+        if (id === undefined) {
+          console.log("farmer Name: ", individualFarmerData.name);
+          const createCardDetailsResponse = await fetch(
+            `${process.env.REACT_APP_BACKEND_URL}/create-deal`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ name: individualFarmerData?.name }),
+            }
+          );
+          if (!createCardDetailsResponse.ok) {
+            throw new Error("Failed to create new Card!");
+          }
+          const data = await createCardDetailsResponse.json();
+          setIndividualCardDetails(data);
+          console.log("response", createCardDetailsResponse);
+          id = data._id;
+        }
+        const updateCardResponse = await fetch(
+          `${process.env.REACT_APP_BACKEND_URL}/update-card-details/${id}`,
           {
-            method: "POST",
+            method: "PUT",
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ name: individualFarmerData?.name }),
+            body: JSON.stringify({ purchases: newPurchases }),
           }
         );
-        if (!createCardDetailsResponse.ok) {
-          throw new Error("Failed to create new Card!");
+        if (!updateCardResponse.ok) {
+          throw new Error("Failed to update card details");
         }
-        const data = await createCardDetailsResponse.json();
-        setIndividualCardDetails(data);
-        console.log("response", createCardDetailsResponse);
-        id = data._id;
-      }
-      const updateCardResponse = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/update-card-details/${id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ purchases: newPurchases }),
-        }
-      );
-      if (!updateCardResponse.ok) {
-        throw new Error("Failed to update card details");
-      }
-      console.log("Card details updated successfully");
+        console.log("Card details updated successfully");
 
-      const slipsMap = new Map(); 
-      const findOrCreateSlipResponses = await Promise.all(
-        newPurchases.map(async (purchase) => {
-          try {
-            // Find or create the slip
-            const response = await fetch(
-              `${process.env.REACT_APP_BACKEND_URL}/slip/findOrCreate`,
-              {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ shopName: purchase.shopName }),
-              }
-            );
-            if (!response.ok) {
-              throw new Error(
-                `Failed to find or create slip for ${purchase.shopName}`
+        const slipsMap = new Map();
+        const findOrCreateSlipResponses = await Promise.all(
+          newPurchases.map(async (purchase) => {
+            try {
+              // Find or create the slip
+              const response = await fetch(
+                `${process.env.REACT_APP_BACKEND_URL}/slip/findOrCreate`,
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({ shopName: purchase.shopName }),
+                }
               );
-            }
-            const slip = await response.json();
-
-            // Add to slipsMap using _id as key and shopName as value
-            slipsMap.set(slip._id, slip.shopName);
-            console.log("Slip added to map:", slip._id, slip.shopName);
-          } catch (error) {
-            console.error(
-              `Error finding or creating slip for ${purchase.shopName}:`,
-              error
-            );
-            throw error;
-          }
-        })
-      );
-
-      // Step 4: Update slips with new purchases
-      const updateSlipResponses = await Promise.all(
-        Array.from(slipsMap.keys()).map(async (_id) => {
-          try {
-            const shopName = slipsMap.get(_id);
-            const purchasesToUpdate = newPurchases.filter(
-              (p) => p.shopName === shopName
-            );
-            const totalAmountToUpdate = purchasesToUpdate.reduce(
-              (total, p) => total + p.total,
-              0
-            );
-
-            const updateSlipResponse = await fetch(
-              `${process.env.REACT_APP_BACKEND_URL}/slip/update/${_id}`,
-              {
-                method: "PUT",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  shopName,
-                  purchases: purchasesToUpdate,
-                  totalAmount: totalAmountToUpdate,
-                }),
+              if (!response.ok) {
+                throw new Error(
+                  `Failed to find or create slip for ${purchase.shopName}`
+                );
               }
-            );
-            if (!updateSlipResponse.ok) {
-              throw new Error(`Failed to update slip ${_id}`);
-            }
-            console.log(
-              `Slip ${_id} updated successfully with purchases:`,
-              purchasesToUpdate
-            );
-          } catch (error) {
-            console.error(`Error updating slip ${_id}:`, error);
-            throw error;
-          }
-        })
-      );
+              const slip = await response.json();
 
-      alert("সকল স্লিপ আপডেট সম্পূর্ন হয়েছে !!");
-    } catch (error) {
-      console.error("Error in handleSave:", error);
-    }
+              // Add to slipsMap using _id as key and shopName as value
+              slipsMap.set(slip._id, slip.shopName);
+              console.log("Slip added to map:", slip._id, slip.shopName);
+            } catch (error) {
+              console.error(
+                `Error finding or creating slip for ${purchase.shopName}:`,
+                error
+              );
+              throw error;
+            }
+          })
+        );
+
+        // Step 4: Update slips with new purchases
+        const updateSlipResponses = await Promise.all(
+          Array.from(slipsMap.keys()).map(async (_id) => {
+            try {
+              const shopName = slipsMap.get(_id);
+              const purchasesToUpdate = newPurchases.filter(
+                (p) => p.shopName === shopName
+              );
+              const totalAmountToUpdate = purchasesToUpdate.reduce(
+                (total, p) => total + p.total,
+                0
+              );
+
+              const updateSlipResponse = await fetch(
+                `${process.env.REACT_APP_BACKEND_URL}/slip/update/${_id}`,
+                {
+                  method: "PUT",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    shopName,
+                    purchases: purchasesToUpdate,
+                    totalAmount: totalAmountToUpdate,
+                  }),
+                }
+              );
+              if (!updateSlipResponse.ok) {
+                throw new Error(`Failed to update slip ${_id}`);
+              }
+              console.log(
+                `Slip ${_id} updated successfully with purchases:`,
+                purchasesToUpdate
+              );
+            } catch (error) {
+              console.error(`Error updating slip ${_id}:`, error);
+              throw error;
+            }
+          })
+        );
+
+        alert("সকল স্লিপ আপডেট সম্পূর্ন হয়েছে !!");
+      } catch (error) {
+        console.error("Error in handleSave:", error);
+      }
   };
 
   const handleShopChange = (index, event) => {
@@ -263,7 +282,6 @@ const CardDetail = () => {
                   </select>
                 </td>
 
-               
                 <td>
                   <input
                     type="text"

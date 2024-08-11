@@ -1,5 +1,5 @@
 const Slip = require("../models/slip");
-
+const Shop = require("../models/shop");
 exports.findOrCreateSlip = async (req, res) => {
   const { shopName } = req.body;
 
@@ -31,9 +31,9 @@ exports.findOrCreateSlip = async (req, res) => {
         },
       },
       {
-        new: true, 
-        upsert: true, 
-        setDefaultsOnInsert: true, 
+        new: true,
+        upsert: true,
+        setDefaultsOnInsert: true,
       }
     );
 
@@ -96,7 +96,7 @@ exports.getSlipDetails = async (req, res) => {
 };
 
 exports.findSlipByDate = async (req, res) => {
-  const { date } = req.params; 
+  const { date } = req.params;
   try {
     const slips = await Slip.find({
       createdAt: date,
@@ -129,5 +129,59 @@ exports.updateSlipPaidAmount = async (req, res) => {
   } catch (error) {
     console.error("Error updating slip's paidAmount:", error);
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+exports.updateShopDueForToday = async (req, res) => {
+  const currentDate = new Date();
+  const year = currentDate.getFullYear();
+  const month = String(currentDate.getMonth() + 1).padStart(2, "0");
+  const day = String(currentDate.getDate()).padStart(2, "0");
+  const startOfDay = new Date(Date.UTC(year, month - 1, day, 0, 0, 0));
+  const endOfDay = new Date(Date.UTC(year, month - 1, day, 23, 59, 59, 999));
+
+  try {
+    const slips = await Slip.find({
+      createdAt: {
+        $gte: startOfDay,
+        $lt: endOfDay,
+      },
+    });
+
+    if (!slips || slips.length === 0) {
+      return res.status(404).json({ message: "No slips found for today" });
+    }
+
+    const updatePromises = slips.map(async (slip) => {
+      if (slip.totalAmount !== slip.paidAmount) {
+        const remainingDue = slip.totalAmount - slip.paidAmount;
+
+        try {
+          const shop = await Shop.findOne({ shopName: slip.shopName });
+          if (!shop) {
+            console.error(`Shop not found for slip with ID ${slip._id}`);
+            return; // Skip updating this shop if not found
+          }
+          console.log("total DUe before", shop.totalDue);
+          shop.totalDue += remainingDue;
+          console.log("total due after : ", shop.totalDue);
+
+          await shop.save();
+        } catch (error) {
+          console.error(`Error updating shop ${slip.shopName}:`, error);
+        }
+      }
+    });
+
+    await Promise.all(updatePromises);
+
+    res
+      .status(200)
+      .json({ message: "Shops' due amounts updated successfully" });
+  } catch (error) {
+    console.error("Error updating shops' due amounts:", error);
+    if (!res.headersSent) {
+      res.status(500).json({ message: "Server error" });
+    }
   }
 };

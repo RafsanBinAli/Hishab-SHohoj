@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./DailyTransaction.css";
 import LastCalculation from "./LastCalculation";
 import TransactionButton from "./TransactionButtons";
+import DailyTransactionTable from "./DailyTransactionTable";
 
 const DailyTransaction = () => {
   const [transactionDetails, setTransactionDetails] = useState(null);
@@ -55,482 +56,57 @@ const DailyTransaction = () => {
         transactionDetails={transactionDetails}
         setTransactionDetails={setTransactionDetails}
       />
+      
       <div className="row mb-4">
-        {/* First Table */}
         <div className="col-md-6">
-          <div className="card">
-            <div className="card-body table-responsive">
-              <table className="table table-striped">
-                <thead>
-                  <tr>
-                    <th> হিসাবের ধরণ </th>
-                    <th>নাম</th>
-                    <th>টাকা</th>
-                    <th>মোট</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {/* Rows for the first table */}
-                  <tr>
-                    <td className="font-weight-bold">দোকানের জমা</td>
-                    <td colSpan="2">
-                      <div
-                        className={
-                          transactionDetails?.credit.dokanPayment.length > 3
-                            ? "scrollable-cell"
-                            : ""
-                        }
-                      >
-                        <table className="table table-bordered">
-                          <tbody>
-                            {transactionDetails?.credit.dokanPayment.map(
-                              (item, index) => (
-                                <tr key={index}>
-                                  <td>{item.name}</td>
-                                  <td>{item.amount}</td>
-                                </tr>
-                              )
-                            )}
-                          </tbody>
-                        </table>
-                      </div>
-                    </td>
-                    <td>
-                      {transactionDetails?.credit?.dokanPayment
-                        ? transactionDetails?.credit.dokanPayment.reduce(
-                            (total, item) => total + item.amount,
-                            0
-                          )
-                        : 0}
-                    </td>
-                  </tr>
-
-                  <tr>
-                    <td className="font-weight-bold">ধার (porishod)</td>
-                    <td colSpan="2">
-                      <div
-                        className={
-                          transactionDetails?.cebit?.dharReturns &&
-                          transactionDetails?.credit.dharReturns.length > 3
-                            ? "scrollable-cell"
-                            : ""
-                        }
-                      >
-                        <table className="table table-bordered">
-                          <tbody>
-                            {transactionDetails?.credit?.dharReturns &&
-                              transactionDetails?.credit.dharReturns.map(
-                                (item, index) => (
-                                  <tr key={index}>
-                                    <td>{item.name}</td>
-                                    <td>{item.amount}</td>
-                                  </tr>
-                                )
-                              )}
-                          </tbody>
-                        </table>
-                      </div>
-                    </td>
-                    <td>
-                      {transactionDetails?.credit?.dharReturns
-                        ? transactionDetails?.credit.dharReturns.reduce(
-                            (total, item) => total + item.amount,
-                            0
-                          )
-                        : 0}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="font-weight-bold">কৃষকের টাকা(জমা)</td>
-                    <td colSpan="2">
-                      <div
-                        className={
-                          transactionDetails?.debit.farmersPayment.length > 3
-                            ? "scrollable-cell"
-                            : ""
-                        }
-                      >
-                        <table className="table table-bordered">
-                          <tbody>
-                            {transactionDetails?.debit.farmersPayment.map(
-                              (item, index) => (
-                                <tr key={index}>
-                                  <td>{item.name}</td>
-                                  <td>{item.amount}</td>
-                                </tr>
-                              )
-                            )}
-                          </tbody>
-                        </table>
-                      </div>
-                    </td>
-                    <td>
-                      {transactionDetails?.debit?.farmersPayment
-                        ? transactionDetails?.debit.farmersPayment.reduce(
-                            (total, item) => total + item.amount,
-                            0
-                          )
-                        : 0}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="font-weight-bold">ধার (জমা)</td>
-                    <td colSpan="2">
-                      <div
-                        className={
-                          transactionDetails?.debit?.dhar &&
-                          transactionDetails?.debit.dhar.length > 3
-                            ? "scrollable-cell"
-                            : ""
-                        }
-                      >
-                        <table className="table table-bordered">
-                          <tbody>
-                            {transactionDetails?.debit?.dhar &&
-                              transactionDetails?.debit.dhar.map(
-                                (item, index) => (
-                                  <tr key={index}>
-                                    <td>{item.name}</td>
-                                    <td>{item.amount}</td>
-                                  </tr>
-                                )
-                              )}
-                          </tbody>
-                        </table>
-                      </div>
-                    </td>
-                    <td>
-                      {transactionDetails?.debit?.dhar
-                        ? transactionDetails?.debit.dhar.reduce(
-                            (total, item) => total + item.amount,
-                            0
-                          )
-                        : 0}
-                    </td>
-                  </tr>
-
-                  {/* অনন্য খরচ Row */}
-                  <tr>
-                    <td className="font-weight-bold">অন্যান্য (জমা)</td>
-                    <td colSpan="2">
-                      <div
-                        className={
-                          transactionDetails?.debit?.otherCost &&
-                          transactionDetails?.debit.otherCost.length > 3
-                            ? "scrollable-cell"
-                            : ""
-                        }
-                      >
-                        <table className="table table-bordered">
-                          <tbody>
-                            {transactionDetails?.debit?.otherCost &&
-                              transactionDetails?.debit.otherCost.map(
-                                (item, index) => (
-                                  <tr key={index}>
-                                    <td>{item.name}</td>
-                                    <td>{item.amount}</td>
-                                  </tr>
-                                )
-                              )}
-                          </tbody>
-                        </table>
-                      </div>
-                    </td>
-                    <td>
-                      {transactionDetails?.debit?.otherCost
-                        ? transactionDetails?.debit.otherCost.reduce(
-                            (total, item) => total + item.amount,
-                            0
-                          )
-                        : 0}
-                    </td>
-                  </tr>
-
-                  {/* দৈনিক নগদ জমা Row */}
-                  <tr>
-                    <td className="calcu-font-weight-bold">দৈনিক নগদ জমা:</td>
-                    <td colSpan="2">
-                      <div
-                        className={
-                          transactionDetails?.dailyCashStack &&
-                          transactionDetails?.dailyCashStack.length > 3
-                            ? "scrollable-cell"
-                            : ""
-                        }
-                      >
-                        <table className="table table-bordered">
-                          <tbody>
-                            {transactionDetails?.dailyCashStack &&
-                              transactionDetails?.dailyCashStack.map(
-                                (item, index) => (
-                                  <tr key={index}>
-                                    <td>{item.name}</td>
-                                    <td>{item.amount}</td>
-                                  </tr>
-                                )
-                              )}
-                          </tbody>
-                        </table>
-                      </div>
-                    </td>
-                    <td>
-                      {transactionDetails?.dailyCashStack
-                        ? transactionDetails?.dailyCashStack.reduce(
-                            (total, item) => total + item.amount,
-                            0
-                          )
-                        : 0}
-                    </td>
-                  </tr>
-                  <tr className="calcu-font-weight-bold">
-                    <td> মোট </td>
-                    <td colSpan="2"></td>
-                    <td> 0 </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
+          <DailyTransactionTable
+            title="আয়"
+            data={[
+              {
+                title: "দৈনিক নগদ জমা",
+                transactionData: transactionDetails?.dailyCashStack || [],
+              },
+              {
+                title: "দোকানের জমা",
+                transactionData: transactionDetails?.credit?.dokanPayment || [],
+              },
+              {
+                title: "ধার (porishod)",
+                transactionData: transactionDetails?.credit?.dharReturns || [],
+              },
+              {
+                title: "নিজের ঋণ",
+                transactionData: transactionDetails?.totalMyOwnDebt || [],
+              }
+            ]}
+          />
         </div>
 
-        {/* Second Table */}
         <div className="col-md-6">
-          <div className="card">
-            <div className="card-body table-responsive">
-              <table className="table table-striped">
-                <thead>
-                  <tr>
-                    <th> হিসাবের ধরণ </th>
-                    <th>নাম</th>
-                    <th>টাকা</th>
-                    <th>মোট</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {/* Rows for the second table */}
-                  <tr>
-                    <td className="font-weight-bold">দোকানের জমা</td>
-                    <td colSpan="2">
-                      <div
-                        className={
-                          transactionDetails?.credit.dokanPayment.length > 3
-                            ? "scrollable-cell"
-                            : ""
-                        }
-                      >
-                        <table className="table table-bordered">
-                          <tbody>
-                            {transactionDetails?.credit.dokanPayment.map(
-                              (item, index) => (
-                                <tr key={index}>
-                                  <td>{item.name}</td>
-                                  <td>{item.amount}</td>
-                                </tr>
-                              )
-                            )}
-                          </tbody>
-                        </table>
-                      </div>
-                    </td>
-                    <td>
-                      {transactionDetails?.credit?.dokanPayment
-                        ? transactionDetails?.credit.dokanPayment.reduce(
-                            (total, item) => total + item.amount,
-                            0
-                          )
-                        : 0}
-                    </td>
-                  </tr>
-
-                  <tr>
-                    <td className="font-weight-bold">ধার (porishod)</td>
-                    <td colSpan="2">
-                      <div
-                        className={
-                          transactionDetails?.cebit?.dharReturns &&
-                          transactionDetails?.credit.dharReturns.length > 3
-                            ? "scrollable-cell"
-                            : ""
-                        }
-                      >
-                        <table className="table table-bordered">
-                          <tbody>
-                            {transactionDetails?.credit?.dharReturns &&
-                              transactionDetails?.credit.dharReturns.map(
-                                (item, index) => (
-                                  <tr key={index}>
-                                    <td>{item.name}</td>
-                                    <td>{item.amount}</td>
-                                  </tr>
-                                )
-                              )}
-                          </tbody>
-                        </table>
-                      </div>
-                    </td>
-                    <td>
-                      {transactionDetails?.credit?.dharReturns
-                        ? transactionDetails?.credit.dharReturns.reduce(
-                            (total, item) => total + item.amount,
-                            0
-                          )
-                        : 0}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="font-weight-bold">কৃষকের টাকা(খরচ)</td>
-                    <td colSpan="2">
-                      <div
-                        className={
-                          transactionDetails?.debit.farmersPayment.length > 3
-                            ? "scrollable-cell"
-                            : ""
-                        }
-                      >
-                        <table className="table table-bordered">
-                          <tbody>
-                            {transactionDetails?.debit.farmersPayment.map(
-                              (item, index) => (
-                                <tr key={index}>
-                                  <td>{item.name}</td>
-                                  <td>{item.amount}</td>
-                                </tr>
-                              )
-                            )}
-                          </tbody>
-                        </table>
-                      </div>
-                    </td>
-                    <td>
-                      {transactionDetails?.debit?.farmersPayment
-                        ? transactionDetails?.debit.farmersPayment.reduce(
-                            (total, item) => total + item.amount,
-                            0
-                          )
-                        : 0}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="font-weight-bold">ধার (খরচ)</td>
-                    <td colSpan="2">
-                      <div
-                        className={
-                          transactionDetails?.debit?.dhar &&
-                          transactionDetails?.debit.dhar.length > 3
-                            ? "scrollable-cell"
-                            : ""
-                        }
-                      >
-                        <table className="table table-bordered">
-                          <tbody>
-                            {transactionDetails?.debit?.dhar &&
-                              transactionDetails?.debit.dhar.map(
-                                (item, index) => (
-                                  <tr key={index}>
-                                    <td>{item.name}</td>
-                                    <td>{item.amount}</td>
-                                  </tr>
-                                )
-                              )}
-                          </tbody>
-                        </table>
-                      </div>
-                    </td>
-                    <td>
-                      {transactionDetails?.debit?.dhar
-                        ? transactionDetails?.debit.dhar.reduce(
-                            (total, item) => total + item.amount,
-                            0
-                          )
-                        : 0}
-                    </td>
-                  </tr>
-
-                  {/* অনন্য খরচ Row */}
-                  <tr>
-                    <td className="font-weight-bold">অন্যান্য (খরচ)</td>
-                    <td colSpan="2">
-                      <div
-                        className={
-                          transactionDetails?.debit?.otherCost &&
-                          transactionDetails?.debit.otherCost.length > 3
-                            ? "scrollable-cell"
-                            : ""
-                        }
-                      >
-                        <table className="table table-bordered">
-                          <tbody>
-                            {transactionDetails?.debit?.otherCost &&
-                              transactionDetails?.debit.otherCost.map(
-                                (item, index) => (
-                                  <tr key={index}>
-                                    <td>{item.name}</td>
-                                    <td>{item.amount}</td>
-                                  </tr>
-                                )
-                              )}
-                          </tbody>
-                        </table>
-                      </div>
-                    </td>
-                    <td>
-                      {transactionDetails?.debit?.otherCost
-                        ? transactionDetails?.debit.otherCost.reduce(
-                            (total, item) => total + item.amount,
-                            0
-                          )
-                        : 0}
-                    </td>
-                  </tr>
-
-                  {/* দৈনিক নগদ জমা Row */}
-                  <tr>
-                    <td className="calcu-font-weight-bold">দৈনিক নগদ জমা:</td>
-                    <td colSpan="2">
-                      <div
-                        className={
-                          transactionDetails?.dailyCashStack &&
-                          transactionDetails?.dailyCashStack.length > 3
-                            ? "scrollable-cell"
-                            : ""
-                        }
-                      >
-                        <table className="table table-bordered">
-                          <tbody>
-                            {transactionDetails?.dailyCashStack &&
-                              transactionDetails?.dailyCashStack.map(
-                                (item, index) => (
-                                  <tr key={index}>
-                                    <td>{item.name}</td>
-                                    <td>{item.amount}</td>
-                                  </tr>
-                                )
-                              )}
-                          </tbody>
-                        </table>
-                      </div>
-                    </td>
-                    <td>
-                      {transactionDetails?.dailyCashStack
-                        ? transactionDetails?.dailyCashStack.reduce(
-                            (total, item) => total + item.amount,
-                            0
-                          )
-                        : 0}
-                    </td>
-                  </tr>
-
-                  <tr className="calcu-font-weight-bold">
-                    <td> মোট </td>
-                    <td colSpan="2"></td>
-                    <td> 0 </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
+          <DailyTransactionTable
+            title="ব্যয়"
+            data={[
+              {
+                title: "কৃষকের টাকা(খরচ)",
+                transactionData: transactionDetails?.debit?.farmersPayment || [],
+              },
+              {
+                title: "ধার (খরচ)",
+                transactionData: transactionDetails?.debit?.dhar || [],
+              },
+              {
+                title: "অন্যান্য (খরচ)",
+                transactionData: transactionDetails?.debit?.otherCost || [],
+              },
+              {
+                title: "নিজের ঋণ পরিশোধ",
+                transactionData: transactionDetails?.totalMyOwnDebtRepay || [],
+              }
+            ]}
+          />
         </div>
       </div>
+        
       <LastCalculation transactionDetails={transactionDetails} />
     </div>
   );

@@ -70,7 +70,32 @@ const transactionSchema = new Schema({
       default: 0,
     },
   },
-
+  myOwnDebt: [
+    {
+      amount: {
+        type: Number,
+        required: true,
+      },
+      date: {
+        type: Date,
+        required: true,
+        default: Date.now,
+      },
+    },
+  ],
+  myOwnDebtRepay: [
+    {
+      amount: {
+        type: Number,
+        required: true,
+      },
+      date: {
+        type: Date,
+        required: true,
+        default: Date.now,
+      },
+    },
+  ],
   totalProfit: {
     type: Number,
     default: 0,
@@ -99,9 +124,17 @@ const transactionSchema = new Schema({
     type: Number,
     default: 0,
   },
+  totalMyOwnDebt: {
+    type: Number,
+    default: 0,
+  },
+  totalMyOwnDebtRepay: {
+    type: Number,
+    default: 0,
+  },
 });
 
-// Pre-save middleware to calculate totalProfit, totalCost, netProfit, and totalDebts
+// Pre-save middleware to calculate totals
 transactionSchema.pre("save", function (next) {
   const totalProfit =
     this.credit.dharReturns.reduce((sum, item) => sum + item.amount, 0) +
@@ -118,10 +151,16 @@ transactionSchema.pre("save", function (next) {
 
   const totalDebts = this.totalDebtsOfShops + this.totalDebtsOfFarmers;
 
+  const totalMyOwnDebt = this.myOwnDebt.reduce((sum, item) => sum + item.amount, 0);
+
+  const totalMyOwnDebtRepay = this.myOwnDebtRepay.reduce((sum, item) => sum + item.amount, 0);
+
   this.totalProfit = totalProfit;
   this.totalCost = totalCost;
   this.netProfit = netProfit;
   this.totalDebts = totalDebts;
+  this.totalMyOwnDebt = totalMyOwnDebt;
+  this.totalMyOwnDebtRepay = totalMyOwnDebtRepay;
 
   next();
 });
