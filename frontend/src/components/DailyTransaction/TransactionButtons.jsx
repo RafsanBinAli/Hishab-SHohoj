@@ -32,7 +32,7 @@ const TransactionButton = ({ transactionDetails, setTransactionDetails }) => {
       const data = await response.json();
       setTransactionDetails(data.transaction);
       alert("Saved Successfully!");
-      setOtherCost(0)
+      setOtherCost(0);
       console.log("Data updated successfully:", data);
     } catch (error) {
       console.log("Error occurred:", error.message);
@@ -63,7 +63,7 @@ const TransactionButton = ({ transactionDetails, setTransactionDetails }) => {
       const data = await response.json();
       setTransactionDetails(data.transaction);
       alert("Saved Successfully!");
-      setDailyCashStack(0)
+      setDailyCashStack(0);
       console.log("Data updated successfully:", data);
     } catch (error) {
       console.log("Error occurred:", error.message);
@@ -84,7 +84,7 @@ const TransactionButton = ({ transactionDetails, setTransactionDetails }) => {
           },
           body: JSON.stringify({
             amount: isRepayment ? myOwnDebtRepayAmount : myOwnDebtAmount,
-            type: isRepayment ? "repayment" : "debt", 
+            type: isRepayment ? "repayment" : "debt",
           }),
         }
       );
@@ -98,7 +98,7 @@ const TransactionButton = ({ transactionDetails, setTransactionDetails }) => {
       setTransactionDetails(data.transaction);
       alert("Saved Successfully!");
       setMyOwnDebtAmount(0);
-      setMyOwnDebtRepayAmount(0)
+      setMyOwnDebtRepayAmount(0);
       console.log("Data updated successfully:", data);
     } catch (error) {
       console.log("Error occurred:", error.message);
@@ -108,110 +108,109 @@ const TransactionButton = ({ transactionDetails, setTransactionDetails }) => {
   return (
     <>
       <div className="calcu-row mb-4">
-        <div className="col-md-12" style={{ width: "50%" }}>
-          <div className="mb-3">
-            <label htmlFor="otherCost" className="font-weight-bold">
-              অন্যান্য খরচ:
-            </label>
-            <input
-              type="number"
-              id="otherCost"
-              className="calcu-daily-cash-stack-input form-control d-inline-block"
-              value={otherCost}
-              onChange={(e) => setOtherCost(Number(e.target.value))}
-              style={{
-                width: "auto",
-                marginLeft: "10px",
-                marginRight: "10px",
-              }}
-            />
-            <button
-              type="button"
-              className="calcu-daily-cash-stack-submit btn btn-primary"
-              onClick={handleOtherCostSubmit}
-            >
-              সংরক্ষণ করুন
-            </button>
-          </div>
+        <div className="calcu-col-md-8">
+          <div className="calcu-card">
+            <div className="calcu-form-group">
+              <label
+                htmlFor="otherCost"
+                className="calcu-daily-cash-stack-label"
+              >
+                অন্যান্য খরচ:
+              </label>
+              <input
+                type="number"
+                id="otherCost"
+                className="calcu-daily-cash-stack-input form-control"
+                value={otherCost}
+                onChange={(e) => setOtherCost(Number(e.target.value))}
+              />
+              <button
+                type="button"
+                className="calcu-daily-cash-stack-submit btn btn-primary"
+                onClick={handleOtherCostSubmit}
+              >
+                সংরক্ষণ করুন
+              </button>
+            </div>
 
-          <div className="mb-3">
-            <label htmlFor="dailyCashStack" className="font-weight-bold">
-              দৈনিক নগদ জমা:
-            </label>
-            <input
-              type="number"
-              id="dailyCashStack"
-              className="calcu-daily-cash-stack-input form-control d-inline-block"
-              value={dailyCashStack}
-              onChange={(e) => setDailyCashStack(Number(e.target.value))}
-              style={{
-                width: "auto",
-                marginLeft: "10px",
-                marginRight: "10px",
-              }}
-            />
-            <button
-              type="button"
-              className="calcu-daily-cash-stack-submit btn btn-primary"
-              onClick={handleDailyCashStack}
-            >
-              সংরক্ষণ করুন
-            </button>
-          </div>
+            <div className="calcu-form-group">
+              <label
+                htmlFor="dailyCashStack"
+                className="calcu-daily-cash-stack-label"
+              >
+                দৈনিক নগদ জমা:
+              </label>
+              <input
+                type="number"
+                id="dailyCashStack"
+                className="calcu-daily-cash-stack-input form-control"
+                value={dailyCashStack}
+                onChange={(e) => setDailyCashStack(Number(e.target.value))}
+              />
+              <button
+                type="button"
+                className="calcu-daily-cash-stack-submit btn btn-primary"
+                onClick={handleDailyCashStack}
+              >
+                সংরক্ষণ করুন
+              </button>
+            </div>
 
-          <div className="mb-3">
-            <label htmlFor="myOwnDebtAmount" className="font-weight-bold">
-              নিজের ঋণ পরিমাণ:
-            </label>
-            <input
-              type="number"
-              id="myOwnDebtAmount"
-              className="calcu-daily-cash-stack-input form-control d-inline-block"
-              value={myOwnDebtAmount}
-              onChange={(e) => setMyOwnDebtAmount(Number(e.target.value))}
-              style={{
-                width: "auto",
-                marginLeft: "10px",
-                marginRight: "10px",
-              }}
-            />
-            <button
-              type="button"
-              className="calcu-daily-cash-stack-submit btn btn-primary"
-              onClick={(e) => handleMyOwnDebtAction(e, false)} // For debt submission
-            >
-              সংরক্ষণ করুন
-            </button>
-          </div>
+            <div className="calcu-form-group">
+              <label
+                htmlFor="myOwnDebt"
+                className="calcu-daily-cash-stack-label"
+              >
+                নিজের ঋণ পরিমাণ:
+              </label>
+              <input
+                type="number"
+                id="myOwnDebt"
+                className="calcu-daily-cash-stack-input form-control"
+                value={myOwnDebtAmount}
+                onChange={(e) => setMyOwnDebtAmount(Number(e.target.value))}
+              />
+              <button
+                type="button"
+                className="calcu-daily-cash-stack-submit btn btn-primary"
+                onClick={(e) => handleMyOwnDebtAction(e, false)}
+              >
+                সংরক্ষণ করুন
+              </button>
+            </div>
 
-          <div className="mb-3">
-            <label htmlFor="myOwnDebtRepayAmount" className="font-weight-bold">
-              নিজের ঋণ পরিশোধের পরিমাণ:
-            </label>
-            <input
-              type="number"
-              id="myOwnDebtRepayAmount"
-              className="calcu-daily-cash-stack-input form-control d-inline-block"
-              value={myOwnDebtRepayAmount}
-              onChange={(e) => setMyOwnDebtRepayAmount(Number(e.target.value))}
-              style={{
-                width: "auto",
-                marginLeft: "10px",
-                marginRight: "10px",
-              }}
-            />
-            <button
-              type="button"
-              className="calcu-daily-cash-stack-submit btn btn-primary"
-              onClick={(e) => handleMyOwnDebtAction(e, true)} // For debt repayment
-            >
-              সংরক্ষণ করুন
-            </button>
+            <div className="calcu-form-group">
+              <label
+                htmlFor="myOwnDebtRepay"
+                className="calcu-daily-cash-stack-label"
+              >
+                নিজের ঋণ পরিশোধের পরিমাণ:
+              </label>
+              <input
+                type="number"
+                id="myOwnDebtRepay"
+                className="calcu-daily-cash-stack-input form-control"
+                value={myOwnDebtRepayAmount}
+                onChange={(e) =>
+                  setMyOwnDebtRepayAmount(Number(e.target.value))
+                }
+              />
+              <button
+                type="button"
+                className="calcu-daily-cash-stack-submit btn btn-primary"
+                onClick={(e) => handleMyOwnDebtAction(e, true)}
+              >
+                সংরক্ষণ করুন
+              </button>
+            </div>
           </div>
         </div>
-        <Link to="/final-hishab" style={{ marginLeft: "auto" }}>
-          <button className="btn btn-primary">Final Hishab</button>
-        </Link>
+
+        <div className="final-hishab-button-container">
+          <Link to="/final-hishab">
+            <button className="final-hishab-button">Final Hishab</button>
+          </Link>
+        </div>
       </div>
     </>
   );

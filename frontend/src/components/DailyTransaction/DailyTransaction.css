@@ -6,12 +6,12 @@
 }
 
 h2.text-center.my-4.py-2.font-weight-bold {
-  font-size: 2rem; /* Increase font size */
-  font-weight: 900; /* Make it bolder */
-  color: #050505; /* Change text color */
-  background-color: #f8f9fa; /* Add background color */
+  font-size: 2rem;
+  font-weight: 900;
+  color: #050505;
+  background-color: #f8f9fa;
   padding: 10px;
-  border-radius: 10px; /* Add border radius for rounded corners */
+  border-radius: 10px;
 }
 
 .container-dailyTransaction .card {
@@ -25,7 +25,7 @@ h2.text-center.my-4.py-2.font-weight-bold {
 .container-dailyTransaction .table {
   width: 100%;
   margin-bottom: 0;
-  table-layout: fixed; /* Ensures equal column width */
+  table-layout: fixed;
 }
 
 .container-dailyTransaction .table td,
@@ -33,14 +33,26 @@ h2.text-center.my-4.py-2.font-weight-bold {
   border: 1px solid #ddd;
   padding: 8px;
   text-align: center;
-  white-space: nowrap; /* Prevents text wrapping */
+  white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis; /* Adds ellipsis if text overflows */
+  text-overflow: ellipsis;
 }
 
 .scrollable-cell {
   max-height: 120px;
   overflow-y: auto;
+}
+
+/* Additional CSS for DailyTransactionTable Titles */
+.daily-transaction-table-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #333;
+  margin-bottom: 15px;
+  padding: 10px;
+  background-color: #f1f1f1;
+  border-radius: 8px;
+  text-align: center;
 }
 
 /* Responsive Adjustments */
@@ -68,6 +80,12 @@ h2.text-center.my-4.py-2.font-weight-bold {
     padding: 6px;
     font-size: 0.875rem;
   }
+
+  .daily-transaction-table-title {
+    font-size: 1.3rem;
+    margin-bottom: 12px;
+    padding: 8px;
+  }
 }
 
 @media (max-width: 768px) {
@@ -80,6 +98,12 @@ h2.text-center.my-4.py-2.font-weight-bold {
   .container-dailyTransaction .table th {
     padding: 5px;
     font-size: 0.8rem;
+  }
+
+  .daily-transaction-table-title {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    padding: 6px;
   }
 }
 
@@ -97,5 +121,11 @@ h2.text-center.my-4.py-2.font-weight-bold {
 
   .row {
     flex-direction: column;
+  }
+
+  .daily-transaction-table-title {
+    font-size: 1rem;
+    margin-bottom: 8px;
+    padding: 5px;
   }
 }

@@ -3,37 +3,30 @@ import { useState, useEffect } from "react";
 
 const LastCalculation = ({ transactionDetails }) => {
   const [totalLav, setTotalLav] = useState(null);
+
   useEffect(() => {
-    const netProfit = transactionDetails?.netProfit;
-    setTotalLav(netProfit + transactionDetails?.dailyCashStack);
+    const netProfit = transactionDetails?.netProfit || 0;
+    setTotalLav(netProfit + (transactionDetails?.dailyCashStack || 0));
   }, [transactionDetails]);
 
   return (
-    <>
-      <div className="calcu-row final-summary-container">
-        <div className="calcu-col-md-6 mx-auto">
-          <div className="calcu-card">
-            <div className="calcu-card-header text-center font-weight-bold">
-              সারাংশ
-            </div>
-            <div className="calcu-card-body text-center">
-              <p className="calcu-font-weight-bold">
-                মোট জমা: {transactionDetails?.totalProfit} টাকা
-              </p>
-
-              <p className="calcu-font-weight-bold">
-                Daily Cash Stack: {transactionDetails?.dailyCashStack} টাকা
-              </p>
-              <p className="calcu-font-weight-bold">
-                মোট খরচ: {transactionDetails?.totalCost} টাকা
-              </p>
-
-              <p className="calcu-font-weight-bold">মোট লাভ: {totalLav} টাকা</p>
-            </div>
-          </div>
+    <div className="last-calculation-container">
+      <div className="last-calculation-card">
+        <div className="last-calculation-header">সারাংশ</div>
+        <div className="last-calculation-body">
+          <p className="last-calculation-item">
+            মোট জমা: {transactionDetails?.totalProfit || 0} টাকা
+          </p>
+          <p className="last-calculation-item">
+            Daily Cash Stack: {transactionDetails?.dailyCashStack || 0} টাকা
+          </p>
+          <p className="last-calculation-item">
+            মোট খরচ: {transactionDetails?.totalCost || 0} টাকা
+          </p>
+          <p className="last-calculation-item">মোট লাভ: {totalLav || 0} টাকা</p>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

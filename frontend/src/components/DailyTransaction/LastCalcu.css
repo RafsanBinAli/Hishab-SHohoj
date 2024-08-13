@@ -6,72 +6,57 @@
   font-family: 'Arial', sans-serif;
 }
 
-/* Responsive Flex Row */
+/* Flex Container for Form */
 .calcu-row {
   display: flex;
   flex-wrap: wrap; /* Allow wrapping for smaller screens */
-  justify-content: center;
   gap: 20px; /* Add space between columns */
 }
 
-/* Responsive Column */
-.calcu-col-md-6 {
-  width: 100%;
-  max-width: 600px;
-  padding: 0 15px; /* Add padding for smaller screens */
+/* Column Styling */
+.calcu-col-md-12 {
+  flex: 1;
+  min-width: 300px; /* Ensure columns have a minimum width */
 }
 
+/* Form Card */
 .calcu-card {
   background-color: #f8f9fa;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  transition: transform 0.2s ease-in-out;
-  margin-bottom: 20px; /* Add margin at the bottom */
-}
-
-.calcu-card:hover {
-  transform: translateY(-5px);
-}
-
-.calcu-card-header {
-  background-color: #007bff;
-  color: #ffffff;
-  padding: 15px;
-  font-size: 1.25rem;
-  border-bottom: 1px solid #007bff;
-}
-
-.calcu-card-body {
   padding: 20px;
-  text-align: center;
+  margin-bottom: 20px;
+  margin-left: 2rem;
+  margin-right: 28rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Space between form and button */
 }
 
-.calcu-font-weight-bold {
-  font-weight: bold;
-  margin: 10px 0;
-  color: #333;
+/* Flexbox for Form Elements */
+.calcu-form-group {
+  display: flex;
+  align-items: center; /* Align items vertically */
+  margin-bottom: 20px; /* Space between form groups */
 }
 
-.calcu-daily-cash-stack-form {
-  margin-top: 20px;
-}
-
+/* Label Styling */
 .calcu-daily-cash-stack-label {
-  display: block;
-  margin-bottom: 10px;
+  flex: 0 0 200px; /* Fixed width for labels */
   font-size: 1rem;
-  color: #555;
+  font-weight: bold;
+  color: #333;
+  margin-right: 10px; /* Gap between label and input */
 }
 
+/* Input Styling */
 .calcu-daily-cash-stack-input {
-  width: 100%; /* Full width on all screens */
+  flex: 1; /* Takes remaining space */
   padding: 10px;
   font-size: 1rem;
   border: 1px solid #ccc;
   border-radius: 4px;
-  margin-bottom: 20px;
-  transition: border-color 0.2s ease-in-out;
+  margin-right: 10px; /* Gap between input and button */
 }
 
 .calcu-daily-cash-stack-input:focus {
@@ -79,10 +64,9 @@
   outline: none;
 }
 
-/* Responsive Button Styles */
+/* Button Styling */
 .calcu-daily-cash-stack-submit {
-  width: 100%; /* Full width for smaller screens */
-  max-width: 150px; /* Limit the max width */
+  width: 100px; /* Fixed width for buttons */
   background-color: #007bff;
   color: #fff;
   padding: 10px;
@@ -90,7 +74,6 @@
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s ease;
-  margin-left: auto; /* Align to the right by default */
 }
 
 .calcu-daily-cash-stack-submit:hover {
@@ -103,56 +86,148 @@
   transform: translateY(0);
 }
 
+/* Button Container for Final Hishab */
 .final-hishab-button-container {
   display: flex;
   justify-content: flex-end;
-  margin-top: 1rem;
-  margin-left: auto;
-  margin-right: 2rem;
+  margin-top: 20px;
 }
 
 .final-hishab-button {
   padding: 0.75rem 1.5rem;
   font-size: 1rem;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-/* Media Queries for Smaller Screens */
+.final-hishab-button:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+}
+
+.final-hishab-button:active {
+  background-color: #004085;
+  transform: translateY(0);
+}
+
+/* Flex Container for Form and Button */
+.form-button-container {
+  display: flex;
+  justify-content: space-between; /* Space between form and button */
+  align-items: flex-start; /* Align items at the top */
+  gap: 20px; /* Space between elements */
+}
+
+/* Last Calculation Container */
+.last-calculation-container {
+  display: flex;
+  justify-content: center; /* Center the card */
+  padding: 20px;
+  background-color: #f0f2f5;
+}
+
+/* Last Calculation Card */
+.last-calculation-card {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  max-width: 600px; /* Limit card width */
+  width: 100%; /* Full width */
+}
+
+/* Last Calculation Header */
+.last-calculation-header {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+/* Last Calculation Body */
+.last-calculation-body {
+  text-align: center;
+}
+
+/* Last Calculation Item */
+.last-calculation-item {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+/* Responsive Styling for Smaller Screens */
 @media (max-width: 768px) {
-  .calcu-card {
-    margin: 0 10px;
-  }
-
   .calcu-row {
-    flex-direction: column; /* Stack items vertically on smaller screens */
+    flex-direction: column; /* Stack items vertically */
   }
 
-  .calcu-col-md-6 {
-    max-width: 100%; /* Full width column on smaller screens */
-    padding: 0; /* Remove padding for smaller screens */
+  .calcu-col-md-12 {
+    max-width: 100%; /* Full width column */
+    padding: 0; /* Remove padding */
   }
 
-  .calcu-daily-cash-stack-input,
-  .calcu-daily-cash-stack-submit {
+  .calcu-card {
+    margin-left: 0; /* Remove left margin */
+    margin-right: 0; /* Remove right margin */
+  }
+
+  .calcu-daily-cash-stack-label {
+    flex: 0 0 auto; /* Auto width for labels */
+    margin-right: 0; /* Remove margin on smaller screens */
+    font-size: 0.875rem; /* Slightly smaller font size */
+  }
+
+  .calcu-daily-cash-stack-input {
     width: 100%; /* Full width on smaller screens */
-    margin: 0.5rem 0; /* Add some spacing between input and button */
+    margin-right: 0; /* Remove margin on smaller screens */
   }
 
   .calcu-daily-cash-stack-submit {
-    margin-left: 0; /* Remove left margin for full-width buttons */
+    width: auto; /* Auto width for button on smaller screens */
+    padding: 8px; /* Smaller padding */
+    font-size: 0.875rem; /* Slightly smaller font size */
+  }
+
+  .form-button-container {
+    flex-direction: column; /* Stack form and button vertically */
+    align-items: center; /* Center align button */
   }
 
   .final-hishab-button-container {
-    justify-content: center;
+    justify-content: center; /* Center the button */
     margin-left: 0;
-    margin-top: 20px;
   }
 
-  .final-hishab-button {
-    width: 100%; /* Full width button on smaller screens */
+  .last-calculation-card {
+    padding: 15px; /* Adjust padding for smaller screens */
   }
 
-  .final-summary-container {
-    margin-bottom: 20px; /* Ensure proper bottom margin for final summary */
+  .last-calculation-header {
+    font-size: 1.25rem; /* Slightly smaller header font size */
+  }
+
+  .last-calculation-item {
+    font-size: 1rem; /* Adjust font size for items */
+  }
+}
+
+@media (max-width: 480px) {
+  .last-calculation-card {
+    padding: 10px; /* Further adjust padding */
+  }
+
+  .last-calculation-header {
+    font-size: 1.1rem; /* Further adjust header font size */
+  }
+
+  .last-calculation-item {
+    font-size: 0.9rem; /* Further adjust item font size */
   }
 }

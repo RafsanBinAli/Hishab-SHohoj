@@ -1,15 +1,15 @@
 import React from "react";
 
 const DailyTransactionTable = ({ title, data }) => {
-    
   return (
     <div className="card">
       <div className="card-body table-responsive">
-        <h4 className="text-center">{title}</h4>
+        {/* Apply the title class */}
+        <h4 className="daily-transaction-table-title">{title}</h4>
         <table className="table table-striped">
           <thead>
             <tr>
-              <th> হিসাবের ধরণ </th>
+              <th>হিসাবের ধরণ</th>
               <th>নাম</th>
               <th>টাকা</th>
               <th>মোট</th>
