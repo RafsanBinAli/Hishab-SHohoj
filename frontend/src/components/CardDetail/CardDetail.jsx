@@ -220,15 +220,13 @@ const CardDetail = () => {
     const selectedFarmer = farmers.find((farmer) => farmer.name === value);
     setIndividualFarmerData(selectedFarmer);
     const selectedCard = allCardDetails.find(
-      (card) => card.farmerName == value
+      (card) => card.farmerName === value
     );
     setIndividualCardDetails(selectedCard);
   };
 
   return (
     <div className="container-card-details mt-4">
-      <h2 className="my-4 py-2 text-center font-weight-bold">হিসাবের বিবরণ</h2>
-
       <div className="mt-4">
         <h3 className="my-4 py-2 text-center font-weight-bold">
           নতুন দোকানের হিসাব যোগ করুন
@@ -325,14 +323,16 @@ const CardDetail = () => {
           সেভ করুন
         </button>
       </div>
+      
+      
 
-      {
+        <h2 className="my-4 py-2 text-center font-weight-bold">হিসাবের বিবরণ</h2>
         <FarmerSlipDetails
           loadedData={loadedData}
           individualFarmerData={individualFarmerData}
           individualCardDetails={individualCardDetails}
         />
-      }
+      
     </div>
   );
 };
