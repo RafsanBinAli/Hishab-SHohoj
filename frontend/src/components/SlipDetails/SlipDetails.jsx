@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 import { FaCalendarAlt } from "react-icons/fa";
 import "./SlipDetails.css"; // Custom CSS for styling
 import { format } from "date-fns";
@@ -9,10 +7,11 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import banglaFont from "../../font/NikoshGrameen.ttf"; // Replace with your font file path
 import Loader from "../Loader/Loader"; // Import the Loader component
+import { getCurrentDate } from "../../functions/getCurrentDate"; // Import the getCurrentDate function
 
 const SlipDetails = () => {
   const { shopName } = useParams(); // Get shopName from URL parameter
-  const [selectedDate, setSelectedDate] = useState(new Date()); // Initialize with today's date
+  const [selectedDate, setSelectedDate] = useState(getCurrentDate()); // Initialize with today's date from getCurrentDate function
   const [slipDetails, setSlipDetails] = useState(null);
   const [shopDetails, setShopDetails] = useState(null);
   const [loading, setLoading] = useState(true); // Initialize loading state
@@ -21,7 +20,7 @@ const SlipDetails = () => {
     const fetchSlipDetails = async () => {
       setLoading(true); // Start loading
       try {
-        const formattedDate = format(selectedDate, "yyyy-MM-dd"); // Format date as yyyy-MM-dd
+        const formattedDate = format(new Date(selectedDate), "yyyy-MM-dd"); // Format date as yyyy-MM-dd
         const response = await fetch(
           `${process.env.REACT_APP_BACKEND_URL}/slip-details/${formattedDate}?shopName=${shopName}`
         );
@@ -59,8 +58,8 @@ const SlipDetails = () => {
     getShopDetails();
   }, [shopName]);
 
-  const handleDateChange = (date) => {
-    setSelectedDate(date);
+  const handleDateChange = (event) => {
+    setSelectedDate(event.target.value);
   };
 
   const handleDownloadPDF = () => {
@@ -79,7 +78,11 @@ const SlipDetails = () => {
     // Document content
     doc.text("হিসাবের বিবরণ", 14, 20);
     doc.text(`দোকানের নাম: ${shopName}`, 14, 30);
-    doc.text(`তারিখ: ${format(selectedDate, "dd MMMM, yyyy")}`, 14, 40);
+    doc.text(
+      `তারিখ: ${format(new Date(selectedDate), "dd MMMM, yyyy")}`,
+      14,
+      40
+    );
 
     // Table headers
     const tableColumn = [
@@ -98,6 +101,24 @@ const SlipDetails = () => {
       price: purchase.price.toString(),
       totalAmount: (purchase.quantity * purchase.price).toString(),
     }));
+
+    // Add the 'Ager Mot Baki' and 'Mot Taka' as new rows in the table
+    tableRows.push(
+      {
+        farmerName: "আগের মোট বাকি",
+        stockName: "",
+        quantity: "",
+        price: "",
+        totalAmount: shopDetails?.totalDue.toString(),
+      },
+      {
+        farmerName: "মোট টাকা",
+        stockName: "",
+        quantity: "",
+        price: "",
+        totalAmount: slipDetails?.totalAmount.toString(),
+      }
+    );
 
     // Set table headers font
     doc.autoTable(tableColumn, tableRows, {
@@ -122,14 +143,15 @@ const SlipDetails = () => {
   return (
     <div className="slip-details-container">
       <h2 className="slip-details-heading font-weight-bold">হিসাবের বিবরণ</h2>
-      <div className="date-picker-container">
-        <FaCalendarAlt className="calendar-icon" />
-        <DatePicker
-          selected={selectedDate}
+      <div className="text-center mb-4">
+        <label htmlFor="datePicker" className="font-weight-bold">
+          তারিখ:
+        </label>
+        <input
+          type="date"
+          value={selectedDate}
           onChange={handleDateChange}
-          dateFormat="dd MMMM, yyyy"
           className="date-picker"
-          placeholderText="Select a date"
         />
       </div>
       {loading ? (
@@ -146,8 +168,7 @@ const SlipDetails = () => {
                     <th>পণ্যের নাম</th>
                     <th>পরিমাণ (কেজি)</th>
                     <th>দাম (টাকা/কেজি)</th>
-                    <th>মোট টাকা</th>{" "}
-                    {/* New column for individual total amount */}
+                    <th>মোট টাকা</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -157,16 +178,25 @@ const SlipDetails = () => {
                       <td>{purchase.stockName}</td>
                       <td>{purchase.quantity}</td>
                       <td>{purchase.price}</td>
-                      <td>{purchase.quantity * purchase.price}</td>{" "}
-                      {/* Calculate individual total amount */}
+                      <td>{purchase.quantity * purchase.price}</td>
                     </tr>
                   ))}
+                  <tr className="slip-row font-weight-bold">
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>আগের মোট বাকি</td>
+                    <td>{shopDetails?.totalDue} টাকা</td>
+                  </tr>
+                  <tr className="slip-row font-weight-bold">
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>মোট টাকা</td>
+                    <td>{slipDetails?.totalAmount} টাকা</td>
+                  </tr>
                 </tbody>
               </table>
-              <div className="total-details">
-                <p>আগের মোট বাকি: {shopDetails?.totalDue} টাকা</p>
-                <p>মোট টাকা: {slipDetails?.totalAmount} টাকা</p>
-              </div>
               <button className="download-button" onClick={handleDownloadPDF}>
                 পিডিএফ ডাউনলোড করুন
               </button>

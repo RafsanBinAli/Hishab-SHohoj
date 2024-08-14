@@ -186,7 +186,7 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
           </button>
         )}
         {!individualCardDetails.doneStatus && (
-          <button className="btn btn-primary m-2" onClick={handlePayNow}>
+          <button className="btn btn-primary m-4" onClick={handlePayNow}>
             Pay now!
           </button>
         )}

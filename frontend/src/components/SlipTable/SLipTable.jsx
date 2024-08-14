@@ -186,7 +186,9 @@ const SlipTable = () => {
         <Loader />
       ) : (
         <>
-          <h2 className="table-title font-weight-bold">দোকানের আজকের হিসাব</h2>
+          <h2 className="table-title text-center my-4 py-2 font-weight-bold">
+            দোকানের আজকের হিসাব
+          </h2>
           <div className="text-center mb-4">
             <label htmlFor="datePicker" className="font-weight-bold">
               তারিখ:
