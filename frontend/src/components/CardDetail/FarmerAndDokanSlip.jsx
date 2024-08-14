@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import handleDownload from "../../functions/handleDownload";
-import NikoshGrameen from "../NikoshGrameen";
 
 const FarmerAndDokanSlip = ({ individualCardDetails }) => {
   console.log("Individual Card Details:", individualCardDetails);
@@ -8,16 +7,6 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
   const [commission, setCommission] = useState(0);
   const [khajna, setKhajna] = useState(0);
   const [finalAmount, setFinalAmount] = useState(0);
-
-  const handleKhajnaChange = (event) => {
-    const khajnaValue = event.target.value;
-    setKhajna(khajnaValue);
-  };
-
-  const handleCommissionChange = (event) => {
-    const commissionValue = event.target.value;
-    setCommission(commissionValue);
-  };
 
   useEffect(() => {
     const totalAmount = individualCardDetails?.purchases.reduce(
@@ -27,6 +16,16 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
 
     setFinalAmount(totalAmount - commission - khajna);
   }, [commission, khajna, individualCardDetails]);
+
+  const handleKhajnaChange = (event) => {
+    const khajnaValue = parseFloat(event.target.value) || 0;
+    setKhajna(khajnaValue);
+  };
+
+  const handleCommissionChange = (event) => {
+    const commissionValue = parseFloat(event.target.value) || 0;
+    setCommission(commissionValue);
+  };
 
   const handlePayNow = async () => {
     if (khajna === 0) {
@@ -61,6 +60,7 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
       console.error("Error saving daily transaction:", error);
       alert("An error occurred while saving daily transaction");
     }
+
     try {
       const updateResponse = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/card-details-update-secondary`,
@@ -147,7 +147,6 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
                 <td colSpan="4" className="text-right font-weight-bold">
                   খাজনা (টাকা):
                 </td>
-
                 <td className="commission font-weight-bold">
                   {individualCardDetails.doneStatus ? (
                     individualCardDetails.khajna
@@ -164,9 +163,7 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
                 <td colSpan="4" className="text-right font-weight-bold">
                   চূড়ান্ত মোট (টাকা):
                 </td>
-                <td className="font-weight-bold">
-                  {individualCardDetails.totalAmountToBeGiven}
-                </td>
+                <td className="font-weight-bold">{finalAmount}</td>
               </tr>
             </tbody>
           </table>
@@ -197,4 +194,5 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
     </>
   );
 };
+
 export default FarmerAndDokanSlip;

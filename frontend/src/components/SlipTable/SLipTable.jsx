@@ -3,6 +3,7 @@ import "./SlipTable.css";
 import Loader from "../Loader/Loader";
 import { getCurrentDate } from "../../functions/getCurrentDate";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
+import MessageModal from "../Modal/MessageModal"; // Import MessageModal
 
 const SlipTable = () => {
   const [slips, setSlips] = useState([]);
@@ -12,6 +13,10 @@ const SlipTable = () => {
   const [selectedDate, setSelectedDate] = useState("");
   const [loading, setLoading] = useState(false);
   const [noInfo, setNoInfo] = useState(false);
+  const [modalShow, setModalShow] = useState(false); // State for modal
+  const [modalTitle, setModalTitle] = useState(""); // Modal title
+  const [modalMessage, setModalMessage] = useState(""); // Modal message
+  const [refreshPage, setRefreshPage] = useState(false); // State to trigger page refresh
 
   const navigate = useNavigate(); // Initialize useNavigate
 
@@ -23,10 +28,15 @@ const SlipTable = () => {
         const response = await fetch(
           `${process.env.REACT_APP_BACKEND_URL}/get-all-shops`
         );
+        if (!response.ok) throw new Error("Failed to fetch dokan details");
         const data = await response.json();
         setAllDokanDetails(data);
       } catch (error) {
-        console.log("Error in fetching dokan details!");
+        console.log("Error in fetching dokan details:", error);
+        setModalTitle("Error");
+        setModalMessage("Failed to fetch dokan details. Please try again.");
+        setModalShow(true);
+        setRefreshPage(true); // Set refresh flag to true for error
       }
     };
     fetchAllDokanDetails();
@@ -44,15 +54,17 @@ const SlipTable = () => {
           setSlips([]);
           return;
         }
-        if (!response.ok) {
-          throw new Error("Failed to fetch slips");
-        }
+        if (!response.ok) throw new Error("Failed to fetch slips");
         const data = await response.json();
         setSlips(data);
         setNoInfo(data.length === 0);
       } catch (error) {
         console.error("Error fetching slips:", error);
         setNoInfo(true);
+        setModalTitle("Error");
+        setModalMessage("Failed to fetch slips. Please try again.");
+        setModalShow(true);
+        setRefreshPage(true); // Set refresh flag to true for error
       } finally {
         setLoading(false);
       }
@@ -63,7 +75,7 @@ const SlipTable = () => {
     }
   }, [selectedDate]);
 
-  const handlePaidChange = (event, shopName, totalAmount) => {
+  const handlePaidChange = (event, shopName) => {
     const { value } = event.target;
     const paidValue = Number(value);
     setPaidInputs({ ...paidInputs, [shopName]: paidValue });
@@ -138,13 +150,19 @@ const SlipTable = () => {
         throw new Error("Error setting dokan payment");
       }
 
-      alert("Slip & Transaction saved successfully");
-      setSavedRows({ ...savedRows, [slip.shopName]: true });
-
-      // Navigate to the same page after saving
-      navigate(0); // 0 refreshes the current page
+      // Show success modal and set a flag to refresh the page
+      setModalTitle("Success");
+      setModalMessage("Slip & Transaction saved successfully");
+      setModalShow(true);
+      setRefreshPage(true); // Set refresh flag to true
     } catch (error) {
       console.error("Error saving slip:", error);
+
+      // Show error modal and set a flag to refresh the page
+      setModalTitle("Error");
+      setModalMessage("Error saving slip. Please try again.");
+      setModalShow(true);
+      setRefreshPage(true); // Set refresh flag to true
     } finally {
       setLoading(false);
     }
@@ -153,6 +171,13 @@ const SlipTable = () => {
   const getTotalDue = (shopName) => {
     const shop = allDokanDetails.find((dokan) => dokan.shopName === shopName);
     return shop ? shop.totalDue : 0;
+  };
+
+  const handleModalConfirm = () => {
+    setModalShow(false);
+    if (refreshPage) {
+      window.location.reload(); // Refresh the page
+    }
   };
 
   return (
@@ -230,6 +255,15 @@ const SlipTable = () => {
           )}
         </>
       )}
+
+      {/* Message Modal */}
+      <MessageModal
+        show={modalShow}
+        onHide={() => setModalShow(false)}
+        title={modalTitle}
+        message={modalMessage}
+        onConfirm={handleModalConfirm}
+      />
     </div>
   );
 };

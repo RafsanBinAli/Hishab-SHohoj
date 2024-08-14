@@ -37,7 +37,9 @@ const AllFarmerSlip = () => {
 
   return (
     <div className="all-deals">
-      <h1 className="all-deals-title">Market Deals</h1>
+      <h1 className="all-deals-title text-center my-4 py-2 font-weight-bold">
+        Market Deals
+      </h1>
       <div className="text-center mb-4">
         <label htmlFor="datePicker" className="font-weight-bold">
           তারিখ:
@@ -74,12 +76,15 @@ const AllFarmerSlip = () => {
                     </span>
                   </p>
                 </div>
-                <Link
-                  to={`/slip/farmer/details/${deal._id}`}
-                  className="all-deals-btn-details"
-                >
-                  View Details
-                </Link>
+
+                <div className="all-slip-card-footer ">
+                  <Link
+                    to={`/slip/farmer/details/${deal._id}`}
+                    className="all-deals-btn-details"
+                  >
+                    View Details
+                  </Link>
+                </div>
               </div>
             ))
           ) : (

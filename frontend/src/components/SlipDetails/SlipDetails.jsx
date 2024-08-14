@@ -139,12 +139,6 @@ const SlipDetails = () => {
           <div className="card">
             <div className="card-body">
               <h5 className="card-title">{slipDetails?.shopName}</h5>
-              <p className="card-text">
-                Total Due before: {shopDetails?.totalDue}
-              </p>
-              <p className="card-text">
-                Total Amount: {slipDetails?.totalAmount}
-              </p>
               <table className="table table-striped slip-table">
                 <thead>
                   <tr>
@@ -169,16 +163,18 @@ const SlipDetails = () => {
                   ))}
                 </tbody>
               </table>
-              <button className="btn btn-primary" onClick={handleDownloadPDF}>
+              <div className="total-details">
+                <p>আগের মোট বাকি: {shopDetails?.totalDue} টাকা</p>
+                <p>মোট টাকা: {slipDetails?.totalAmount} টাকা</p>
+              </div>
+              <button className="download-button" onClick={handleDownloadPDF}>
                 পিডিএফ ডাউনলোড করুন
               </button>
             </div>
           </div>
         </div>
       ) : (
-        <p className="loading-text">
-          No slip details found for the selected date.
-        </p>
+        <p className="loading-text">No slip details found.</p>
       )}
     </div>
   );

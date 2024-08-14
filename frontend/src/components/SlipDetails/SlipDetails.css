@@ -55,6 +55,7 @@
 
 .card-body {
   padding: 1.25rem;
+  position: relative;
 }
 
 .table {
@@ -82,17 +83,29 @@
   background-color: #0056b3;
 }
 
-  
-  @media only screen and (max-width: 992px) {
-    .slip-details-container{
-      margin-left: 0;
-      padding: 0;
-    }
-  }
+.total-details {
+  text-align: right;
+  margin-top: 20px;
+  font-weight: bold;
+  font-size: 16px;
+}
 
-  @media only screen and (max-width: 768px) {
-    .slip-details-container{
-      margin-left: 0;
-      padding: 0;
-    }
+.total-details p {
+  margin: 0;
+  font-family: 'NikoshGrameen', sans-serif; /* Ensure the Bangla font is applied */
+  font-weight: bold;
+}
+
+@media only screen and (max-width: 992px) {
+  .slip-details-container {
+    margin-left: 0;
+    padding: 0;
   }
+}
+
+@media only screen and (max-width: 768px) {
+  .slip-details-container {
+    margin-left: 0;
+    padding: 0;
+  }
+}
