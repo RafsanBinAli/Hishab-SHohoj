@@ -1,14 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import Loader from "../Loader/Loader";
 import handleDownload from "../../functions/handleDownload";
 
 const FarmerSlipDetailsPaidUnpaid = () => {
+  const slipRef = useRef();
   const { id } = useParams();
   const [slipDetails, setSlipDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [commission, setCommission] = useState(0);
   const [khajna, setKhajna] = useState(0);
+
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
@@ -16,11 +18,13 @@ const FarmerSlipDetailsPaidUnpaid = () => {
     const day = String(date.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
+
   const totalAmount = slipDetails?.purchases.reduce(
     (acc, purchase) => acc + purchase.quantity * purchase.price,
     0
   );
-  var finalAmount = totalAmount - commission - khajna;
+
+  const finalAmount = totalAmount - commission - khajna;
 
   useEffect(() => {
     const fetchDeal = async () => {
@@ -66,7 +70,7 @@ const FarmerSlipDetailsPaidUnpaid = () => {
             commission,
             khajna,
             name: slipDetails?.farmerName,
-            amount: totalAmount - khajna - commission,
+            amount: finalAmount,
           }),
         }
       );
@@ -91,7 +95,7 @@ const FarmerSlipDetailsPaidUnpaid = () => {
             id: slipDetails?._id,
             khajna,
             commission,
-            totalAmountToBeGiven: totalAmount - khajna - commission,
+            totalAmountToBeGiven: finalAmount,
           }),
         }
       );
@@ -116,11 +120,10 @@ const FarmerSlipDetailsPaidUnpaid = () => {
       <h2 className="dokaner-slip-title font-weight-bold">
         {slipDetails?.farmerName} স্লিপ
       </h2>
-      <div className="slip-card">
+      <div className="slip-card" ref={slipRef}>
         <div className="card">
           <div className="card-body">
             <h5 className="card-title">{slipDetails?.shopName}</h5>
-
             <table className="table table-striped slip-table">
               <thead>
                 <tr>
@@ -207,15 +210,7 @@ const FarmerSlipDetailsPaidUnpaid = () => {
             {slipDetails.doneStatus && (
               <button
                 className="btn btn-primary m-2"
-                onClick={() =>
-                  handleDownload({
-                    individualCardDetails: slipDetails,
-                    selectedDate: formatDate(slipDetails.createdAt),
-                    commission: slipDetails.commission,
-                    khajna: slipDetails.khajna,
-                    finalAmount: slipDetails.totalAmountToBeGiven,
-                  })
-                }
+                onClick={() => handleDownload(slipRef)}
               >
                 পিডিএফ ডাউনলোড করুন
               </button>

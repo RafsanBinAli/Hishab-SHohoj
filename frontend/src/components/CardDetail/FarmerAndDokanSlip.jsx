@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import handleDownload from "../../functions/handleDownload";
 
 const FarmerAndDokanSlip = ({ individualCardDetails }) => {
-  console.log("Individual Card Details:", individualCardDetails);
+  const slipRef = useRef(); // Create a ref to capture the slip content
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [commission, setCommission] = useState(0);
   const [khajna, setKhajna] = useState(0);
@@ -91,7 +91,7 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
 
   return (
     <>
-      <div className="col-md-7">
+      <div className="col-md-7" ref={slipRef}>
         <div className="card-body" id="dokaner-slip">
           <h5 className="header-title">কৃষকের Slip</h5>
           <table className="table table-striped">
@@ -172,15 +172,7 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
         {individualCardDetails?.doneStatus && (
           <button
             className="btn btn-primary m-2"
-            onClick={() =>
-              handleDownload({
-                individualCardDetails,
-                selectedDate,
-                commission,
-                khajna,
-                finalAmount,
-              })
-            }
+            onClick={() => handleDownload(slipRef)}
           >
             পিডিএফ ডাউনলোড করুন
           </button>

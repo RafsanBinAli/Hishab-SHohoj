@@ -1,13 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
-import { FaCalendarAlt } from "react-icons/fa";
-import "./SlipDetails.css"; // Custom CSS for styling
 import { format } from "date-fns";
-import jsPDF from "jspdf";
-import "jspdf-autotable";
-import banglaFont from "../../font/NikoshGrameen.ttf"; // Replace with your font file path
 import Loader from "../Loader/Loader"; // Import the Loader component
 import { getCurrentDate } from "../../functions/getCurrentDate"; // Import the getCurrentDate function
+import "./SlipDetails.css"; // Custom CSS for styling
+import handleDownload from "../../functions/handleDownload"; // Import the handleDownload function
 
 const SlipDetails = () => {
   const { shopName } = useParams(); // Get shopName from URL parameter
@@ -15,6 +12,7 @@ const SlipDetails = () => {
   const [slipDetails, setSlipDetails] = useState(null);
   const [shopDetails, setShopDetails] = useState(null);
   const [loading, setLoading] = useState(true); // Initialize loading state
+  const slipRef = useRef(null); // Ref to capture the slip details
 
   useEffect(() => {
     const fetchSlipDetails = async () => {
@@ -62,84 +60,6 @@ const SlipDetails = () => {
     setSelectedDate(event.target.value);
   };
 
-  const handleDownloadPDF = () => {
-    const doc = new jsPDF();
-
-    // Load Bangla font
-    doc.addFileToVFS(banglaFont);
-    doc.addFont(banglaFont, "BanglaFont", "normal");
-
-    // Set font for the entire document
-    doc.setFont("BanglaFont");
-
-    // Set font size
-    doc.setFontSize(12);
-
-    // Document content
-    doc.text("হিসাবের বিবরণ", 14, 20);
-    doc.text(`দোকানের নাম: ${shopName}`, 14, 30);
-    doc.text(
-      `তারিখ: ${format(new Date(selectedDate), "dd MMMM, yyyy")}`,
-      14,
-      40
-    );
-
-    // Table headers
-    const tableColumn = [
-      { header: "কৃষকের নাম", dataKey: "farmerName" },
-      { header: "পণ্যের নাম", dataKey: "stockName" },
-      { header: "পরিমাণ (কেজি)", dataKey: "quantity" },
-      { header: "দাম (টাকা/কেজি)", dataKey: "price" },
-      { header: "মোট টাকা", dataKey: "totalAmount" },
-    ];
-
-    // Table rows
-    const tableRows = slipDetails.purchases.map((purchase) => ({
-      farmerName: purchase.farmerName,
-      stockName: purchase.stockName,
-      quantity: purchase.quantity.toString(),
-      price: purchase.price.toString(),
-      totalAmount: (purchase.quantity * purchase.price).toString(),
-    }));
-
-    // Add the 'Ager Mot Baki' and 'Mot Taka' as new rows in the table
-    tableRows.push(
-      {
-        farmerName: "আগের মোট বাকি",
-        stockName: "",
-        quantity: "",
-        price: "",
-        totalAmount: shopDetails?.totalDue.toString(),
-      },
-      {
-        farmerName: "মোট টাকা",
-        stockName: "",
-        quantity: "",
-        price: "",
-        totalAmount: slipDetails?.totalAmount.toString(),
-      }
-    );
-
-    // Set table headers font
-    doc.autoTable(tableColumn, tableRows, {
-      startY: 50,
-      margin: { top: 50 },
-      styles: { font: "BanglaFont", fontStyle: "normal" },
-      columnStyles: {
-        0: { fontStyle: "normal" },
-        1: { fontStyle: "normal" },
-        2: { fontStyle: "normal" },
-        3: { fontStyle: "normal" },
-        4: { fontStyle: "normal" },
-      },
-      headerStyles: { fontStyle: "normal" },
-      bodyStyles: { fontStyle: "normal" },
-      showHead: "firstPage",
-    });
-
-    doc.save("slip-details.pdf");
-  };
-
   return (
     <div className="slip-details-container">
       <h2 className="slip-details-heading font-weight-bold">হিসাবের বিবরণ</h2>
@@ -157,7 +77,7 @@ const SlipDetails = () => {
       {loading ? (
         <Loader /> // Show loader while data is being fetched
       ) : slipDetails ? (
-        <div className="slip-card">
+        <div ref={slipRef} className="slip-card">
           <div className="card">
             <div className="card-body">
               <h5 className="card-title">{slipDetails?.shopName}</h5>
@@ -197,15 +117,18 @@ const SlipDetails = () => {
                   </tr>
                 </tbody>
               </table>
-              <button className="download-button" onClick={handleDownloadPDF}>
-                পিডিএফ ডাউনলোড করুন
-              </button>
             </div>
           </div>
         </div>
       ) : (
         <p className="loading-text">No slip details found.</p>
       )}
+      <button
+        className="download-button"
+        onClick={() => handleDownload(slipRef)} // Use the imported handleDownload function
+      >
+        পিডিএফ ডাউনলোড করুন
+      </button>
     </div>
   );
 };
