@@ -2,7 +2,7 @@ const Farmer = require("../models/Farmer");
 
 exports.createFarmer = async (req, res) => {
   console.log(req.body);
-  const { name, village, fathersName, phoneNumber } = req.body;
+  const { name, village, imageUrl, phoneNumber } = req.body;
 
   try {
     // Check if a farmer with the same name already exists
@@ -15,7 +15,7 @@ exports.createFarmer = async (req, res) => {
     }
 
     // Create a new farmer instance
-    const newFarmer = new Farmer({ name, village, fathersName, phoneNumber });
+    const newFarmer = new Farmer({ name, village, imageUrl, phoneNumber });
 
     // Save the new farmer to the database
     await newFarmer.save();

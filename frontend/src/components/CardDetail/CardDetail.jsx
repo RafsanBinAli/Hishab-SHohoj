@@ -52,6 +52,10 @@ const CardDetail = () => {
     });
   };
 
+  const handleRemoveRow = (index) => {
+    setFormRows((prevRows) => prevRows.filter((_, i) => i !== index));
+  };
+
   const handleSave = async () => {
     if (
       formRows.some(
@@ -66,6 +70,7 @@ const CardDetail = () => {
       alert("Please fill out all fields before saving.");
       return;
     }
+
     if (individualCardDetails?.doneStatus) {
       alert("Already saved once, can't update it!");
       setFormRows([
@@ -79,6 +84,7 @@ const CardDetail = () => {
       ]);
       return;
     }
+
     try {
       const newPurchases = formRows.map((row) => ({
         farmerName: row.farmerName,
@@ -88,6 +94,7 @@ const CardDetail = () => {
         price: row.price,
         total: row.quantity * row.price,
       }));
+
       let id = individualCardDetails?._id;
       if (id === undefined) {
         console.log("farmer Name: ", individualFarmerData.name);
@@ -109,6 +116,7 @@ const CardDetail = () => {
         console.log("response", createCardDetailsResponse);
         id = data._id;
       }
+
       const updateCardResponse = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/update-card-details/${id}`,
         {
@@ -128,7 +136,6 @@ const CardDetail = () => {
       const findOrCreateSlipResponses = await Promise.all(
         newPurchases.map(async (purchase) => {
           try {
-            // Find or create the slip
             const response = await fetch(
               `${process.env.REACT_APP_BACKEND_URL}/slip/findOrCreate`,
               {
@@ -145,8 +152,6 @@ const CardDetail = () => {
               );
             }
             const slip = await response.json();
-
-            // Add to slipsMap using _id as key and shopName as value
             slipsMap.set(slip._id, slip.shopName);
             console.log("Slip added to map:", slip._id, slip.shopName);
           } catch (error) {
@@ -159,7 +164,6 @@ const CardDetail = () => {
         })
       );
 
-      // Step 4: Update slips with new purchases
       const updateSlipResponses = await Promise.all(
         Array.from(slipsMap.keys()).map(async (_id) => {
           try {
@@ -199,6 +203,14 @@ const CardDetail = () => {
           }
         })
       );
+
+      // Refresh card details after successful save
+      const refreshedCardDetails = await fetchCardDetails();
+      const updatedCardDetails = refreshedCardDetails.find(
+        (card) => card.farmerName === individualFarmerData.name
+      );
+      setAllCardDetails(refreshedCardDetails);
+      setIndividualCardDetails(updatedCardDetails);
 
       alert("সকল স্লিপ আপডেট সম্পূর্ন হয়েছে !!");
     } catch (error) {
@@ -310,10 +322,19 @@ const CardDetail = () => {
 
                 <td>
                   {index === formRows.length - 1 && (
-                    <button className="btn btn-primary" onClick={handleAddRow}>
+                    <button
+                      className="btn btn-primary mr-2"
+                      onClick={handleAddRow}
+                    >
                       নতুন সারি
                     </button>
                   )}
+                  <button
+                    className="btn btn-danger"
+                    onClick={() => handleRemoveRow(index)}
+                  >
+                    Remove
+                  </button>
                 </td>
               </tr>
             ))}
@@ -323,16 +344,13 @@ const CardDetail = () => {
           সেভ করুন
         </button>
       </div>
-      
-      
 
-        <h2 className="my-4 py-2 text-center font-weight-bold">হিসাবের বিবরণ</h2>
-        <FarmerSlipDetails
-          loadedData={loadedData}
-          individualFarmerData={individualFarmerData}
-          individualCardDetails={individualCardDetails}
-        />
-      
+      <h2 className="my-4 py-2 text-center font-weight-bold">হিসাবের বিবরণ</h2>
+      <FarmerSlipDetails
+        loadedData={loadedData}
+        individualFarmerData={individualFarmerData}
+        individualCardDetails={individualCardDetails}
+      />
     </div>
   );
 };

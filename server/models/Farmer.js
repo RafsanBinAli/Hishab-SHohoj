@@ -7,7 +7,7 @@ const debtEntrySchema = new mongoose.Schema({
   },
   date: {
     type: Date,
-    default:Date.now(),
+    default: Date.now(),
     required: true,
   },
   debtAmount: {
@@ -16,7 +16,7 @@ const debtEntrySchema = new mongoose.Schema({
   },
   action: {
     type: String,
-    enum: ['newDebt', 'repayDebt'],
+    enum: ["newDebt", "repayDebt"],
     required: true,
   },
 });
@@ -32,8 +32,9 @@ const farmerSchema = new mongoose.Schema({
   village: {
     type: String,
   },
-  fathersName: {
+  imageUrl: {
     type: String,
+    required: true,
   },
   totalDue: {
     type: Number,

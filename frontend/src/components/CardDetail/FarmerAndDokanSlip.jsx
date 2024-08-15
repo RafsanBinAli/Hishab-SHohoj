@@ -9,12 +9,14 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
   const [finalAmount, setFinalAmount] = useState(0);
 
   useEffect(() => {
-    const totalAmount = individualCardDetails?.purchases.reduce(
-      (total, item) => total + item.total,
-      0
-    );
+    if (individualCardDetails?.purchases) {
+      const totalAmount = individualCardDetails.purchases.reduce(
+        (total, item) => total + item.total,
+        0
+      );
 
-    setFinalAmount(totalAmount - commission - khajna);
+      setFinalAmount(totalAmount - commission - khajna);
+    }
   }, [commission, khajna, individualCardDetails]);
 
   const handleKhajnaChange = (event) => {
@@ -30,7 +32,7 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
   const handlePayNow = async () => {
     if (khajna === 0) {
       const isConfirmed = window.confirm(
-        "Khajna is 0. Are you sure you want to proceed?"
+        "খাজনা ০। আপনি কি নিশ্চিত যে আপনি এগিয়ে যেতে চান?"
       );
       if (!isConfirmed) {
         return;
@@ -54,11 +56,11 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
       );
 
       if (!response.ok) {
-        throw new Error("Failed to save daily transaction");
+        throw new Error("Daily transaction save failed");
       }
     } catch (error) {
       console.error("Error saving daily transaction:", error);
-      alert("An error occurred while saving daily transaction");
+      alert("Daily transaction save failed");
     }
 
     try {
@@ -78,14 +80,13 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
         }
       );
       if (!updateResponse.ok) {
-        throw new Error("Error updating card details!");
+        throw new Error("Error updating card details");
       }
       const data = await updateResponse.json();
-
       alert("Commissions and khajnas saved successfully and updated!");
     } catch (error) {
-      console.error("Error occurred updating card details!");
-      alert("Error occurred updating card details");
+      console.error("Error updating card details:", error);
+      alert("Error updating card details");
     }
   };
 
@@ -163,7 +164,7 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
                 <td colSpan="4" className="text-right font-weight-bold">
                   চূড়ান্ত মোট (টাকা):
                 </td>
-                <td className="font-weight-bold">{finalAmount}</td>
+                <td className="font-weight-bold">{finalAmount.toFixed(2)}</td>
               </tr>
             </tbody>
           </table>

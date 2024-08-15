@@ -10,8 +10,9 @@ const Farmer = () => {
     name: "",
     phoneNumber: "",
     village: "",
-    fathersName: "",
+    imageUrl: "",
   });
+  const [imagePreview, setImagePreview] = useState(null);
   const [modalShow, setModalShow] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [modalMessage, setModalMessage] = useState("");
@@ -34,10 +35,6 @@ const Farmer = () => {
     };
 
     fetchUsers();
-
-    return () => {
-      // Optional clean-up logic here
-    };
   }, []);
 
   const handleUserInputChange = (event) => {
@@ -46,16 +43,17 @@ const Farmer = () => {
   };
 
   const handleAddUser = async () => {
-    const url = `${process.env.REACT_APP_BACKEND_URL}/create-farmer`;
-
     try {
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newUserInfo),
-      });
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/create-farmer`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newUserInfo),
+        }
+      );
 
       if (!response.ok) {
         const errorMessage = await response.json();
@@ -70,6 +68,38 @@ const Farmer = () => {
       setModalTitle("Error");
       setModalMessage(error.message);
       setModalShow(true);
+    }
+  };
+
+  const handleImageChange = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const formData = new FormData();
+      formData.append("image", file);
+
+      try {
+        const response = await fetch(
+          "https://api.imgbb.com/1/upload?key=c9af6d674adfdc89791fbbddc0ca6ff6",
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to upload image");
+        }
+
+        const data = await response.json();
+        setNewUserInfo({
+          ...newUserInfo,
+          imageUrl: data.data.url,
+        });
+
+        setImagePreview(URL.createObjectURL(file));
+      } catch (error) {
+        console.error("Error uploading image:", error);
+      }
     }
   };
 
@@ -120,17 +150,29 @@ const Farmer = () => {
                   onChange={handleUserInputChange}
                 />
               </div>
-              <div className="form-group">
-                <label htmlFor="fathersName">বাবার নাম</label>
+              <div className="mb-3">
+                <label htmlFor="image" className="form-label">
+                  দোকানের ছবি সংযুক্ত করুন
+                </label>
                 <input
-                  type="text"
+                  type="file"
                   className="form-control"
-                  id="fathersName"
-                  name="fathersName"
-                  value={newUserInfo.fathersName}
-                  onChange={handleUserInputChange}
+                  id="image"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  required
                 />
               </div>
+              {imagePreview && (
+                <div className="mb-3">
+                  <img
+                    src={imagePreview}
+                    alt="Uploaded"
+                    className="img-thumbnail"
+                    style={{ maxHeight: "200px", maxWidth: "200px" }}
+                  />
+                </div>
+              )}
 
               <button
                 type="button"
