@@ -188,6 +188,17 @@
   font-weight: 600;
 }
 
+.farmer-slip-search {
+  margin-bottom: 20px;
+}
+
+.farmer-slip-search .form-control {
+  width: 100%;
+  
+  margin: 0 auto;
+  padding: 10px;
+}
+
 /* Responsive adjustments */
 @media (max-width: 1024px) {
   .farmer-slip-card-container {

@@ -89,7 +89,6 @@ const BorrowedTable = () => {
 
   return (
     <div>
-      <h2 className="card-title mb-4">দোকানের লিস্ট</h2>
       <input
         type="text"
         className="form-control mb-3"

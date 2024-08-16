@@ -128,7 +128,18 @@
 .info-item-farmer{
   padding:5px;
 }
+
+.saveBtn {
+  display: block; /* Make the button a block-level element to center it */
+  margin: 1rem auto; /* Center the button horizontally with automatic margins */
+  text-align: center; /* Center text inside the button */
+}
+
 @media (max-width: 768px) {
+  .saveBtn {
+    margin: 1rem auto; /* Center the button horizontally on smaller screens */
+    width: 100%; /* Optionally set width to 100% on smaller screens for better alignment */
+  }
   .card-section {
     flex-direction: column; /* Stack sections vertically on smaller screens */
   }

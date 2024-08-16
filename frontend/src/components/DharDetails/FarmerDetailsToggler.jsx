@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./Borrowed.css";
+import "./DharDetails.css";
 import MessageModal from "../Modal/MessageModal";
 
 const FarmerDetailsToggler = () => {
@@ -23,20 +23,21 @@ const FarmerDetailsToggler = () => {
   });
 
   useEffect(() => {
-    const fetchFarmerData = async () => {
-      try {
-        const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/get-all-farmers`
-        );
-        if (!response.ok) throw new Error("Failed to fetch farmer data");
-        const data = await response.json();
-        setFarmerList(data);
-      } catch (error) {
-        console.error("Error fetching farmer data:", error);
-      }
-    };
     fetchFarmerData();
   }, []);
+
+  const fetchFarmerData = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/get-all-farmers`
+      );
+      if (!response.ok) throw new Error("Failed to fetch farmer data");
+      const data = await response.json();
+      setFarmerList(data);
+    } catch (error) {
+      console.error("Error fetching farmer data:", error);
+    }
+  };
 
   const showModal = (title, message) => {
     setModalTitle(title);
@@ -77,18 +78,7 @@ const FarmerDetailsToggler = () => {
       if (!updateResponse.ok)
         throw new Error("Failed to update farmer's details");
 
-      const updatedFarmer = await updateResponse.json();
-      setFarmerList(
-        farmerList.map((farmer) =>
-          farmer.name === newFarmerData.farmerName
-            ? {
-                ...farmer,
-                totalDue: updatedFarmer.totalDue,
-                editHistory: updatedFarmer.editHistory,
-              }
-            : farmer
-        )
-      );
+      await updateResponse.json();
 
       const transactionResponse = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/transaction/dhar-entry`,
@@ -105,6 +95,10 @@ const FarmerDetailsToggler = () => {
         throw new Error("Failed to update transaction details");
 
       showModal("Success", "ধারের ডাটা সংরক্ষণ হয়েছে!");
+
+      // Fetch updated data after save
+      fetchFarmerData();
+      setRedirectTo("/borrow");
     } catch (error) {
       showModal("Error", error.message || "Failed to save debt data");
     }
@@ -137,19 +131,7 @@ const FarmerDetailsToggler = () => {
       if (!updateResponse.ok)
         throw new Error("Failed to update farmer's details");
 
-      const updatedFarmer = await updateResponse.json();
-      setFarmerList(
-        farmerList.map((farmer) =>
-          farmer.name === newFarmerData.farmerName
-            ? {
-                ...farmer,
-                totalDue: updatedFarmer.totalDue,
-                totalPaid: updatedFarmer.totalPaid,
-                editHistory: updatedFarmer.editHistory,
-              }
-            : farmer
-        )
-      );
+      await updateResponse.json();
 
       const transactionResponse = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/transaction/dhar-repay`,
@@ -166,6 +148,9 @@ const FarmerDetailsToggler = () => {
         throw new Error("Failed to update transaction details");
 
       showModal("Success", "পরিশোধের ডাটা সংরক্ষণ হয়েছে!");
+
+      // Fetch updated data after save
+      fetchFarmerData();
       setRedirectTo("/borrow");
     } catch (error) {
       showModal("Error", error.message || "Failed to save payment data");
@@ -276,18 +261,7 @@ const FarmerDetailsToggler = () => {
                 </ul>
               )}
             </div>
-            <div>
-              <div className="headings">
-                <label className="totalDue">পূর্বের ধার</label>
-              </div>
-              <input
-                type="number"
-                name="totalDue"
-                value={newFarmerData.totalDue}
-                placeholder="পূর্বের ধার"
-                disabled
-              />
-            </div>
+
             <div>
               <div className="">
                 <label className="newDhar">ধার দান</label>
@@ -300,27 +274,16 @@ const FarmerDetailsToggler = () => {
                 placeholder="ধার দান"
               />
             </div>
-            <div>
-              <div className="headings">
-                <label className="remainingDue">বাকি</label>
-              </div>
-              <input
-                type="number"
-                name="remainingDue"
-                value={newFarmerData.remainingDue}
-                placeholder="বাকি"
-                disabled
-              />
-            </div>
-            <div className="saveBtn">
-              <div className="headingBtn"></div>
-              <button
-                onClick={handleSaveDebtClick}
-                disabled={!newFarmerData.farmerName}
-              >
-                সংরক্ষণ করুন
-              </button>
-            </div>
+          </div>
+          <div className="saveBtn">
+            <div className="headingBtn"></div>
+            <button
+              className="btn-primary"
+              onClick={handleSaveDebtClick}
+              disabled={!newFarmerData.farmerName}
+            >
+              সংরক্ষণ করুন
+            </button>
           </div>
         </div>
       )}
@@ -357,51 +320,29 @@ const FarmerDetailsToggler = () => {
                 </ul>
               )}
             </div>
+
             <div>
               <div className="headings">
-                <label className="totalDue">পূর্বের ধার</label>
-              </div>
-              <input
-                type="number"
-                name="totalDue"
-                value={newFarmerData.totalDue}
-                placeholder="পূর্বের ধার"
-                disabled
-              />
-            </div>
-            <div>
-              <div className="headings">
-                <label className="payGet">টাকা গ্রহণ/ধার দান</label>
+                <label className="payGet">টাকা গ্রহণ</label>
               </div>
               <input
                 type="number"
                 name="payGet"
                 value={newFarmerData.payGet}
                 onChange={handleNewFarmerInputChange}
-                placeholder="টাকা গ্রহণ/ধার দান"
+                placeholder="টাকা গ্রহণ"
               />
             </div>
-            <div>
-              <div className="headings">
-                <label className="remainingDue">বাকি</label>
-              </div>
-              <input
-                type="number"
-                name="remainingDue"
-                value={newFarmerData.remainingDue}
-                placeholder="বাকি"
-                disabled
-              />
-            </div>
-            <div className="saveBtn">
-              <div className="headingBtn"></div>
-              <button
-                onClick={handleSavePaymentClick}
-                disabled={!newFarmerData.farmerName}
-              >
-                সংরক্ষণ করুন
-              </button>
-            </div>
+          </div>
+          <div className="saveBtn">
+            <div className="headingBtn"></div>
+            <button
+              className="btn-primary"
+              onClick={handleSavePaymentClick}
+              disabled={!newFarmerData.farmerName}
+            >
+              সংরক্ষণ করুন
+            </button>
           </div>
         </div>
       )}

@@ -6,6 +6,7 @@ import Loader from "../Loader/Loader";
 const DokanerSlip = () => {
   const [shops, setShops] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const fetchShops = async () => {
@@ -35,6 +36,15 @@ const DokanerSlip = () => {
     fetchShops();
   }, []);
 
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  // Filter shops by the search term
+  const filteredShops = shops.filter((shop) =>
+    shop.shopName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="dokaner-slip-container">
       <div className="mt-4 mb-4 text-center farmer-slip-btn">
@@ -47,6 +57,13 @@ const DokanerSlip = () => {
         <Loader />
       ) : (
         <div>
+          <input
+            type="text"
+            className="form-control mb-3"
+            placeholder="দোকানের নাম দিয়ে সার্চ করুন"
+            value={searchTerm}
+            onChange={handleSearch}
+          />
           <div className="dokaner-slip-table">
             <div className="table-responsive">
               <table className="table table-striped">
@@ -57,7 +74,7 @@ const DokanerSlip = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {shops.map((shop) => (
+                  {filteredShops.map((shop) => (
                     <tr key={shop._id}>
                       <td>{shop.shopName}</td>
                       <td>

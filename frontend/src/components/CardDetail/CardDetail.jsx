@@ -345,7 +345,6 @@ const CardDetail = () => {
         </button>
       </div>
 
-      <h2 className="my-4 py-2 text-center font-weight-bold">হিসাবের বিবরণ</h2>
       <FarmerSlipDetails
         loadedData={loadedData}
         individualFarmerData={individualFarmerData}

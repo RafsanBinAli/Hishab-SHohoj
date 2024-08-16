@@ -105,6 +105,12 @@ const FarmerSlipDetailsPaidUnpaid = () => {
       const data = await updateResponse.json();
 
       alert("Commissions and khajnas saved successfully and updated!");
+
+      // Reload the page to fetch the new data
+      window.location.reload();
+
+      // Alternatively, you can refetch the deal data without a full page reload:
+      // fetchDeal();
     } catch (error) {
       console.error("Error occurred updating card details!");
       alert("Error occurred updating card details");

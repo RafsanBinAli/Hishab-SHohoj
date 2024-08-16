@@ -34,7 +34,6 @@ const farmerSchema = new mongoose.Schema({
   },
   imageUrl: {
     type: String,
-    required: true,
   },
   totalDue: {
     type: Number,

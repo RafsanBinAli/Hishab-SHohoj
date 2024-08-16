@@ -4,6 +4,8 @@ import "./FarmerSlip.css"; // Import your custom CSS file
 
 const FarmerSlip = () => {
   const [deals, setDeals] = useState([]);
+  const [filteredDeals, setFilteredDeals] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -19,6 +21,7 @@ const FarmerSlip = () => {
         }
         const data = await response.json();
         setDeals(data);
+        setFilteredDeals(data); // Initialize filtered deals with all deals
       } catch (error) {
         console.error("Error fetching deals:", error);
       } finally {
@@ -28,8 +31,19 @@ const FarmerSlip = () => {
 
     fetchDeals();
   }, []);
+
+  const handleSearch = (e) => {
+    const value = e.target.value.toLowerCase();
+    setSearchTerm(value);
+
+    const filtered = deals.filter((deal) =>
+      deal.farmerName.toLowerCase().includes(value)
+    );
+    setFilteredDeals(filtered);
+  };
+
   const handleShowAllDeals = () => {
-    navigate('/slip/farmer/all-deals');
+    navigate("/slip/farmer/all-deals");
   };
 
   return (
@@ -43,12 +57,23 @@ const FarmerSlip = () => {
           Show Every Deal
         </button>
       </div>
+
+      <div className="farmer-slip-search">
+        <input
+          type="text"
+          className="form-control"
+          placeholder="কৃষকের নাম দিয়ে সার্চ করুন"
+          value={searchTerm}
+          onChange={handleSearch}
+        />
+      </div>
+
       {loading ? (
         <div className="farmer-slip-loader">Loading...</div>
       ) : (
         <div className="farmer-slip-card-container">
-          {deals.length ? (
-            deals.map((deal) => (
+          {filteredDeals.length ? (
+            filteredDeals.map((deal) => (
               <div className="farmer-slip-card" key={deal._id}>
                 <div className="farmer-slip-card-header">
                   <h2 className="farmer-slip-farmer-name">{deal.farmerName}</h2>
