@@ -7,7 +7,8 @@ import DailyTransactionTable from "./DailyTransactionTable";
 const DailyTransaction = () => {
   const [transactionDetails, setTransactionDetails] = useState(null);
   const [totalDifference, setTotalDifference] = useState(0); // State to store the difference
-
+  const [totalIncome, setTotalIncome] = useState(0);
+  const [totalExpense, setTotalExpense] = useState(0);
   const dateNow = new Date();
   const normalizedDate = new Date(
     Date.UTC(dateNow.getFullYear(), dateNow.getMonth(), dateNow.getDate())
@@ -34,10 +35,10 @@ const DailyTransaction = () => {
         console.log("transaction data", data);
 
         // Calculate the difference between total income and total expense
-        const totalIncome = calculateTotalIncome(data);
-        const totalExpense = calculateTotalExpense(data);
-        console.log("total income", totalIncome);
-        console.log("total expense", totalExpense);
+        const totalIncomeFromTrans = calculateTotalIncome(data);
+        const totalExpenseFromTrans = calculateTotalExpense(data);
+        setTotalIncome(totalIncomeFromTrans);
+        setTotalExpense(totalExpenseFromTrans);
         setTotalDifference(totalIncome - totalExpense);
       } catch (error) {
         console.log("Error occurred", error);
@@ -150,20 +151,13 @@ const DailyTransaction = () => {
       </div>
 
       {/* Add a new section to display the total difference */}
-      <div className="text-center mb-4">
-        <label htmlFor="totalDifference" className="font-weight-bold">
-          আয় - ব্যয় এর ফলাফল:
-        </label>
-        <input
-          type="text"
-          id="totalDifference"
-          value={totalDifference}
-          readOnly
-          className="ml-2"
-        />
-      </div>
+     
 
-      <LastCalculation transactionDetails={transactionDetails} />
+      <LastCalculation
+        transactionDetails={transactionDetails}
+        totalIncome={totalIncome}
+        totalExpense={totalExpense}
+      />
     </div>
   );
 };
