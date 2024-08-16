@@ -132,6 +132,14 @@ const transactionSchema = new Schema({
     type: Number,
     default: 0,
   },
+  todayDebt: {
+    type: Number,
+    default: 0,
+  },
+  todayDebtRepay: {
+    type: Number,
+    default: 0,
+  },
 });
 
 // Pre-save middleware to calculate totals
@@ -151,9 +159,15 @@ transactionSchema.pre("save", function (next) {
 
   const totalDebts = this.totalDebtsOfShops + this.totalDebtsOfFarmers;
 
-  const totalMyOwnDebt = this.myOwnDebt.reduce((sum, item) => sum + item.amount, 0);
+  const totalMyOwnDebt = this.myOwnDebt.reduce(
+    (sum, item) => sum + item.amount,
+    0
+  );
 
-  const totalMyOwnDebtRepay = this.myOwnDebtRepay.reduce((sum, item) => sum + item.amount, 0);
+  const totalMyOwnDebtRepay = this.myOwnDebtRepay.reduce(
+    (sum, item) => sum + item.amount,
+    0
+  );
 
   this.totalProfit = totalProfit;
   this.totalCost = totalCost;

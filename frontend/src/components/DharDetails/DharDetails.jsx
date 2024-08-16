@@ -39,7 +39,7 @@ const DharDetails = () => {
                   </div>
                 </div>
 
-                <FarmerDetailsToggler />
+                <FarmerDetailsToggler farmer={farmer}/>
               </div>
               <div className="card-section-right">
                 <div className="debt-entries">

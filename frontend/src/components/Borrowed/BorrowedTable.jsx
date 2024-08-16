@@ -39,8 +39,10 @@ const BorrowedTable = () => {
     setSearchTerm(e.target.value);
   };
 
-  const filteredFarmersList = farmerList.filter((farmer) =>
-    farmer.name.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredFarmersList = farmerList.filter(
+    (farmer) =>
+      farmer.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      farmer.totalDue  !== 0
   );
 
   const handleEditClick = async (farmerName, updatedData) => {
@@ -87,8 +89,15 @@ const BorrowedTable = () => {
     navigate(`/dhar-details/${farmer._id}`, { state: { farmer } });
   };
 
+  const handleOwnDebtClick = () => {
+    navigate("/nijer-dhar");
+  };
+
   return (
     <div>
+      <button className="btn btn-primary mb-3" onClick={handleOwnDebtClick}>
+        Nijer Dhar
+      </button>
       <input
         type="text"
         className="form-control mb-3"

@@ -5,6 +5,7 @@ const normalizedDate = new Date(
 );
 const Shop = require("../models/shop");
 const Farmer = require("../models/Farmer");
+const DebtHistory = require("../models/DebtHistory");
 
 exports.saveDailyTransaction = async (req, res) => {
   try {
@@ -154,7 +155,7 @@ exports.updateDailyCashStack = async (req, res) => {
         .status(404)
         .json({ message: "Transaction not found for the day!" });
     }
-    transactionToday.dailyCashStack = dailyCashStack;
+    transactionToday.dailyCashStack += dailyCashStack;
     await transactionToday.save();
     res.status(200).json({
       message: "Cash stack updated successfully!",
@@ -239,6 +240,13 @@ exports.createDaily = async (req, res) => {
 exports.updateMyOwnDebt = async (req, res) => {
   try {
     const { amount, type } = req.body;
+
+    const newDebtHistory = new DebtHistory({
+      date: normalizedDate,
+      amount,
+      type,
+    });
+
     let transactionToday = await DailyTransaction.findOne({
       date: normalizedDate,
     });
@@ -250,12 +258,14 @@ exports.updateMyOwnDebt = async (req, res) => {
     }
 
     if (type === "debt") {
+      transactionToday.todayDebt+=amount;
       transactionToday.myOwnDebt.push({ amount, date: normalizedDate });
       transactionToday.totalMyOwnDebt = transactionToday.myOwnDebt.reduce(
         (sum, debt) => sum + debt.amount,
         0
       );
     } else if (type === "repayment") {
+      transactionToday.todayDebtRepay+=amount;
       transactionToday.myOwnDebtRepay.push({ amount, date: normalizedDate });
       transactionToday.totalMyOwnDebtRepay = transactionToday.myOwnDebtRepay.reduce(
         (sum, repayment) => sum + repayment.amount,
@@ -266,6 +276,7 @@ exports.updateMyOwnDebt = async (req, res) => {
     }
 
     await transactionToday.save();
+    await newDebtHistory.save();
 
     res.status(200).json({
       message: `My own ${type} updated successfully!`,
@@ -274,6 +285,46 @@ exports.updateMyOwnDebt = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       message: `Failed to update my own ${type}!`,
+      error: error.message,
+    });
+  }
+};
+
+exports.calculateCommissionAndKhajna = async (req, res) => {
+  try {
+    const { date1, date2 } = req.query;
+
+    // Convert dates to Date objects for comparison
+    const startDate = new Date(date1);
+    const endDate = new Date(date2);
+    let totalCommission = 0;
+    let totalKhajna = 0;
+    let totalOtherCost=0;
+
+    // Fetch all transactions between the two dates (inclusive)
+    const transactions = await DailyTransaction.find({
+      date: {
+        $gte: startDate,
+        $lte: endDate,
+      },
+    });
+
+    // Iterate through each transaction and accumulate commission and khajna
+    transactions.forEach((transaction) => {
+      totalCommission += transaction.credit.commissions || 0;
+      totalKhajna += transaction.credit.khajnas || 0;
+      totalOtherCost += transaction.debit.otherCost || 0;
+    });
+
+    // Return the calculated totals
+    res.status(200).json({
+      totalCommission,
+      totalKhajna,
+      totalOtherCost
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: 'Failed to calculate commission and khajna!',
       error: error.message,
     });
   }

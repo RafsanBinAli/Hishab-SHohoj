@@ -12,4 +12,6 @@ router.post("/create-daily",transactionController.createDaily)
 router.post("/update-daily-cash-stack",transactionController.updateDailyCashStack)
 router.post("/update-other-cost",transactionController.updateOtherCost)
 router.post("/handle-my-own-debt",transactionController.updateMyOwnDebt)
+router.get('/calculate', transactionController.calculateCommissionAndKhajna);
+
 module.exports = router;

@@ -8,6 +8,7 @@ var cors = require("cors");
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var transactionRouter = require("./routes/transaction")
+var debtRouter =require("./routes/debt")
 const dotenv = require('dotenv').config()
 require('./config/cronJob'); 
 const connectDB = require("./config/Database")
@@ -32,6 +33,7 @@ app.use(cors());
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/transaction",transactionRouter)
+app.use("/debt",debtRouter)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

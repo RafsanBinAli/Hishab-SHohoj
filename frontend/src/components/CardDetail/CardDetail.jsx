@@ -329,12 +329,14 @@ const CardDetail = () => {
                       নতুন সারি
                     </button>
                   )}
-                  <button
-                    className="btn btn-danger"
-                    onClick={() => handleRemoveRow(index)}
-                  >
-                    Remove
-                  </button>
+                  {index > 0 && (
+                    <button
+                      className="btn btn-danger"
+                      onClick={() => handleRemoveRow(index)}
+                    >
+                      Remove
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}

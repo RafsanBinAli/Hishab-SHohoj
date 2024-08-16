@@ -26,6 +26,7 @@ import FarmerSlip from "./components/FarmerSlip/FarmerSlip";
 import FarmerSlipDetails from "./components/CardDetail/FarmerSlipDetails";
 import FarmerSlipDetailsPaidUnpaid from "./components/FarmerSlip/FarmerSlipDetailsPaidUnpaid";
 import AllFarmerSlip from "./components/AllFarmerSlip/AllFarmerSlip";
+import OwnDebtTable from "./components/OwnDebtTable/OwnDebtTable";
 
 require("dotenv").config();
 
@@ -131,6 +132,11 @@ function App() {
           <Route
             path="/dhar-details/:id"
             element={<PrivateRoute element={<DharDetails />} />}
+          />
+          
+          <Route
+            path="/nijer-dhar"
+            element={<PrivateRoute element={<OwnDebtTable />} />}
           />
           <Route
             path="/final-hishab"

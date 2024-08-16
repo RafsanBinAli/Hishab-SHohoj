@@ -2,12 +2,9 @@ import React, { useState, useEffect } from "react";
 import "./DharDetails.css";
 import MessageModal from "../Modal/MessageModal";
 
-const FarmerDetailsToggler = () => {
+const FarmerDetailsToggler = ({ farmer }) => {
   const [showNewDebtForm, setShowNewDebtForm] = useState(false);
   const [showNewPaymentForm, setShowNewPaymentForm] = useState(false);
-  const [filteredFarmers, setFilteredFarmers] = useState([]);
-  const [farmerList, setFarmerList] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
 
   const [modalShow, setModalShow] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
@@ -15,29 +12,23 @@ const FarmerDetailsToggler = () => {
   const [redirectTo, setRedirectTo] = useState(null);
 
   const [newFarmerData, setNewFarmerData] = useState({
-    farmerName: "",
-    totalDue: "",
+    farmerName: farmer.name,
+    totalDue: farmer.totalDue,
     payGet: "",
     newDhar: "",
-    remainingDue: "",
+    remainingDue: farmer.totalDue,
   });
 
   useEffect(() => {
-    fetchFarmerData();
-  }, []);
-
-  const fetchFarmerData = async () => {
-    try {
-      const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/get-all-farmers`
-      );
-      if (!response.ok) throw new Error("Failed to fetch farmer data");
-      const data = await response.json();
-      setFarmerList(data);
-    } catch (error) {
-      console.error("Error fetching farmer data:", error);
+    if (farmer) {
+      setNewFarmerData((prevData) => ({
+        ...prevData,
+        farmerName: farmer.name,
+        totalDue: farmer.totalDue,
+        remainingDue: farmer.totalDue,
+      }));
     }
-  };
+  }, [farmer]);
 
   const showModal = (title, message) => {
     setModalTitle(title);
@@ -95,10 +86,6 @@ const FarmerDetailsToggler = () => {
         throw new Error("Failed to update transaction details");
 
       showModal("Success", "ধারের ডাটা সংরক্ষণ হয়েছে!");
-
-      // Fetch updated data after save
-      fetchFarmerData();
-      setRedirectTo("/borrow");
     } catch (error) {
       showModal("Error", error.message || "Failed to save debt data");
     }
@@ -148,28 +135,9 @@ const FarmerDetailsToggler = () => {
         throw new Error("Failed to update transaction details");
 
       showModal("Success", "পরিশোধের ডাটা সংরক্ষণ হয়েছে!");
-
-      // Fetch updated data after save
-      fetchFarmerData();
-      setRedirectTo("/borrow");
     } catch (error) {
       showModal("Error", error.message || "Failed to save payment data");
     }
-  };
-
-  const filteredFarmersList = farmerList.filter((farmer) =>
-    farmer.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const handleFarmerSelection = (farmer) => {
-    setNewFarmerData({
-      farmerName: farmer.name,
-      totalDue: farmer.totalDue,
-      payGet: "",
-      newDhar: "",
-      remainingDue: farmer.totalDue,
-    });
-    setFilteredFarmers([]);
   };
 
   const handleNewFarmerInputChange = (e) => {
@@ -186,15 +154,6 @@ const FarmerDetailsToggler = () => {
         updatedData.remainingDue = (
           parseFloat(prevData.totalDue || 0) - parseFloat(value || 0)
         ).toFixed(2);
-      }
-
-      if (name === "farmerName") {
-        const searchTerm = value.toLowerCase();
-        setFilteredFarmers(
-          farmerList.filter((farmer) =>
-            farmer.name.toLowerCase().includes(searchTerm)
-          )
-        );
       }
 
       return updatedData;
@@ -221,49 +180,18 @@ const FarmerDetailsToggler = () => {
   return (
     <div>
       <div className="button-container">
-        <button onClick={toggleNewDebtForm}>
-          নতুন ধার এর তথ্য সংযুক্ত করুন
-        </button>
-        <button onClick={toggleNewPaymentForm}>
-          নতুন পরিশোধের তথ্য সংযুক্ত করুন
-        </button>
+        <button onClick={toggleNewDebtForm}>নতুন ধার</button>
+        <button onClick={toggleNewPaymentForm}>নতুন পরিশোধ</button>
       </div>
 
       {showNewDebtForm && (
         <div className="new-farmer-section">
           <h2 className="farmer-header-demo font-weight-bold">
-            নতুন ধার এর তথ্য সংযুক্ত করুন
+            নতুন ধার এর তথ্য
           </h2>
           <div className="new-farmer-inputs">
             <div>
               <div className="headings">
-                <label className="farmerName">কৃষকের নাম</label>
-              </div>
-              <input
-                type="text"
-                name="farmerName"
-                className="farmer-name"
-                value={newFarmerData.farmerName}
-                onChange={handleNewFarmerInputChange}
-                placeholder="কৃষকের নাম"
-              />
-              {filteredFarmers.length > 0 && (
-                <ul className="list-group-f">
-                  {filteredFarmers.map((farmer) => (
-                    <li
-                      key={farmer._id}
-                      className="list-group-item"
-                      onClick={() => handleFarmerSelection(farmer)}
-                    >
-                      {farmer.name}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-
-            <div>
-              <div className="">
                 <label className="newDhar">ধার দান</label>
               </div>
               <input
@@ -277,11 +205,7 @@ const FarmerDetailsToggler = () => {
           </div>
           <div className="saveBtn">
             <div className="headingBtn"></div>
-            <button
-              className="btn-primary"
-              onClick={handleSaveDebtClick}
-              disabled={!newFarmerData.farmerName}
-            >
+            <button className="btn-primary" onClick={handleSaveDebtClick}>
               সংরক্ষণ করুন
             </button>
           </div>
@@ -291,36 +215,9 @@ const FarmerDetailsToggler = () => {
       {showNewPaymentForm && (
         <div className="new-farmer-section">
           <h2 className="farmer-header-demo font-weight-bold">
-            নতুন পরিশোধের তথ্য সংযুক্ত করুন
+            নতুন পরিশোধের তথ্য
           </h2>
           <div className="new-farmer-inputs">
-            <div>
-              <div className="headings">
-                <label className="farmerName">কৃষকের নাম</label>
-              </div>
-              <input
-                type="text"
-                name="farmerName"
-                className="farmer-name"
-                value={newFarmerData.farmerName}
-                onChange={handleNewFarmerInputChange}
-                placeholder="কৃষকের নাম"
-              />
-              {filteredFarmers.length > 0 && (
-                <ul className="list-group-f">
-                  {filteredFarmers.map((farmer) => (
-                    <li
-                      key={farmer._id}
-                      className="list-group-item"
-                      onClick={() => handleFarmerSelection(farmer)}
-                    >
-                      {farmer.name}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-
             <div>
               <div className="headings">
                 <label className="payGet">টাকা গ্রহণ</label>
@@ -336,11 +233,7 @@ const FarmerDetailsToggler = () => {
           </div>
           <div className="saveBtn">
             <div className="headingBtn"></div>
-            <button
-              className="btn-primary"
-              onClick={handleSavePaymentClick}
-              disabled={!newFarmerData.farmerName}
-            >
+            <button className="btn-primary" onClick={handleSavePaymentClick}>
               সংরক্ষণ করুন
             </button>
           </div>

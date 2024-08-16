@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Table } from "react-bootstrap";
+import { Container, Row, Col, Table, Button } from "react-bootstrap";
 import "react-datepicker/dist/react-datepicker.css";
 import "./FinalPage.css";
 
@@ -8,7 +8,8 @@ const FinalPage = () => {
   const [startDate2, setStartDate2] = useState(new Date());
   const [transactionDetails1, setTransactionDetails1] = useState({});
   const [transactionDetails2, setTransactionDetails2] = useState({});
-
+  const [showSummary, setShowSummary] = useState(false);
+  const [summaryDetails, setSummaryDetails] = useState(null);
   // Function to format date as YYYY-MM-DD
   const formatDate = (date) => {
     const day = String(date.getDate()).padStart(2, "0");
@@ -41,7 +42,29 @@ const FinalPage = () => {
 
     fetchTransactionDetails(startDate1, setTransactionDetails1);
     fetchTransactionDetails(startDate2, setTransactionDetails2);
+    setShowSummary(false);
   }, [startDate1, startDate2]);
+
+  const handleCalculateClick = async () => {
+    try {
+      const formattedDate1 = formatDate(startDate1);
+      const formattedDate2 = formatDate(startDate2);
+
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/transaction/calculate?date1=${formattedDate1}&date2=${formattedDate2}`
+      );
+      if (!response.ok) {
+        throw new Error("Unable to fetch data");
+      }
+      const data = await response.json();
+
+      setSummaryDetails(data);
+
+      setShowSummary(true); // Show the summary after data is fetched
+    } catch (error) {
+      console.log("Error occurred:", error);
+    }
+  };
 
   return (
     <Container fluid className="final-page-container">
@@ -81,7 +104,7 @@ const FinalPage = () => {
               </tr>
               <tr>
                 <td>নিজের ধার</td>
-                <td>{transactionDetails1.nijerDhar || 0}</td>
+                <td>{transactionDetails1.totalMyOwnDebt || 0}</td>
               </tr>
               <tr>
                 <td>মোট</td>
@@ -89,7 +112,7 @@ const FinalPage = () => {
                   {(transactionDetails1.totalDebtsOfShops || 0) +
                     (transactionDetails1.totalDebtsOfFarmers || 0) +
                     (transactionDetails1.motCash || 0) +
-                    (transactionDetails1.nijerDhar || 0)}
+                    (transactionDetails1.totalMyOwnDebt || 0)}
                 </td>
               </tr>
             </tbody>
@@ -131,7 +154,7 @@ const FinalPage = () => {
               </tr>
               <tr>
                 <td>নিজের ধার</td>
-                <td>{transactionDetails2.nijerDhar || 0}</td>
+                <td>{transactionDetails2.totalMyOwnDebt || 0}</td>
               </tr>
               <tr>
                 <td>মোট</td>
@@ -139,7 +162,7 @@ const FinalPage = () => {
                   {(transactionDetails2.totalDebtsOfShops || 0) +
                     (transactionDetails2.totalDebtsOfFarmers || 0) +
                     (transactionDetails2.motCash || 0) +
-                    (transactionDetails2.nijerDhar || 0)}
+                    (transactionDetails2.totalMyOwnDebt || 0)}
                 </td>
               </tr>
             </tbody>
@@ -148,51 +171,60 @@ const FinalPage = () => {
       </Row>
 
       <Row className="mt-3 justify-content-center">
-        <Col lg={8} className="text-center">
-          <h5 className="summary-title font-weight-bold">
-            সারসংক্ষেপ ({formatDate(startDate1)} থেকে {formatDate(startDate2)})
-          </h5>
-          <Table
-            striped
-            bordered
-            hover
-            size="sm"
-            className="table-style mx-auto"
-          >
-            <thead>
-              <tr>
-                <th>ধরন</th>
-                <th>টাকা</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>কমিশন ও খাজনা</td>
-                <td>
-                  {(transactionDetails1.commission || 0) +
-                    (transactionDetails2.commission || 0)}
-                </td>
-              </tr>
-              <tr>
-                <td>নিজের খরচ</td>
-                <td>
-                  {(transactionDetails1.nijerKhoroch || 0) +
-                    (transactionDetails2.nijerKhoroch || 0)}
-                </td>
-              </tr>
-              <tr>
-                <td>মোট</td>
-                <td className="font-weight-bold">
-                  {(transactionDetails1.commission || 0) +
-                    (transactionDetails2.commission || 0) -
-                    (transactionDetails1.nijerKhoroch || 0) -
-                    (transactionDetails2.nijerKhoroch || 0)}
-                </td>
-              </tr>
-            </tbody>
-          </Table>
-        </Col>
+        <Button
+          variant="primary"
+          onClick={handleCalculateClick}
+          className="mb-3"
+        >
+          Calculate
+        </Button>
       </Row>
+
+      {showSummary && (
+        <Row className="mt-3 justify-content-center">
+          <Col lg={8} className="text-center">
+            <h5 className="summary-title font-weight-bold">
+              সারসংক্ষেপ ({formatDate(startDate1)} থেকে {formatDate(startDate2)}
+              )
+            </h5>
+            <Table
+              striped
+              bordered
+              hover
+              size="sm"
+              className="table-style mx-auto"
+            >
+              <thead>
+                <tr>
+                  <th>ধরন</th>
+                  <th>টাকা</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>কমিশন ও খাজনা</td>
+                  <td>
+                    {(summaryDetails.totalCommission || 0) +
+                      (summaryDetails.totalKhajna || 0)}
+                  </td>
+                </tr>
+                <tr>
+                  <td>নিজের খরচ</td>
+                  <td>{summaryDetails.totalOtherCost || 0}</td>
+                </tr>
+                <tr>
+                  <td>Minus Result</td>
+                  <td className="font-weight-bold">
+                    {(summaryDetails.totalCommission || 0) +
+                      (summaryDetails.totalKhajna || 0) -
+                      (summaryDetails.totalOtherCost || 0)}
+                  </td>
+                </tr>
+              </tbody>
+            </Table>
+          </Col>
+        </Row>
+      )}
     </Container>
   );
 };

@@ -6,6 +6,8 @@ import DailyTransactionTable from "./DailyTransactionTable";
 
 const DailyTransaction = () => {
   const [transactionDetails, setTransactionDetails] = useState(null);
+  const [totalDifference, setTotalDifference] = useState(0); // State to store the difference
+
   const dateNow = new Date();
   const normalizedDate = new Date(
     Date.UTC(dateNow.getFullYear(), dateNow.getMonth(), dateNow.getDate())
@@ -30,12 +32,51 @@ const DailyTransaction = () => {
         const data = await response.json();
         setTransactionDetails(data);
         console.log("transaction data", data);
+
+        // Calculate the difference between total income and total expense
+        const totalIncome = calculateTotalIncome(data);
+        const totalExpense = calculateTotalExpense(data);
+        console.log("total income", totalIncome);
+        console.log("total expense", totalExpense);
+        setTotalDifference(totalIncome - totalExpense);
       } catch (error) {
         console.log("Error occurred", error);
       }
     };
     fetchTransactionDetails();
   }, [selectedDate]);
+
+  const calculateTotalIncome = (data) => {
+    return [
+      data?.dailyCashStack || 0,
+      data?.credit?.dokanPayment || [],
+      data?.credit?.dharReturns || [],
+      data?.todayDebt || 0,
+    ].reduce((total, section) => {
+      if (Array.isArray(section)) {
+        return total + section.reduce((sum, item) => sum + item.amount, 0);
+      } else if (typeof section === "number") {
+        return total + section;
+      }
+      return total;
+    }, 0);
+  };
+
+  const calculateTotalExpense = (data) => {
+    return [
+      data?.debit?.farmersPayment || [],
+      data?.debit?.dhar || [],
+      data?.debit?.otherCost || [],
+      data?.todayDebtRepay || [],
+    ].reduce((total, section) => {
+      if (Array.isArray(section)) {
+        return total + section.reduce((sum, item) => sum + item.amount, 0);
+      } else if (typeof section === "number") {
+        return total + section;
+      }
+      return total;
+    }, 0);
+  };
 
   return (
     <div className="container-dailyTransaction mt-4">
@@ -56,7 +97,7 @@ const DailyTransaction = () => {
         transactionDetails={transactionDetails}
         setTransactionDetails={setTransactionDetails}
       />
-      
+
       <div className="row mb-4">
         <div className="col-md-6">
           <DailyTransactionTable
@@ -76,8 +117,8 @@ const DailyTransaction = () => {
               },
               {
                 title: "নিজের ঋণ",
-                transactionData: transactionDetails?.totalMyOwnDebt || [],
-              }
+                transactionData: transactionDetails?.todayDebt || [],
+              },
             ]}
           />
         </div>
@@ -88,7 +129,8 @@ const DailyTransaction = () => {
             data={[
               {
                 title: "কৃষকের টাকা(খরচ)",
-                transactionData: transactionDetails?.debit?.farmersPayment || [],
+                transactionData:
+                  transactionDetails?.debit?.farmersPayment || [],
               },
               {
                 title: "ধার (খরচ)",
@@ -100,13 +142,27 @@ const DailyTransaction = () => {
               },
               {
                 title: "নিজের ঋণ পরিশোধ",
-                transactionData: transactionDetails?.totalMyOwnDebtRepay || [],
-              }
+                transactionData: transactionDetails?.todayDebtRepay || [],
+              },
             ]}
           />
         </div>
       </div>
-        
+
+      {/* Add a new section to display the total difference */}
+      <div className="text-center mb-4">
+        <label htmlFor="totalDifference" className="font-weight-bold">
+          আয় - ব্যয় এর ফলাফল:
+        </label>
+        <input
+          type="text"
+          id="totalDifference"
+          value={totalDifference}
+          readOnly
+          className="ml-2"
+        />
+      </div>
+
       <LastCalculation transactionDetails={transactionDetails} />
     </div>
   );
