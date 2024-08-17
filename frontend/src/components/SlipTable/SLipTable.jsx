@@ -182,25 +182,25 @@ const SlipTable = () => {
 
   return (
     <div className="slip-table-container">
+      <h2 className="table-title text-center my-4 py-2 font-weight-bold">
+        দোকানের আজকের হিসাব
+      </h2>
+      <div className="text-center mb-4">
+        <label htmlFor="datePicker" className="font-weight-bold">
+          তারিখ:
+        </label>
+        <input
+          type="date"
+          id="datePicker"
+          value={selectedDate}
+          onChange={(e) => setSelectedDate(e.target.value)}
+          className="ml-2"
+        />
+      </div>
       {loading ? (
         <Loader />
       ) : (
         <>
-          <h2 className="table-title text-center my-4 py-2 font-weight-bold">
-            দোকানের আজকের হিসাব
-          </h2>
-          <div className="text-center mb-4">
-            <label htmlFor="datePicker" className="font-weight-bold">
-              তারিখ:
-            </label>
-            <input
-              type="date"
-              id="datePicker"
-              value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
-              className="ml-2"
-            />
-          </div>
           {noInfo ? (
             <div className="no-info">
               No information available for this date.

@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import handleDownload from "../../functions/handleDownload";
+import MessageModal from "../Modal/MessageModal"; // Import the MessageModal component
 
 const FarmerAndDokanSlip = ({ individualCardDetails }) => {
   const slipRef = useRef(); // Create a ref to capture the slip content
@@ -7,6 +8,12 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
   const [commission, setCommission] = useState(0);
   const [khajna, setKhajna] = useState(0);
   const [finalAmount, setFinalAmount] = useState(0);
+
+  // State for controlling the modal
+  const [modalShow, setModalShow] = useState(false);
+  const [modalTitle, setModalTitle] = useState("");
+  const [modalMessage, setModalMessage] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
 
   useEffect(() => {
     if (individualCardDetails?.purchases) {
@@ -38,6 +45,7 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
         return;
       }
     }
+
     try {
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/transaction/save-daily`,
@@ -59,8 +67,11 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
         throw new Error("Daily transaction save failed");
       }
     } catch (error) {
-      console.error("Error saving daily transaction:", error);
-      alert("Daily transaction save failed");
+      setModalTitle("Error");
+      setModalMessage("Daily transaction save failed");
+      setIsSuccess(false);
+      setModalShow(true);
+      return;
     }
 
     try {
@@ -82,92 +93,103 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
       if (!updateResponse.ok) {
         throw new Error("Error updating card details");
       }
-      const data = await updateResponse.json();
-      alert("Commissions and khajnas saved successfully and updated!");
+
+      setModalTitle("Success");
+      setModalMessage(
+        "Commissions and khajnas saved successfully and updated!"
+      );
+      setIsSuccess(true);
+      setModalShow(true);
     } catch (error) {
-      console.error("Error updating card details:", error);
-      alert("Error updating card details");
+      setModalTitle("Error");
+      setModalMessage("Error updating card details");
+      setIsSuccess(false);
+      setModalShow(true);
     }
   };
 
   return (
     <>
-      <div className="col-md-7" ref={slipRef}>
-        <div className="card-body" id="dokaner-slip">
-          <h5 className="header-title">কৃষকের Slip</h5>
-          <table className="table table-striped">
-            <thead>
-              <tr>
-                <th>দোকানের নাম</th>
-                <th>পণ্যের নাম</th>
-                <th>পরিমাণ (কেজি)</th>
-                <th>দাম (টাকা/কেজি)</th>
-                <th>মোট (টাকা)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {individualCardDetails?.purchases.map((item, index) => (
-                <tr key={index}>
-                  <td>{item.shopName}</td>
-                  <td>{item.stockName}</td>
-                  <td>{item.quantity}</td>
-                  <td>{item.price}</td>
-                  <td>{item.total}</td>
+      <div className="col-md-7">
+        <div className="card-body" id="dokaner-slip" ref={slipRef}>
+          <div>
+            <h3 className="card-title m-2">
+              {individualCardDetails?.farmerName}
+            </h3>
+            <table className="table table-striped">
+              <thead>
+                <tr>
+                  <th>দোকানের নাম</th>
+                  <th>পণ্যের নাম</th>
+                  <th>পরিমাণ (কেজি)</th>
+                  <th>দাম (টাকা/কেজি)</th>
+                  <th>মোট (টাকা)</th>
                 </tr>
-              ))}
+              </thead>
+              <tbody>
+                {individualCardDetails?.purchases.map((item, index) => (
+                  <tr key={index}>
+                    <td>{item.shopName}</td>
+                    <td>{item.stockName}</td>
+                    <td>{item.quantity}</td>
+                    <td>{item.price}</td>
+                    <td>{item.total}</td>
+                  </tr>
+                ))}
 
-              <tr>
-                <td colSpan="4" className="text-right font-weight-bold">
-                  মোট (টাকা):
-                </td>
-                <td className="font-weight-bold">
-                  {individualCardDetails?.purchases.reduce(
-                    (total, item) => total + item.total,
-                    0
-                  )}
-                </td>
-              </tr>
+                <tr>
+                  <td colSpan="4" className="text-right font-weight-bold">
+                    মোট (টাকা):
+                  </td>
+                  <td className="font-weight-bold">
+                    {individualCardDetails?.purchases.reduce(
+                      (total, item) => total + item.total,
+                      0
+                    )}
+                  </td>
+                </tr>
 
-              <tr>
-                <td colSpan="4" className="text-right font-weight-bold">
-                  কমিশন (টাকা):
-                </td>
-                <td className="commission font-weight-bold">
-                  {individualCardDetails.doneStatus ? (
-                    individualCardDetails.commission
-                  ) : (
-                    <input
-                      type="number"
-                      value={commission}
-                      onChange={handleCommissionChange}
-                    />
-                  )}
-                </td>
-              </tr>
-              <tr>
-                <td colSpan="4" className="text-right font-weight-bold">
-                  খাজনা (টাকা):
-                </td>
-                <td className="commission font-weight-bold">
-                  {individualCardDetails.doneStatus ? (
-                    individualCardDetails.khajna
-                  ) : (
-                    <input
-                      type="number"
-                      value={khajna}
-                      onChange={handleKhajnaChange}
-                    />
-                  )}
-                </td>
-              </tr>
-              <tr>
-                <td colSpan="4" className="text-right font-weight-bold">
-                  চূড়ান্ত মোট (টাকা):
-                </td>
-                <td className="font-weight-bold">{finalAmount.toFixed(2)}</td>
-              </tr>
-            </tbody>
-          </table>
+                <tr>
+                  <td colSpan="4" className="text-right font-weight-bold">
+                    কমিশন (টাকা):
+                  </td>
+                  <td className="commission font-weight-bold">
+                    {individualCardDetails.doneStatus ? (
+                      individualCardDetails.commission
+                    ) : (
+                      <input
+                        type="number"
+                        value={commission}
+                        onChange={handleCommissionChange}
+                      />
+                    )}
+                  </td>
+                </tr>
+                <tr>
+                  <td colSpan="4" className="text-right font-weight-bold">
+                    খাজনা (টাকা):
+                  </td>
+                  <td className="commission font-weight-bold">
+                    {individualCardDetails.doneStatus ? (
+                      individualCardDetails.khajna
+                    ) : (
+                      <input
+                        type="number"
+                        value={khajna}
+                        onChange={handleKhajnaChange}
+                      />
+                    )}
+                  </td>
+                </tr>
+                <tr>
+                  <td colSpan="4" className="text-right font-weight-bold">
+                    চূড়ান্ত মোট (টাকা):
+                  </td>
+                  <td className="font-weight-bold">{finalAmount.toFixed(2)}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
 
         {individualCardDetails?.doneStatus && (
@@ -184,6 +206,15 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
           </button>
         )}
       </div>
+
+      {/* MessageModal for displaying error/success messages */}
+      <MessageModal
+        show={modalShow}
+        onHide={() => setModalShow(false)}
+        title={modalTitle}
+        message={modalMessage}
+        onConfirm={() => setModalShow(false)}
+      />
     </>
   );
 };

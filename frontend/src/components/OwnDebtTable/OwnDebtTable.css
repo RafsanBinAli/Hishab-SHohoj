@@ -1,44 +1,75 @@
+/* Base styles for larger screens */
 .own-debt-tables {
+    background-color: #f9f9f9;
     padding: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-}
+    border-radius: 10px;
+    margin-top: 20px;
+    margin-left: 11rem;
+    max-width: 1320px;
+  }
   
-.tables-wrapper {
+  .tables-wrapper {
     display: flex;
     justify-content: space-between;
     gap: 20px;
     width: 100%;
-}
+  }
   
-.debt-table {
+  .debt-table {
     flex: 1;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
+  }
   
-.debt-table h3 {
+  .debt-table h3 {
     text-align: center;
     margin-bottom: 20px;
     color: #333;
-}
+  }
   
-.table {
+  .table {
     width: 100%;
     border-collapse: collapse;
-}
+  }
   
-.table th,
-.table td {
+  .table th,
+  .table td {
     padding: 10px;
     text-align: center; /* Center the text horizontally */
     vertical-align: middle; /* Center the text vertically */
     border-bottom: 1px solid #ddd;
-}
+  }
   
-.table tbody tr:hover {
+  .table tbody tr:hover {
     background-color: #f1f1f1;
-}
+  }
+  
+  /* Responsive styles for smaller screens */
+  @media (max-width: 768px) {
+    .own-debt-tables {
+      margin-left: auto;
+      margin-right: auto;
+      padding: 15px;
+    }
+  
+    .tables-wrapper {
+      flex-direction: column; /* Stack tables vertically */
+      gap: 15px;
+    }
+  
+    .debt-table {
+      padding: 15px;
+    }
+  
+    .debt-table h3 {
+      font-size: 18px; /* Adjust font size for smaller screens */
+    }
+  
+    .table th,
+    .table td {
+      padding: 8px;
+      font-size: 14px; /* Adjust table cell font size for better readability */
+    }
+  }
+  

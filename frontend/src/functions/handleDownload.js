@@ -7,22 +7,27 @@ const handleDownload = (slipRef) => {
     const imgData = canvas.toDataURL("image/png");
     const pdf = new jsPDF();
 
-    // Adjust the PDF size to fit the content
-    const imgWidth = 210; // A4 width in mm
-    const pageHeight = 297; // A4 height in mm
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-    let heightLeft = imgHeight;
-    let position = 0;
+    // A4 size dimensions in mm
+    const pageWidth = 210;
+    const pageHeight = 297;
 
-    // Add the image content to the PDF
-    pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-    heightLeft -= pageHeight;
+    // Set margins in mm
+    const margin = 15;
+    const imgWidth = pageWidth - 2 * margin;
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+    let heightLeft = imgHeight;
+    let position = margin;
+
+    // Add the image content to the PDF with margins
+    pdf.addImage(imgData, "PNG", margin, position, imgWidth, imgHeight);
+    heightLeft -= pageHeight - 2 * margin;
 
     while (heightLeft >= 0) {
-      position = heightLeft - imgHeight;
+      position = heightLeft - imgHeight + margin;
       pdf.addPage();
-      pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
+      pdf.addImage(imgData, "PNG", margin, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight - 2 * margin;
     }
 
     pdf.save("slip-details.pdf");

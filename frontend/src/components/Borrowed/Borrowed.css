@@ -226,7 +226,27 @@
   outline: none; /* Remove default focus outline */
 }
 
+.nijerDhar {
+  display: block;
+  margin-left: auto; /* Aligns the button to the right on larger screens */
+  margin-right: 0;
+  background-color: #007bff; /* Primary blue color */
+  color: white;
+  font-weight: bold;
+  padding: 10px 30px; /* Increased padding for a larger button */
+  font-size: 18px; /* Larger font size */
+  border-radius: 8px; /* Slightly more rounded corners */
+  text-align: center;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.nijerDhar:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+  transform: scale(1.05); /* Slightly enlarges the button on hover */
+}
+
 @media (max-width: 1200px) {
+
   .borrowed-container {
     padding: 15px;
     margin-left: 0;
@@ -247,6 +267,7 @@
 }
 
 @media (max-width: 992px) {
+  
   .borrowed-container {
     padding: 10px;
     margin-left: 0;
@@ -267,6 +288,7 @@
 }
 
 @media (max-width: 768px) {
+  
   .borrowed-container {
     padding: 10px;
     margin-left: 0;

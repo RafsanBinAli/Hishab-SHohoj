@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import "./CardDetail.css";
 import FarmerSlipDetails from "./FarmerSlipDetails";
+import MessageModal from "../Modal/MessageModal"; // Import the MessageModal component
 import {
   fetchShops,
   fetchFarmers,
   fetchCardDetails,
 } from "../../utils/dataService";
+
 const CardDetail = () => {
   const [loadedData, setLoadedData] = useState(null);
   const [shops, setShops] = useState([]);
@@ -16,6 +18,11 @@ const CardDetail = () => {
   const [formRows, setFormRows] = useState([
     { farmerName: "", shopName: "", stockName: "", quantity: "", price: "" },
   ]);
+
+  // State for managing the modal
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalTitle, setModalTitle] = useState("");
+  const [modalMessage, setModalMessage] = useState("");
 
   useEffect(() => {
     const initializeData = async () => {
@@ -67,12 +74,16 @@ const CardDetail = () => {
           !row.price
       )
     ) {
-      alert("Please fill out all fields before saving.");
+      setModalTitle("Incomplete Fields");
+      setModalMessage("Please fill out all fields before saving.");
+      setModalVisible(true);
       return;
     }
 
     if (individualCardDetails?.doneStatus) {
-      alert("Already saved once, can't update it!");
+      setModalTitle("Already Saved");
+      setModalMessage("Already saved once, can't update it!");
+      setModalVisible(true);
       setFormRows([
         {
           farmerName: "",
@@ -212,9 +223,14 @@ const CardDetail = () => {
       setAllCardDetails(refreshedCardDetails);
       setIndividualCardDetails(updatedCardDetails);
 
-      alert("সকল স্লিপ আপডেট সম্পূর্ন হয়েছে !!");
+      setModalTitle("Success");
+      setModalMessage("সকল স্লিপ আপডেট সম্পূর্ন হয়েছে !!");
+      setModalVisible(true);
     } catch (error) {
       console.error("Error in handleSave:", error);
+      setModalTitle("Error");
+      setModalMessage("An error occurred during save operation.");
+      setModalVisible(true);
     }
   };
 
@@ -224,6 +240,7 @@ const CardDetail = () => {
     newFormRows[index][name] = value;
     setFormRows(newFormRows);
   };
+
   const handleFarmerChange = (index, event) => {
     const { name, value } = event.target;
     const newFormRows = [...formRows];
@@ -351,6 +368,15 @@ const CardDetail = () => {
         loadedData={loadedData}
         individualFarmerData={individualFarmerData}
         individualCardDetails={individualCardDetails}
+      />
+
+      {/* Render the MessageModal component */}
+      <MessageModal
+        show={modalVisible}
+        onHide={() => setModalVisible(false)}
+        title={modalTitle}
+        message={modalMessage}
+        onConfirm={() => setModalVisible(false)}
       />
     </div>
   );

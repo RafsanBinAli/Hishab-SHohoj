@@ -4,7 +4,7 @@ import Loader from "../Loader/Loader";
 import handleDownload from "../../functions/handleDownload";
 
 const FarmerSlipDetailsPaidUnpaid = () => {
-  const slipRef = useRef();
+  const cardRef = useRef(); // New ref for the table
   const { id } = useParams();
   const [slipDetails, setSlipDetails] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -126,10 +126,10 @@ const FarmerSlipDetailsPaidUnpaid = () => {
       <h2 className="dokaner-slip-title font-weight-bold">
         {slipDetails?.farmerName} স্লিপ
       </h2>
-      <div className="slip-card" ref={slipRef}>
-        <div className="card">
+      <div className="slip-card ">
+        <div className="card" ref={cardRef}>
           <div className="card-body">
-            <h5 className="card-title">{slipDetails?.shopName}</h5>
+            <h3 className="card-title">{slipDetails?.farmerName}</h3>
             <table className="table table-striped slip-table">
               <thead>
                 <tr>
@@ -213,22 +213,23 @@ const FarmerSlipDetailsPaidUnpaid = () => {
                 </tr>
               </tbody>
             </table>
-            {slipDetails.doneStatus && (
-              <button
-                className="btn btn-primary m-2"
-                onClick={() => handleDownload(slipRef)}
-              >
-                পিডিএফ ডাউনলোড করুন
-              </button>
-            )}
-
-            {!slipDetails.doneStatus && (
-              <button className="btn btn-primary mt-3" onClick={handlePayNow}>
-                Pay Now
-              </button>
-            )}
           </div>
         </div>
+
+        {slipDetails.doneStatus && (
+          <button
+            className="btn btn-primary m-4"
+            onClick={() => handleDownload(cardRef)} // Only download the table
+          >
+            পিডিএফ ডাউনলোড করুন
+          </button>
+        )}
+
+        {!slipDetails.doneStatus && (
+          <button className="btn btn-primary m-4" onClick={handlePayNow}>
+            Pay Now
+          </button>
+        )}
       </div>
     </div>
   );

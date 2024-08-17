@@ -42,7 +42,7 @@ const BorrowedTable = () => {
   const filteredFarmersList = farmerList.filter(
     (farmer) =>
       farmer.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      farmer.totalDue  !== 0
+      farmer.totalDue !== 0
   );
 
   const handleEditClick = async (farmerName, updatedData) => {
@@ -95,8 +95,8 @@ const BorrowedTable = () => {
 
   return (
     <div>
-      <button className="btn btn-primary mb-3" onClick={handleOwnDebtClick}>
-        Nijer Dhar
+      <button className="nijerDhar  mb-3" onClick={handleOwnDebtClick}>
+        নিজের ধার
       </button>
       <input
         type="text"

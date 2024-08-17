@@ -76,7 +76,7 @@ const Navbar = ({ setIsUserLoggedIn }) => {
           >
             <FontAwesomeIcon icon={faTimes} />
           </button>
-          কৃষকের
+
           <ul className="navbar-nav ml-auto">
             <li className="nav-item">
               <Link
@@ -132,7 +132,7 @@ const Navbar = ({ setIsUserLoggedIn }) => {
                 টোটাল হিসাব
               </Link>
             </li>
-            
+
             <li className="nav-item">
               <Link
                 className="nav-link"

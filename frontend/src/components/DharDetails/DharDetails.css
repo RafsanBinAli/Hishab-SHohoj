@@ -135,6 +135,26 @@
   text-align: center; /* Center text inside the button */
 }
 
+.new-farmer-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin: 20px 0;
+  background-color: #f9f9f9;
+}
+
+.payget{
+  margin-right: 0;
+}
+
+.headings{
+  margin-right: 1rem;
+}
+
 @media (max-width: 768px) {
   .saveBtn {
     margin: 1rem auto; /* Center the button horizontally on smaller screens */

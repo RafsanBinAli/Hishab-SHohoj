@@ -180,7 +180,9 @@ const FarmerDetailsToggler = ({ farmer }) => {
   return (
     <div>
       <div className="button-container">
-        <button onClick={toggleNewDebtForm}>নতুন ধার</button>
+        <button className="m-2" onClick={toggleNewDebtForm}>
+          নতুন ধার
+        </button>
         <button onClick={toggleNewPaymentForm}>নতুন পরিশোধ</button>
       </div>
 
@@ -220,7 +222,7 @@ const FarmerDetailsToggler = ({ farmer }) => {
           <div className="new-farmer-inputs">
             <div>
               <div className="headings">
-                <label className="payGet">টাকা গ্রহণ</label>
+                <label>টাকা গ্রহণ</label>
               </div>
               <input
                 type="number"
