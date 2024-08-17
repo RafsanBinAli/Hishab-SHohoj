@@ -34,6 +34,7 @@ const ShopList = ({ shops, loading }) => {
                   <th>দোকানের নাম</th>
                   <th>ঠিকানা</th>
                   <th>মোবাইল নম্বর</th>
+                  <th>বাকি</th>
                   <th>ছবি</th>
                 </tr>
               </thead>
@@ -44,6 +45,7 @@ const ShopList = ({ shops, loading }) => {
                     <td>{shop.shopName}</td>
                     <td>{shop.address}</td>
                     <td>{shop.phoneNumber}</td>
+                    <td>{shop.totalDue}</td>
                     <td>
                       {shop.imageUrl && (
                         <img

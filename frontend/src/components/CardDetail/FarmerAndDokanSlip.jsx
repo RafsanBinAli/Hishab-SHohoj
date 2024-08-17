@@ -1,13 +1,15 @@
 import { useEffect, useState, useRef } from "react";
 import handleDownload from "../../functions/handleDownload";
-import MessageModal from "../Modal/MessageModal"; // Import the MessageModal component
+import MessageModal from "../Modal/MessageModal";
 
 const FarmerAndDokanSlip = ({ individualCardDetails }) => {
-  const slipRef = useRef(); // Create a ref to capture the slip content
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const slipRef = useRef();
   const [commission, setCommission] = useState(0);
   const [khajna, setKhajna] = useState(0);
   const [finalAmount, setFinalAmount] = useState(0);
+  const [isPaid, setIsPaid] = useState(
+    individualCardDetails?.doneStatus || false
+  );
 
   // State for controlling the modal
   const [modalShow, setModalShow] = useState(false);
@@ -22,6 +24,22 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
         0
       );
 
+      const fetchedCommission = individualCardDetails.commission || 0;
+      const fetchedKhajna = individualCardDetails.khajna || 0;
+
+      setCommission(fetchedCommission);
+      setKhajna(fetchedKhajna);
+
+      setFinalAmount(totalAmount - fetchedCommission - fetchedKhajna);
+    }
+  }, [individualCardDetails]);
+
+  useEffect(() => {
+    if (individualCardDetails?.purchases) {
+      const totalAmount = individualCardDetails.purchases.reduce(
+        (total, item) => total + item.total,
+        0
+      );
       setFinalAmount(totalAmount - commission - khajna);
     }
   }, [commission, khajna, individualCardDetails]);
@@ -66,15 +84,7 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
       if (!response.ok) {
         throw new Error("Daily transaction save failed");
       }
-    } catch (error) {
-      setModalTitle("Error");
-      setModalMessage("Daily transaction save failed");
-      setIsSuccess(false);
-      setModalShow(true);
-      return;
-    }
 
-    try {
       const updateResponse = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/card-details-update-secondary`,
         {
@@ -90,9 +100,13 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
           }),
         }
       );
+
       if (!updateResponse.ok) {
         throw new Error("Error updating card details");
       }
+
+      // Set the payment as completed
+      setIsPaid(true);
 
       setModalTitle("Success");
       setModalMessage(
@@ -102,7 +116,7 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
       setModalShow(true);
     } catch (error) {
       setModalTitle("Error");
-      setModalMessage("Error updating card details");
+      setModalMessage("An error occurred while processing the payment.");
       setIsSuccess(false);
       setModalShow(true);
     }
@@ -154,8 +168,8 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
                     কমিশন (টাকা):
                   </td>
                   <td className="commission font-weight-bold">
-                    {individualCardDetails.doneStatus ? (
-                      individualCardDetails.commission
+                    {isPaid ? (
+                      commission
                     ) : (
                       <input
                         type="number"
@@ -170,8 +184,8 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
                     খাজনা (টাকা):
                   </td>
                   <td className="commission font-weight-bold">
-                    {individualCardDetails.doneStatus ? (
-                      individualCardDetails.khajna
+                    {isPaid ? (
+                      khajna
                     ) : (
                       <input
                         type="number"
@@ -192,22 +206,20 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
           </div>
         </div>
 
-        {individualCardDetails?.doneStatus && (
+        {isPaid ? (
           <button
             className="btn btn-primary m-2"
             onClick={() => handleDownload(slipRef)}
           >
             পিডিএফ ডাউনলোড করুন
           </button>
-        )}
-        {!individualCardDetails.doneStatus && (
+        ) : (
           <button className="btn btn-primary m-4" onClick={handlePayNow}>
             Pay now!
           </button>
         )}
       </div>
 
-      {/* MessageModal for displaying error/success messages */}
       <MessageModal
         show={modalShow}
         onHide={() => setModalShow(false)}

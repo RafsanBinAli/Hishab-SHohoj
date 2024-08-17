@@ -43,6 +43,7 @@ const FarmerList = ({ farmers }) => {
                     <th>কৃষকের নাম </th>
                     <th>ঠিকানা </th>
                     <th>মোবাইল নম্বর </th>
+                    <th>বাকি</th>
                     <th>ছবি</th>
                   </tr>
                 </thead>
@@ -53,6 +54,7 @@ const FarmerList = ({ farmers }) => {
                       <td>{farmer.name}</td>
                       <td>{farmer.village}</td>
                       <td>{farmer.phoneNumber}</td>
+                      <td>{farmer.totalDue}</td>
                       <td>
                         {farmer.imageUrl && (
                           <img
