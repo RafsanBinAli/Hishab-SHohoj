@@ -180,7 +180,7 @@ const FarmerDetailsToggler = ({ farmer }) => {
   return (
     <div>
       <div className="button-container">
-        <button className="m-2" onClick={toggleNewDebtForm}>
+        <button className="m-4" onClick={toggleNewDebtForm}>
           নতুন ধার
         </button>
         <button onClick={toggleNewPaymentForm}>নতুন পরিশোধ</button>

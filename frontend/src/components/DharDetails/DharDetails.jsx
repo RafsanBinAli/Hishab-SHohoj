@@ -21,29 +21,40 @@ const DharDetails = () => {
           <div className="card-content">
             <div className="card-section">
               <div className="card-section-left">
-                <h2 className="entries-header">Farmer Debt</h2>
+                <h2 className="entries-header font-weight-bold">কৃষকের ধার</h2>
+
+                {/* Farmer Image */}
+                <div className="dhar-farmer-image-container">
+                  <img
+                    src={farmer.imageUrl || "placeholder-image-url.jpg"}
+                    alt={farmer.name}
+                    className="dhar-farmer-image"
+                  />
+                </div>
+
                 <div className="farmer-info">
                   <div className="info-item-farmer">
-                    <span className="label">Farmer Name:</span> {farmer.name}
+                    <span className="label">কৃষকের নাম:</span> {farmer.name}
                   </div>
                   <div className="info-item-farmer">
-                    <span className="label">Total Due:</span> {farmer.totalDue}
+                    <span className="label">মোট ধার:</span> {farmer.totalDue}
                   </div>
                   <div className="info-item-farmer">
-                    <span className="label">Total Paid:</span>{" "}
-                    {farmer.totalPaid}
+                    <span className="label">পরিশোধ :</span> {farmer.totalPaid}
                   </div>
                   <div className="info-item-farmer">
-                    <span className="label">Remaining Due:</span>{" "}
+                    <span className="label"> বাকি:</span>{" "}
                     {farmer.totalDue - farmer.totalPaid}
                   </div>
                 </div>
 
-                <FarmerDetailsToggler farmer={farmer}/>
+                <FarmerDetailsToggler farmer={farmer} />
               </div>
               <div className="card-section-right">
                 <div className="debt-entries">
-                  <h2 className="entries-header">Debt Entries</h2>
+                  <h2 className="entries-header font-weight-bold">
+                    ধার/পরিশোধ তথ্য
+                  </h2>
                   {farmer.lastEditedBy && farmer.lastEditedBy.length > 0 ? (
                     <ul className="entries-list">
                       {farmer.lastEditedBy.map((entry, index) => (
@@ -61,9 +72,18 @@ const DharDetails = () => {
                           </div>
                           <div className="info-item">
                             <span className="label">পরিমান :</span>{" "}
-                            {entry.debtAmount}{" "}
-                            <b style={{ marginLeft: "5px" }}>টাকা</b>
+                            {entry.debtAmount} টাকা
                           </div>
+
+                          {/*   <div className="info-item">
+                            <span className="label">মোট ধার :</span>{" "}
+                            {farmer.totalDue} টাকা
+                          </div>
+
+                          <div className="info-item">
+                            <span className="label">বাকি :</span>{" "}
+                            {farmer.totalDue - farmer.totalPaid} টাকা
+                          </div>  */}
 
                           <div className="info-item">
                             <span className="label">তারিখ :</span>{" "}

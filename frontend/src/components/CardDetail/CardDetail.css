@@ -105,6 +105,33 @@
   overflow-wrap: break-word; /* Break long words to fit within container */
 }
 
+.farmer-image-container {
+  margin-left: 38px;
+  margin-bottom: 15px;
+  width: 100%; /* Full width within its container */
+  max-width: 310px; /* Maximum width of the container */
+  height: 200px; /* Set equal height to make it square */
+  border: 2px solid #ddd; /* Subtle border */
+  border-radius: 5px; /* Rounded corners */
+  overflow: hidden; /* Ensure the image stays within the container */
+  box-shadow: 0 4px 6px rgb(167 167 167 / 10%); /* Add a soft shadow for depth */
+  display: flex; /* Flexbox to center the image */
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+}
+
+.farmer-image {
+  width: 100%; /* Full width within its container */
+  height: 100%; /* Full height within its container */
+  object-fit: contain; /* Show the whole image, with empty space if needed */
+  transition: transform 0.3s ease; /* Smooth transform effect */
+}
+
+.farmer-image:hover {
+  transform: scale(1.05); /* Slight zoom effect on hover */
+}
+
+
 /* Responsive Styles */
 @media (max-width: 991.98px) {
   .container-card-details .card-body {

@@ -1,24 +1,41 @@
 import React from "react";
-import "./CardDetail.css"; // Make sure to import the CSS file
+import "./CardDetail.css";
 
 const FarmerDetails = ({ individualFarmerData }) => {
+  console.log(individualFarmerData); // Debugging: Check if data is correct
+
   return (
     <>
       <div className="col-md-4 ml-10">
-        <div className="card-body">
+        <div className="card-body farmer-card">
           <h5 className="header-title">কৃষকের পরিচয়</h5>
           <div className="farmer-details">
-            <div className="detail-item">
-              <span className="label">নাম:</span>
-              <span className="value">{individualFarmerData?.name}</span>
+            <div className="farmer-image-container">
+              {individualFarmerData?.imageUrl ? (
+                <img
+                  src={individualFarmerData.imageUrl}
+                  alt={individualFarmerData?.name}
+                  className="farmer-image"
+                />
+              ) : (
+                <p>No Image Available</p>
+              )}
             </div>
-            <div className="detail-item">
-              <span className="label">গ্রাম:</span>
-              <span className="value">{individualFarmerData?.village}</span>
-            </div>
-            <div className="detail-item">
-              <span className="label">মোবাইল:</span>
-              <span className="value">{individualFarmerData?.phoneNumber}</span>
+            <div className="detail-items">
+              <div className="detail-item">
+                <span className="label">নাম:</span>
+                <span className="value">{individualFarmerData?.name}</span>
+              </div>
+              <div className="detail-item">
+                <span className="label">গ্রাম:</span>
+                <span className="value">{individualFarmerData?.village}</span>
+              </div>
+              <div className="detail-item">
+                <span className="label">মোবাইল:</span>
+                <span className="value">
+                  {individualFarmerData?.phoneNumber}
+                </span>
+              </div>
             </div>
           </div>
         </div>

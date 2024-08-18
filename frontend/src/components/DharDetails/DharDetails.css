@@ -106,27 +106,47 @@
   display: flex;
   align-items: center;
   margin-bottom: 8px; /* Adjust margin as needed */
-  margin-left: 10%;
+  margin-left: 28%;
 }
 
-.label {
-  width: 120px; /* Adjust width as needed */
-  font-weight: bold;
-  margin-right: 10px; /* Spacing between label and data */
-  text-decoration: underline; /* Underline for label */
-  margin-right: 15%;
-}
+
 
 .data {
   flex: 1; /* Take up remaining space */
 }
 
-.farmer-info{
-  margin-top: 5%;
-  padding: 10px;
+.farmer-info {
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* More space between rows */
 }
-.info-item-farmer{
-  padding:5px;
+
+.info-item-farmer {
+  display: flex;
+  flex-direction: row; /* Default layout for larger screens */
+  align-items: center;
+  padding: 2px 0; /* Padding for better spacing */
+  font-size: 18px;
+  margin-left: 170px;
+}
+
+.label {
+  flex-basis: 150px; /* Ensures labels start from the same side */
+  font-weight: bold;
+  color: #000;
+  margin-right: 20px; /* Space between label and value */
+  text-align: left; /* Align text to the left */
+  text-decoration: none; /* Remove underline from labels */
+}
+
+.value {
+  flex-grow: 1; /* Takes up remaining space */
+  color: #333;
+  padding-left: 10px; /* Add space on the left of the value */
+  background-color: #f5f5f5; /* Light background for values */
+  border-radius: 5px; /* Rounded corners for values */
+  word-wrap: break-word; /* Ensure text wraps within the value container */
+  overflow-wrap: break-word; /* Break long words to fit within container */
 }
 
 .saveBtn {
@@ -154,6 +174,34 @@
 .headings{
   margin-right: 1rem;
 }
+
+
+.dhar-farmer-image-container {
+  margin-left: 153px;
+  margin-bottom: 15px;
+  width: 100%; /* Full width within its container */
+  max-width: 310px; /* Maximum width of the container */
+  height: 200px; /* Set equal height to make it square */
+  border: 2px solid #ddd; /* Subtle border */
+  border-radius: 5px; /* Rounded corners */
+  overflow: hidden; /* Ensure the image stays within the container */
+  box-shadow: 0 4px 6px rgb(167 167 167 / 10%); /* Add a soft shadow for depth */
+  display: flex; /* Flexbox to center the image */
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+}
+
+.dhar-farmer-image {
+  width: 100%; /* Full width within its container */
+  height: 100%; /* Full height within its container */
+  object-fit: contain; /* Show the whole image, with empty space if needed */
+  transition: transform 0.3s ease; /* Smooth transform effect */
+}
+
+.dhar-farmer-image:hover {
+  transform: scale(1.05); /* Slight zoom effect on hover */
+}
+
 
 @media (max-width: 768px) {
   .saveBtn {
@@ -183,9 +231,35 @@
     font-size: 16px; /* Reduce font size for content */
   }
 
+  .dhar-farmer-image-container{
+    margin-left: 0;
+  }
+
   .entry-item p {
     font-size: 14px; /* Reduce font size for entry item paragraphs */
     padding-left: 10px; /* Add left padding for paragraphs */
+  }
+
+  .info-item{
+    margin-left: -10%;
+  }
+
+  .info-item-farmer {
+    margin-left: -20px;
+    gap: 0;
+    padding: 0;
+   /* Stack label and value vertically on smaller screens */
+  }
+
+  .label {
+    flex-basis: auto; /* Allow label to adjust width on smaller screens */
+    margin-right: 0; /* Remove right margin */
+    margin-bottom: 0px; /* Add bottom margin for spacing */
+    text-align: left;
+  }
+
+  .value {
+    flex-basis: auto; /* Allow value to adjust width on smaller screens */
   }
 }
 
