@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import FarmerDetailsToggler from "./FarmerDetailsToggler";
 import "./DharDetails.css";
@@ -6,10 +6,41 @@ import "./DharDetails.css";
 const DharDetails = () => {
   const location = useLocation();
   const { farmer } = location.state || {};
+  const [farmerData, setFarmerData] = useState(farmer);
 
-  console.log("Farmer Data:", farmer); // Debug log
+  useEffect(() => {
+    if (farmer) {
+      setFarmerData(farmer);
+    }
+  }, [farmer]);
 
-  if (!farmer) {
+  // Define the onUpdate function
+  const onUpdate = async () => {
+    console.log("onUpdate called");
+    try {
+      const userAuthToken = localStorage.getItem("userAuthToken");
+      if (!userAuthToken) throw new Error("User is not authenticated.");
+
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/farmer/${farmerData.name}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${userAuthToken}`,
+          },
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to fetch updated farmer data.");
+
+      const updatedFarmer = await response.json();
+      setFarmerData(updatedFarmer);
+    } catch (error) {
+      console.error("Error fetching updated farmer data:", error);
+    }
+  };
+
+  if (!farmerData) {
     return <p>No dhar details available.</p>;
   }
 
@@ -26,38 +57,41 @@ const DharDetails = () => {
                 {/* Farmer Image */}
                 <div className="dhar-farmer-image-container">
                   <img
-                    src={farmer.imageUrl || "placeholder-image-url.jpg"}
-                    alt={farmer.name}
+                    src={farmerData.imageUrl || "placeholder-image-url.jpg"}
+                    alt={farmerData.name}
                     className="dhar-farmer-image"
                   />
                 </div>
 
                 <div className="farmer-info">
                   <div className="info-item-farmer">
-                    <span className="label">কৃষকের নাম:</span> {farmer.name}
+                    <span className="label">কৃষকের নাম:</span> {farmerData.name}
                   </div>
                   <div className="info-item-farmer">
-                    <span className="label">মোট ধার:</span> {farmer.totalDue}
+                    <span className="label">মোট ধার:</span>{" "}
+                    {farmerData.totalDue}
                   </div>
                   <div className="info-item-farmer">
-                    <span className="label">পরিশোধ :</span> {farmer.totalPaid}
+                    <span className="label">পরিশোধ :</span>{" "}
+                    {farmerData.totalPaid}
                   </div>
                   <div className="info-item-farmer">
-                    <span className="label"> বাকি:</span>{" "}
-                    {farmer.totalDue - farmer.totalPaid}
+                    <span className="label">বাকি:</span>{" "}
+                    {farmerData.totalDue - farmerData.totalPaid}
                   </div>
                 </div>
 
-                <FarmerDetailsToggler farmer={farmer} />
+                <FarmerDetailsToggler farmer={farmerData} onUpdate={onUpdate} />
               </div>
               <div className="card-section-right">
                 <div className="debt-entries">
                   <h2 className="entries-header font-weight-bold">
                     ধার/পরিশোধ তথ্য
                   </h2>
-                  {farmer.lastEditedBy && farmer.lastEditedBy.length > 0 ? (
+                  {farmerData.lastEditedBy &&
+                  farmerData.lastEditedBy.length > 0 ? (
                     <ul className="entries-list">
-                      {farmer.lastEditedBy.map((entry, index) => (
+                      {farmerData.lastEditedBy.map((entry, index) => (
                         <li
                           key={index}
                           className={`entry-item ${
@@ -75,15 +109,10 @@ const DharDetails = () => {
                             {entry.debtAmount} টাকা
                           </div>
 
-                          {/*   <div className="info-item">
-                            <span className="label">মোট ধার :</span>{" "}
-                            {farmer.totalDue} টাকা
-                          </div>
-
                           <div className="info-item">
-                            <span className="label">বাকি :</span>{" "}
-                            {farmer.totalDue - farmer.totalPaid} টাকা
-                          </div>  */}
+                            <span className="label">বাকি :</span> {entry.due}{" "}
+                            টাকা
+                          </div>
 
                           <div className="info-item">
                             <span className="label">তারিখ :</span>{" "}

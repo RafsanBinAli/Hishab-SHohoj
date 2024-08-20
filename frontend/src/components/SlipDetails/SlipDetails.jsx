@@ -77,7 +77,7 @@ const SlipDetails = () => {
       {loading ? (
         <Loader /> // Show loader while data is being fetched
       ) : slipDetails ? (
-        <div ref={slipRef} className="slip-card">
+        <div className="slip-card" ref={slipRef}>
           <div className="card">
             <div className="card-body">
               <h5 className="card-title">{slipDetails?.shopName}</h5>
@@ -128,16 +128,17 @@ const SlipDetails = () => {
               </table>
             </div>
           </div>
+
+          <button
+            className="download-button"
+            onClick={() => handleDownload(slipRef)} // Use the imported handleDownload function
+          >
+            পিডিএফ ডাউনলোড করুন
+          </button>
         </div>
       ) : (
         <p className="loading-text">No slip details found.</p>
       )}
-      <button
-        className="download-button"
-        onClick={() => handleDownload(slipRef)} // Use the imported handleDownload function
-      >
-        পিডিএফ ডাউনলোড করুন
-      </button>
     </div>
   );
 };

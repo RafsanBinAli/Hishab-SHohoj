@@ -14,6 +14,10 @@ const debtEntrySchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+
+  due: {
+    type: Number,
+  },
   action: {
     type: String,
     enum: ["newDebt", "repayDebt"],

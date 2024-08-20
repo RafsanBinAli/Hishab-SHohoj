@@ -3,12 +3,15 @@ import "./DailyTransaction.css";
 import LastCalculation from "./LastCalculation";
 import TransactionButton from "./TransactionButtons";
 import DailyTransactionTable from "./DailyTransactionTable";
+import KhajnaCommissionTable from "./KhajnaCommissionTable";
 
 const DailyTransaction = () => {
   const [transactionDetails, setTransactionDetails] = useState(null);
   const [totalDifference, setTotalDifference] = useState(0); // State to store the difference
   const [totalIncome, setTotalIncome] = useState(0);
   const [totalExpense, setTotalExpense] = useState(0);
+  const [khajna, setKhajna] = useState(0); // State to store Khajna
+  const [commission, setCommission] = useState(0); // State to store Commission
   const dateNow = new Date();
   const normalizedDate = new Date(
     Date.UTC(dateNow.getFullYear(), dateNow.getMonth(), dateNow.getDate())
@@ -40,6 +43,10 @@ const DailyTransaction = () => {
         setTotalIncome(totalIncomeFromTrans);
         setTotalExpense(totalExpenseFromTrans);
         setTotalDifference(totalIncome - totalExpense);
+
+        // Set Khajna and Commission values
+        setKhajna(data.credit?.khajnas || 0);
+        setCommission(data.credit?.commissions || 0);
       } catch (error) {
         console.log("Error occurred", error);
       }
@@ -150,14 +157,18 @@ const DailyTransaction = () => {
         </div>
       </div>
 
-      {/* Add a new section to display the total difference */}
-     
-
-      <LastCalculation
-        transactionDetails={transactionDetails}
-        totalIncome={totalIncome}
-        totalExpense={totalExpense}
-      />
+      <div className="row mb-4">
+        <div className="col-md-6">
+          <KhajnaCommissionTable khajna={khajna} commission={commission} />
+        </div>
+        <div className="col-md-6">
+          <LastCalculation
+            transactionDetails={transactionDetails}
+            totalIncome={totalIncome}
+            totalExpense={totalExpense}
+          />
+        </div>
+      </div>
     </div>
   );
 };

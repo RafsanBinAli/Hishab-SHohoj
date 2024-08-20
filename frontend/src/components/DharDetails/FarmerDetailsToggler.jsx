@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./DharDetails.css";
 import MessageModal from "../Modal/MessageModal";
 
-const FarmerDetailsToggler = ({ farmer }) => {
+const FarmerDetailsToggler = ({ farmer, onUpdate }) => {
   const [showNewDebtForm, setShowNewDebtForm] = useState(false);
   const [showNewPaymentForm, setShowNewPaymentForm] = useState(false);
 
@@ -79,6 +79,7 @@ const FarmerDetailsToggler = ({ farmer }) => {
           body: JSON.stringify({
             farmerName: newFarmerData.farmerName,
             amount: newFarmerData.newDhar,
+            due: newFarmerData.remainingDue,
           }),
         }
       );
@@ -86,6 +87,8 @@ const FarmerDetailsToggler = ({ farmer }) => {
         throw new Error("Failed to update transaction details");
 
       showModal("Success", "ধারের ডাটা সংরক্ষণ হয়েছে!");
+      // Call onUpdate to fetch updated data
+      await onUpdate();
     } catch (error) {
       showModal("Error", error.message || "Failed to save debt data");
     }
@@ -128,6 +131,7 @@ const FarmerDetailsToggler = ({ farmer }) => {
           body: JSON.stringify({
             farmerName: newFarmerData.farmerName,
             amount: newFarmerData.payGet,
+            due: newFarmerData.remainingDue,
           }),
         }
       );
@@ -135,6 +139,8 @@ const FarmerDetailsToggler = ({ farmer }) => {
         throw new Error("Failed to update transaction details");
 
       showModal("Success", "পরিশোধের ডাটা সংরক্ষণ হয়েছে!");
+      // Call onUpdate to fetch updated data
+      await onUpdate();
     } catch (error) {
       showModal("Error", error.message || "Failed to save payment data");
     }

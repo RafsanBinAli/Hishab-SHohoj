@@ -59,29 +59,41 @@ exports.updateFarmer = async (req, res) => {
     if (!farmer) {
       return res.status(404).json({ error: "Farmer not found" });
     }
+
+    let due = farmer.totalDue - farmer.totalPaid; // Calculate the current due
+
     if (payGet) {
-      farmer.totalPaid = farmer.totalPaid + parseFloat(payGet || 0);
+      farmer.totalPaid += parseFloat(payGet || 0);
+      due = farmer.totalDue - farmer.totalPaid; // Update due value
+
       const action = {
         editedBy: req.user.username,
         date: new Date(),
         debtAmount: parseFloat(payGet || 0),
+        due: due, // Add due data
         action: "repayDebt",
       };
       farmer.lastEditedBy.push(action);
-    } else {
-      farmer.totalDue = farmer.totalDue + parseFloat(newDhar || 0);
+    } else if (newDhar) {
+      farmer.totalDue += parseFloat(newDhar || 0);
+      due = farmer.totalDue - farmer.totalPaid; // Update due value
+
       const action = {
         editedBy: req.user.username,
         date: new Date(),
         debtAmount: parseFloat(newDhar || 0),
+        due: due, // Add due data
         action: "newDebt",
       };
-
       farmer.lastEditedBy.push(action);
     }
-    await farmer.save();
 
-    res.json({ totalDue: farmer.totalDue, editHistory: farmer.lastEditedBy });
+    await farmer.save();
+    res.json({
+      totalDue: farmer.totalDue,
+      totalPaid: farmer.totalPaid,
+      editHistory: farmer.lastEditedBy,
+    });
   } catch (error) {
     console.error("Error updating farmer:", error);
     res.status(500).json({ error: "Failed to update farmer" });

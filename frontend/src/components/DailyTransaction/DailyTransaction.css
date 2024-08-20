@@ -55,6 +55,16 @@ h2.text-center.my-4.py-2.font-weight-bold {
   text-align: center;
 }
 
+/* KhajnaCommissionTable */
+.khajna-commission-table {
+  margin: 1rem;
+}
+
+.khajna-commission-table .table {
+  width: 100%;
+}
+
+
 /* Responsive Adjustments */
 @media (max-width: 1200px) {
   .container-dailyTransaction {

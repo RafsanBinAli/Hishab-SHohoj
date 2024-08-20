@@ -212,8 +212,8 @@ const SlipTable = () => {
                   <tr>
                     <th>দোকানের নাম</th>
                     <th>আজকের স্লিপের টাকা</th>
-                    <th>আজকের স্লিপের পরিশোধ টাকা</th>
                     <th>আগের বাকি টাকা</th>
+                    <th>আজকের স্লিপের পরিশোধ টাকা</th>
                     <th>পরিশোধ করতে হবে টাকা</th>
                     <th>পরিশোধ</th>
                     <th>Status</th>
@@ -224,8 +224,10 @@ const SlipTable = () => {
                     <tr key={index}>
                       <td>{slip.shopName}</td>
                       <td>{slip.totalAmount}</td>
-                      <td>{slip.paidAmount}</td>
+
                       <td>{getTotalDue(slip.shopName)}</td>
+                      <td>{slip.paidAmount}</td>
+
                       <td>
                         {slip.totalAmount +
                           getTotalDue(slip.shopName) -
