@@ -4,7 +4,6 @@ const DailyTransactionTable = ({ title, data }) => {
   return (
     <div className="card">
       <div className="card-body table-responsive">
-        {/* Apply the title class */}
         <h4 className="daily-transaction-table-title">{title}</h4>
         <table className="table table-striped">
           <thead>
@@ -35,7 +34,7 @@ const DailyTransactionTable = ({ title, data }) => {
                             {section.transactionData.map((item, index) => (
                               <tr key={index}>
                                 <td>{item.name}</td>
-                                <td>{item.amount}</td>
+                                <td>{item.amount || item.cost}</td>
                               </tr>
                             ))}
                           </tbody>
@@ -48,7 +47,8 @@ const DailyTransactionTable = ({ title, data }) => {
                   <td>
                     {Array.isArray(section.transactionData)
                       ? section.transactionData.reduce(
-                          (total, item) => total + item.amount,
+                          (total, item) =>
+                            total + (item.amount || item.cost),
                           0
                         )
                       : section.transactionData || 0}
@@ -65,7 +65,8 @@ const DailyTransactionTable = ({ title, data }) => {
                     grandTotal +
                     (Array.isArray(section.transactionData)
                       ? section.transactionData.reduce(
-                          (total, item) => total + item.amount,
+                          (total, item) =>
+                            total + (item.amount || item.cost),
                           0
                         )
                       : section.transactionData || 0),

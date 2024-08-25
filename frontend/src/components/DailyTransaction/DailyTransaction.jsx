@@ -7,11 +7,12 @@ import KhajnaCommissionTable from "./KhajnaCommissionTable";
 
 const DailyTransaction = () => {
   const [transactionDetails, setTransactionDetails] = useState(null);
-  const [totalDifference, setTotalDifference] = useState(0); // State to store the difference
   const [totalIncome, setTotalIncome] = useState(0);
   const [totalExpense, setTotalExpense] = useState(0);
-  const [khajna, setKhajna] = useState(0); // State to store Khajna
-  const [commission, setCommission] = useState(0); // State to store Commission
+  const [khajna, setKhajna] = useState(0);
+  const [commission, setCommission] = useState(0);
+  const [totalDifference, setTotalDifference] = useState(0);
+
   const dateNow = new Date();
   const normalizedDate = new Date(
     Date.UTC(dateNow.getFullYear(), dateNow.getMonth(), dateNow.getDate())
@@ -22,6 +23,7 @@ const DailyTransaction = () => {
     const day = String(date.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
+
   const [selectedDate, setSelectedDate] = useState(formatDate(normalizedDate));
 
   useEffect(() => {
@@ -35,20 +37,20 @@ const DailyTransaction = () => {
         }
         const data = await response.json();
         setTransactionDetails(data);
-        console.log("transaction data", data);
 
-        // Calculate the difference between total income and total expense
-        const totalIncomeFromTrans = calculateTotalIncome(data);
-        const totalExpenseFromTrans = calculateTotalExpense(data);
-        setTotalIncome(totalIncomeFromTrans);
-        setTotalExpense(totalExpenseFromTrans);
-        setTotalDifference(totalIncome - totalExpense);
+        // Calculate the totals
+        const income = calculateTotalIncome(data);
+        const expense = calculateTotalExpense(data);
+        setTotalIncome(income);
+        setTotalExpense(expense);
+        setTotalDifference(income - expense);
 
         // Set Khajna and Commission values
         setKhajna(data.credit?.khajnas || 0);
         setCommission(data.credit?.commissions || 0);
       } catch (error) {
         console.log("Error occurred", error);
+        // Optionally, show an error message to users here
       }
     };
     fetchTransactionDetails();
@@ -137,8 +139,7 @@ const DailyTransaction = () => {
             data={[
               {
                 title: "কৃষকের টাকা(খরচ)",
-                transactionData:
-                  transactionDetails?.debit?.farmersPayment || [],
+                transactionData: transactionDetails?.debit?.farmersPayment || [],
               },
               {
                 title: "ধার (খরচ)",
@@ -166,6 +167,7 @@ const DailyTransaction = () => {
             transactionDetails={transactionDetails}
             totalIncome={totalIncome}
             totalExpense={totalExpense}
+            totalDifference={totalDifference}
           />
         </div>
       </div>

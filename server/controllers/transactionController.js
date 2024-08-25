@@ -171,28 +171,39 @@ exports.updateDailyCashStack = async (req, res) => {
 
 exports.updateOtherCost = async (req, res) => {
   try {
-    const { otherCost } = req.body;
-    let transactionToday = await DailyTransaction.findOne({
-      date: normalizedDate,
-    });
+      const { otherCost } = req.body; // Expecting an array of objects [{ name: 'Example', cost: 100 }, ...]
 
-    if (!transactionToday) {
-      return res
-        .status(404)
-        .json({ message: "Transaction not found for the day!" });
-    }
-    transactionToday.debit.otherCost = otherCost;
-    await transactionToday.save();
+      // Find the transaction for the current day
+      const transactionToday = await DailyTransaction.findOne({
+          date: normalizedDate,
+      });
 
-    res.status(200).json({
-      message: "Other cost  updated successfully!",
-      transaction: transactionToday,
-    });
+      if (!transactionToday) {
+          return res
+              .status(404)
+              .json({ message: "Transaction not found for the day!" });
+      }
+
+      // Validate the otherCost input
+      if (Array.isArray(otherCost) && otherCost.every(item => item.name && item.amount !== undefined)) {
+          // Push each new cost into the existing otherCost array
+          transactionToday.debit.otherCost.push(...otherCost);
+          await transactionToday.save();
+
+          return res.status(200).json({
+              message: "Other cost(s) added successfully!",
+              transaction: transactionToday,
+          });
+      } else {
+          return res.status(400).json({
+              message: "Invalid other cost format! Expected an array of objects with 'name' and 'cost'.",
+          });
+      }
   } catch (error) {
-    res.status(500).json({
-      message: "Failed to update other costs!",
-      error: error.message,
-    });
+      res.status(500).json({
+          message: "Failed to add other costs!",
+          error: error.message,
+      });
   }
 };
 

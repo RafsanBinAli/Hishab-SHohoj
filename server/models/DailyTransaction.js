@@ -65,10 +65,18 @@ const transactionSchema = new Schema({
         },
       },
     ],
-    otherCost: {
-      type: Number,
-      default: 0,
-    },
+    otherCost: [
+      {
+        name: {
+          type: String,
+          required: true,
+        },
+        amount: {
+          type: Number,
+          required: true,
+        },
+      },
+    ],
   },
   myOwnDebt: [
     {
@@ -153,7 +161,7 @@ transactionSchema.pre("save", function (next) {
   const totalCost =
     this.debit.dhar.reduce((sum, item) => sum + item.amount, 0) +
     this.debit.farmersPayment.reduce((sum, item) => sum + item.amount, 0) +
-    this.debit.otherCost;
+    this.debit.otherCost.reduce((sum, item) => sum + item.cost, 0); // Update to sum the cost in otherCost array
 
   const netProfit = totalProfit - totalCost;
 
