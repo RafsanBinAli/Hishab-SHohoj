@@ -38,7 +38,7 @@ const FarmerSlipDetailsPaidUnpaid = () => {
         }
         const data = await response.json();
         setSlipDetails(data);
-        console.log(data);
+        console.log(data.createdAt);
       } catch (error) {
         console.error("Error fetching deal:", error);
       } finally {
@@ -67,6 +67,7 @@ const FarmerSlipDetailsPaidUnpaid = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
+            date: slipDetails?.createdAt,
             commission,
             khajna,
             name: slipDetails?.farmerName,
@@ -106,11 +107,7 @@ const FarmerSlipDetailsPaidUnpaid = () => {
 
       alert("Commissions and khajnas saved successfully and updated!");
 
-      // Reload the page to fetch the new data
-      window.location.reload();
-
-      // Alternatively, you can refetch the deal data without a full page reload:
-      // fetchDeal();
+      setSlipDetails(data);
     } catch (error) {
       console.error("Error occurred updating card details!");
       alert("Error occurred updating card details");
@@ -124,7 +121,8 @@ const FarmerSlipDetailsPaidUnpaid = () => {
   return (
     <div className="dokaner-slip-container">
       <h2 className="dokaner-slip-title font-weight-bold">
-        {slipDetails?.farmerName} স্লিপ
+        {slipDetails?.farmerName} স্লিপ Date:{" "}
+        {formatDate(slipDetails?.createdAt)}
       </h2>
       <div className="slip-card ">
         <div className="card" ref={cardRef}>
@@ -141,7 +139,7 @@ const FarmerSlipDetailsPaidUnpaid = () => {
                 </tr>
               </thead>
               <tbody>
-                {slipDetails?.purchases.map((purchase, index) => (
+                {slipDetails?.purchases?.map((purchase, index) => (
                   <tr key={index} className="slip-row">
                     <td>{purchase.shopName}</td>
                     <td>{purchase.stockName}</td>

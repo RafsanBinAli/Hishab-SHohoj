@@ -11,8 +11,12 @@ exports.saveDailyTransaction = async (req, res) => {
   try {
     const commission = Number(req.body.commission);
     const khajna = Number(req.body.khajna);
-
-    let transaction = await DailyTransaction.findOne({ date: normalizedDate });
+    const date = new Date(req.body.date);
+    const dateOfTransaction = new Date(
+      Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
+    );
+    console.log(date)
+    let transaction = await DailyTransaction.findOne({ date: dateOfTransaction });
 
     if (!transaction) {
       return res
