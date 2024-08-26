@@ -100,19 +100,24 @@ const FinalPage = () => {
               </tr>
               <tr>
                 <td>মোট ক্যাশ</td>
-                <td>{transactionDetails1.motCash || 0}</td>
+                <td>{transactionDetails1.netProfit || 0}</td>
               </tr>
               <tr>
                 <td>নিজের ধার</td>
                 <td>{transactionDetails1.totalMyOwnDebt || 0}</td>
               </tr>
               <tr>
+                <td>Unpaid Deals</td>
+                <td>{transactionDetails1.totalUnpaidDealsPrice || 0}</td>
+              </tr>
+              <tr>
                 <td>মোট</td>
                 <td>
                   {(transactionDetails1.totalDebtsOfShops || 0) +
                     (transactionDetails1.totalDebtsOfFarmers || 0) +
-                    (transactionDetails1.motCash || 0) +
-                    (transactionDetails1.totalMyOwnDebt || 0)}
+                    (transactionDetails1.netProfit || 0) +
+                    (transactionDetails1.totalMyOwnDebt || 0) +
+                    (transactionDetails1.totalUnpaidDealsPrice || 0)}
                 </td>
               </tr>
             </tbody>
@@ -150,19 +155,24 @@ const FinalPage = () => {
               </tr>
               <tr>
                 <td>মোট ক্যাশ</td>
-                <td>{transactionDetails2.motCash || 0}</td>
+                <td>{transactionDetails2.netProfit || 0}</td>
               </tr>
               <tr>
                 <td>নিজের ধার</td>
                 <td>{transactionDetails2.totalMyOwnDebt || 0}</td>
               </tr>
               <tr>
+                <td>Unpaid Deals</td>
+                <td>{transactionDetails2.totalUnpaidDealsPrice || 0}</td>
+              </tr>
+              <tr>
                 <td>মোট</td>
                 <td>
                   {(transactionDetails2.totalDebtsOfShops || 0) +
                     (transactionDetails2.totalDebtsOfFarmers || 0) +
-                    (transactionDetails2.motCash || 0) +
-                    (transactionDetails2.totalMyOwnDebt || 0)}
+                    (transactionDetails2.netProfit || 0) +
+                    (transactionDetails2.totalMyOwnDebt || 0) +
+                    (transactionDetails2.totalUnpaidDealsPrice || 0)}
                 </td>
               </tr>
             </tbody>

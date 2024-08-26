@@ -2,43 +2,35 @@ import React, { useState, useEffect } from "react";
 import "./SlipTable.css";
 import Loader from "../Loader/Loader";
 import { getCurrentDate } from "../../functions/getCurrentDate";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
-import MessageModal from "../Modal/MessageModal"; // Import MessageModal
+import MessageModal from "../Modal/MessageModal";
+import { fetchShops } from "../../utils/dataService"; // Import fetchShops utility function
 
 const SlipTable = () => {
   const [slips, setSlips] = useState([]);
   const [allDokanDetails, setAllDokanDetails] = useState([]);
   const [paidInputs, setPaidInputs] = useState({});
-  const [savedRows, setSavedRows] = useState({});
   const [selectedDate, setSelectedDate] = useState("");
   const [loading, setLoading] = useState(false);
   const [noInfo, setNoInfo] = useState(false);
-  const [modalShow, setModalShow] = useState(false); // State for modal
-  const [modalTitle, setModalTitle] = useState(""); // Modal title
-  const [modalMessage, setModalMessage] = useState(""); // Modal message
-  const [refreshPage, setRefreshPage] = useState(false); // State to trigger page refresh
-
-  const navigate = useNavigate(); // Initialize useNavigate
+  const [modalShow, setModalShow] = useState(false);
+  const [modalTitle, setModalTitle] = useState("");
+  const [modalMessage, setModalMessage] = useState("");
 
   useEffect(() => {
     const today = getCurrentDate();
     setSelectedDate(today);
+
     const fetchAllDokanDetails = async () => {
-      try {
-        const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/get-all-shops`
-        );
-        if (!response.ok) throw new Error("Failed to fetch dokan details");
-        const data = await response.json();
-        setAllDokanDetails(data);
-      } catch (error) {
-        console.log("Error in fetching dokan details:", error);
+      const shops = await fetchShops();
+      if (shops.length === 0) {
         setModalTitle("Error");
         setModalMessage("Failed to fetch dokan details. Please try again.");
         setModalShow(true);
-        setRefreshPage(true); // Set refresh flag to true for error
+      } else {
+        setAllDokanDetails(shops);
       }
     };
+
     fetchAllDokanDetails();
   }, []);
 
@@ -52,19 +44,19 @@ const SlipTable = () => {
         if (response.status === 404) {
           setNoInfo(true);
           setSlips([]);
-          return;
+        } else if (!response.ok) {
+          throw new Error("Failed to fetch slips");
+        } else {
+          const data = await response.json();
+          setSlips(data);
+          setNoInfo(data.length === 0);
         }
-        if (!response.ok) throw new Error("Failed to fetch slips");
-        const data = await response.json();
-        setSlips(data);
-        setNoInfo(data.length === 0);
       } catch (error) {
         console.error("Error fetching slips:", error);
         setNoInfo(true);
         setModalTitle("Error");
         setModalMessage("Failed to fetch slips. Please try again.");
         setModalShow(true);
-        setRefreshPage(true); // Set refresh flag to true for error
       } finally {
         setLoading(false);
       }
@@ -78,7 +70,10 @@ const SlipTable = () => {
   const handlePaidChange = (event, shopName) => {
     const { value } = event.target;
     const paidValue = Number(value);
-    setPaidInputs({ ...paidInputs, [shopName]: paidValue });
+    setPaidInputs((prev) => ({
+      ...prev,
+      [shopName]: isNaN(paidValue) ? 0 : paidValue,
+    }));
   };
 
   const handleSave = async (slip) => {
@@ -86,83 +81,59 @@ const SlipTable = () => {
       alert("সকল টাকা পরিশোধ করা হয়েছে");
       return;
     }
+
+    const paidAmount = Number(paidInputs[slip.shopName] || 0);
+    if (isNaN(paidAmount) || paidAmount <= 0) {
+      setModalTitle("Invalid Input");
+      setModalMessage("Please enter a valid payment amount.");
+      setModalShow(true);
+      return;
+    }
+
     setLoading(true);
-    const paidAmount = paidInputs[slip.shopName] || 0;
 
     try {
       const updateShopResponse = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/shop/update-totalDue`,
         {
           method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            shopName: slip.shopName,
-            totalDue:
-              getTotalDue(slip.shopName) - paidAmount > 0
-                ? getTotalDue(slip.shopName) - paidAmount
-                : 0,
-          }),
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ shopName: slip.shopName, paidAmount }),
         }
       );
-
-      if (!updateShopResponse.ok) {
+      if (!updateShopResponse.ok)
         throw new Error("Failed to update shop's totalDue");
-      }
 
-      if (paidAmount > getTotalDue(slip.shopName)) {
-        const updatePurchaseResponse = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/slip/update-editStatus-paid`,
-          {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              slipId: slip._id,
-              paidAmount: paidAmount - getTotalDue(slip.shopName),
-              edit: true,
-            }),
-          }
-        );
-
-        if (!updatePurchaseResponse.ok) {
-          throw new Error("Failed to update slip's remainingTotal");
+      const updatePurchaseResponse = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/slip/update-editStatus-paid`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ slipId: slip._id, paidAmount, edit: true }),
         }
-      }
+      );
+      if (!updatePurchaseResponse.ok)
+        throw new Error("Failed to update slip's remainingTotal");
 
       const transactionResponse = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/transaction/dokan-payment`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            shopName: slip.shopName,
-            amount: paidAmount,
-          }),
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ shopName: slip.shopName, amount: paidAmount }),
         }
       );
-
-      if (!transactionResponse.ok) {
+      if (!transactionResponse.ok)
         throw new Error("Error setting dokan payment");
-      }
 
-      // Show success modal and set a flag to refresh the page
       setModalTitle("Success");
       setModalMessage("Slip & Transaction saved successfully");
       setModalShow(true);
-      setRefreshPage(true); // Set refresh flag to true
     } catch (error) {
       console.error("Error saving slip:", error);
-
-      // Show error modal and set a flag to refresh the page
       setModalTitle("Error");
       setModalMessage("Error saving slip. Please try again.");
       setModalShow(true);
-      setRefreshPage(true); // Set refresh flag to true
     } finally {
       setLoading(false);
     }
@@ -170,14 +141,12 @@ const SlipTable = () => {
 
   const getTotalDue = (shopName) => {
     const shop = allDokanDetails.find((dokan) => dokan.shopName === shopName);
-    return shop ? shop.totalDue : 0;
+    return shop && !isNaN(shop.totalDue) ? shop.totalDue : 0;
   };
 
   const handleModalConfirm = () => {
     setModalShow(false);
-    if (refreshPage) {
-      window.location.reload(); // Refresh the page
-    }
+    window.location.reload();
   };
 
   return (
@@ -215,7 +184,6 @@ const SlipTable = () => {
                     <th>আগের বাকি টাকা</th>
                     <th>পরিশোধ করতে হবে টাকা</th>
                     <th>আজকের পরিশোধ টাকা</th>
-                    
                     <th>পরিশোধ</th>
                     <th>Status</th>
                   </tr>
@@ -225,23 +193,14 @@ const SlipTable = () => {
                     <tr key={index}>
                       <td>{slip.shopName}</td>
                       <td>{slip.totalAmount}</td>
-
+                      <td>{Math.max(0, getTotalDue(slip.shopName) - slip.totalAmount)}</td>
                       <td>{getTotalDue(slip.shopName)}</td>
-                      <td>
-                        {slip.totalAmount +
-                          getTotalDue(slip.shopName) -
-                          slip.paidAmount}
-                      </td>
                       <td>{slip.paidAmount}</td>
-
-                      
                       <td>
                         <input
                           type="number"
                           value={paidInputs[slip.shopName] || ""}
-                          onChange={(e) =>
-                            handlePaidChange(e, slip.shopName, slip.totalAmount)
-                          }
+                          onChange={(e) => handlePaidChange(e, slip.shopName)}
                           className="paid-input"
                         />
                       </td>

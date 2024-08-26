@@ -35,5 +35,5 @@ router.put("/slip/update/:id", slipController.updateSlip);
 router.get('/slip-details/:formattedDate', slipController.getSlipDetails);
 router.get('/slip/:date', slipController.findSlipByDate); 
 router.put('/slip/update-editStatus-paid',slipController.updateSlipPaidAmount);
-router.post("/slip/calculation-for-debt",slipController.updateShopDueForToday)
+
 module.exports = router;

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Borrowed.css";
-import Loader from "../Loader/Loader"; // Import the Loader component
+import Loader from "../Loader/Loader";
 
 const BorrowedTable = () => {
   const [editingFarmerName, setEditingFarmerName] = useState(null);
@@ -11,12 +11,12 @@ const BorrowedTable = () => {
   });
   const [searchTerm, setSearchTerm] = useState("");
   const [farmerList, setFarmerList] = useState([]);
-  const [loading, setLoading] = useState(true); // Initialize loading state
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchFarmerData = async () => {
-      setLoading(true); // Start loading
+      setLoading(true);
       try {
         const response = await fetch(
           `${process.env.REACT_APP_BACKEND_URL}/get-all-farmers`
@@ -29,7 +29,7 @@ const BorrowedTable = () => {
       } catch (error) {
         console.error("Error fetching farmer data:", error);
       } finally {
-        setLoading(false); // Stop loading
+        setLoading(false);
       }
     };
     fetchFarmerData();
@@ -39,10 +39,8 @@ const BorrowedTable = () => {
     setSearchTerm(e.target.value);
   };
 
-  const filteredFarmersList = farmerList.filter(
-    (farmer) =>
-      farmer.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      farmer.totalDue !== 0
+  const filteredFarmersList = farmerList.filter((farmer) =>
+    farmer.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleEditClick = async (farmerName, updatedData) => {
@@ -106,7 +104,7 @@ const BorrowedTable = () => {
         onChange={handleSearch}
       />
       {loading ? (
-        <Loader /> // Show loader while data is being fetched
+        <Loader /> 
       ) : (
         <div className="table-responsive">
           <table className="borrowed-table">
@@ -150,12 +148,21 @@ const BorrowedTable = () => {
                   <td
                     style={{
                       backgroundColor:
-                        farmer.totalDue - farmer.totalPaid === 0 ? "green" : "",
+                        farmer.totalDue === 0
+                          ? "#ab1a60"
+                          : farmer.totalDue - farmer.totalPaid === 0
+                          ? "green"
+                          : "",
                       color:
-                        farmer.totalDue - farmer.totalPaid === 0 ? "white" : "",
+                        farmer.totalDue === 0 ||
+                        farmer.totalDue - farmer.totalPaid === 0
+                          ? "white"
+                          : "",
                     }}
                   >
-                    {farmer.totalDue - farmer.totalPaid === 0
+                    {farmer.totalDue === 0
+                      ? "Not yet"
+                      : farmer.totalDue - farmer.totalPaid === 0
                       ? "Paid"
                       : farmer.totalDue - farmer.totalPaid}
                   </td>

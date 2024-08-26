@@ -7,15 +7,15 @@ const LastCalculation = ({ transactionDetails, totalIncome, totalExpense }) => {
         <div className="last-calculation-header">সারাংশ</div>
         <div className="last-calculation-body">
           <p className="last-calculation-item">
-            মোট জমা: {totalIncome}
+            মোট জমা: {transactionDetails?.totalProfit || 0}
             টাকা
           </p>
          
           <p className="last-calculation-item">
-            মোট খরচ: {totalExpense || 0} টাকা
+            মোট খরচ: {transactionDetails?.totalCost  || 0} টাকা
           </p>
           <p className="last-calculation-item">
-            মোট লাভ: {totalIncome - totalExpense || 0} টাকা
+          অবশিষ্ট : {transactionDetails?.netProfit || 0} টাকা
           </p>
         </div>
       </div>

@@ -106,14 +106,14 @@ const SlipDetails = () => {
                     <td></td>
                     <td></td>
                     <td>মোট টাকা </td>
-                    <td>{shopDetails?.totalAmount} টাকা</td>
+                    <td>{slipDetails?.totalAmount} টাকা</td>
                   </tr>
                   <tr className="slip-row font-weight-bold">
                     <td></td>
                     <td></td>
                     <td></td>
                     <td>আগের মোট বাকি</td>
-                    <td>{slipDetails?.totalDue} টাকা</td>
+                    <td>{shopDetails?.totalDue} টাকা</td>
                   </tr>
                   <tr className="slip-row font-weight-bold">
                     <td></td>
@@ -121,7 +121,7 @@ const SlipDetails = () => {
                     <td></td>
                     <td>চূড়ান্ত মোট </td>
                     <td>
-                      {slipDetails?.totalDue - slipDetails?.totalAmount} টাকা
+                      {shopDetails?.totalDue + slipDetails?.totalAmount} টাকা
                     </td>
                   </tr>
                 </tbody>

@@ -183,7 +183,7 @@ const TransactionButton = ({ transactionDetails, setTransactionDetails }) => {
                 htmlFor="myOwnDebt"
                 className="calcu-daily-cash-stack-label"
               >
-                নিজের ঋণ পরিমাণ:
+                নিজের ধার :
               </label>
               <input
                 type="number"
@@ -206,7 +206,7 @@ const TransactionButton = ({ transactionDetails, setTransactionDetails }) => {
                 htmlFor="myOwnDebtRepay"
                 className="calcu-daily-cash-stack-label"
               >
-                নিজের ঋণ পরিশোধের পরিমাণ:
+                নিজের ধার পরিশোধ:
               </label>
               <input
                 type="number"

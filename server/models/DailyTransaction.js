@@ -148,6 +148,10 @@ const transactionSchema = new Schema({
     type: Number,
     default: 0,
   },
+  totalUnpaidDealsPrice: {
+    type: Number,
+    default: 0,
+  },
 });
 
 // Pre-save middleware to calculate totals
@@ -155,13 +159,14 @@ transactionSchema.pre("save", function (next) {
   const totalProfit =
     this.credit.dharReturns.reduce((sum, item) => sum + item.amount, 0) +
     this.credit.dokanPayment.reduce((sum, item) => sum + item.amount, 0) +
-    this.credit.commissions +
-    this.credit.khajnas;
+    this.dailyCashStack+
+    this.totalUnpaidDealsPrice
+    ;
 
   const totalCost =
     this.debit.dhar.reduce((sum, item) => sum + item.amount, 0) +
     this.debit.farmersPayment.reduce((sum, item) => sum + item.amount, 0) +
-    this.debit.otherCost.reduce((sum, item) => sum + item.cost, 0); // Update to sum the cost in otherCost array
+    this.debit.otherCost.reduce((sum, item) => sum + item.amount, 0);
 
   const netProfit = totalProfit - totalCost;
 

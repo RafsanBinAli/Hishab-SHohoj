@@ -9,7 +9,6 @@ exports.createShop = async (req, res) => {
       phoneNumber,
       imageUrl,
     });
-
     const savedShop = await newShop.save();
 
     res.status(201).json(savedShop);
@@ -29,18 +28,14 @@ exports.getShops = async (req, res) => {
 };
 exports.updateTotalDue = async (req, res) => {
   try {
-    const { shopName, totalDue } = req.body;
-    console.log("shopname: ", shopName);
-    console.log("totalDue", totalDue);
-
+    const { shopName, paidAmount } = req.body;
     const shop = await Shop.findOne({ shopName });
 
     if (!shop) {
       return res.status(404).json({ message: "Shop not found" });
     }
-   
-    
-    shop.totalDue = totalDue;
+
+    shop.totalDue -= paidAmount;
 
     const updatedShop = await shop.save();
     console.log(updatedShop);

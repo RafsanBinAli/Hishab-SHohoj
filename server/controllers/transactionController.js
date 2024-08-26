@@ -1,4 +1,5 @@
 const DailyTransaction = require("../models/DailyTransaction");
+const NewDeal = require("../models/NewDeal");
 const date = new Date();
 const normalizedDate = new Date(
   Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
@@ -234,11 +235,16 @@ exports.createDaily = async (req, res) => {
       (sum, farmer) => sum + farmer.totalDue,
       0
     );
+    const unpaidDeals = await NewDeal.find({ doneStatus: false });
+    const totalUnpaidDealsPrice = unpaidDeals.reduce((sum, deal) => {
+      return sum + deal.purchases.reduce((acc, purchase) => acc + purchase.total, 0);
+    }, 0);
 
     transaction = new DailyTransaction({
       date: normalizedDate,
       totalDebtsOfShops,
       totalDebtsOfFarmers,
+      totalUnpaidDealsPrice
     });
 
     await transaction.save();
