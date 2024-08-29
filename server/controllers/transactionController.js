@@ -359,7 +359,11 @@ exports.calculateCommissionAndKhajna = async (req, res) => {
     transactions.forEach((transaction) => {
       totalCommission += transaction.credit.commissions || 0;
       totalKhajna += transaction.credit.khajnas || 0;
-      totalOtherCost += transaction.debit.otherCost || 0;
+
+      // Accumulate the totalOtherCost by iterating over the otherCost array
+      if (transaction.debit && transaction.debit.otherCost) {
+        totalOtherCost += transaction.debit.otherCost.reduce((sum, item) => sum + item.amount, 0);
+      }
     });
 
     // Return the calculated totals
