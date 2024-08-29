@@ -54,46 +54,47 @@ exports.showAllFarmers = async (req, res) => {
 exports.updateFarmer = async (req, res) => {
   const { name } = req.params;
   const { newDhar, payGet } = req.body;
+
   try {
-    const farmer = await Farmer.findOne({ name });
+    const farmer = await Farmer.findOne({
+      name: new RegExp(`^${name.trim()}$`, "i"),
+    });
     if (!farmer) {
-      return res.status(404).json({ error: "Farmer not found" });
+      return res
+        .status(404)
+        .json({ error: `Farmer with name ${name} not found.` });
     }
 
-    let due = farmer.totalDue - farmer.totalPaid; // Calculate the current due
+    let due = farmer.totalDue - farmer.totalPaid;
 
     if (payGet) {
       farmer.totalPaid += parseFloat(payGet || 0);
-      due = farmer.totalDue - farmer.totalPaid; // Update due value
+      due = farmer.totalDue - farmer.totalPaid;
 
       const action = {
         editedBy: req.user.username,
         date: new Date(),
         debtAmount: parseFloat(payGet || 0),
-        due: due, // Add due data
+        due: due,
         action: "repayDebt",
       };
       farmer.lastEditedBy.push(action);
     } else if (newDhar) {
       farmer.totalDue += parseFloat(newDhar || 0);
-      due = farmer.totalDue - farmer.totalPaid; // Update due value
+      due = farmer.totalDue - farmer.totalPaid;
 
       const action = {
         editedBy: req.user.username,
         date: new Date(),
         debtAmount: parseFloat(newDhar || 0),
-        due: due, // Add due data
+        due: due,
         action: "newDebt",
       };
       farmer.lastEditedBy.push(action);
     }
 
     await farmer.save();
-    res.json({
-      totalDue: farmer.totalDue,
-      totalPaid: farmer.totalPaid,
-      editHistory: farmer.lastEditedBy,
-    });
+    res.json(farmer); // Return the updated farmer object
   } catch (error) {
     console.error("Error updating farmer:", error);
     res.status(500).json({ error: "Failed to update farmer" });

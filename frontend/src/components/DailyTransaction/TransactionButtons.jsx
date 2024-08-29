@@ -13,35 +13,34 @@ const TransactionButton = ({ transactionDetails, setTransactionDetails }) => {
   const handleOtherCostSubmit = async (e) => {
     e.preventDefault();
     try {
-        const response = await fetch(
-            `${process.env.REACT_APP_BACKEND_URL}/transaction/update-other-cost`,
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    otherCost: [{ name: otherCostName, amount: otherCost }],
-                }),
-            }
-        );
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`Unable to fetch data: ${errorText}`);
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/transaction/update-other-cost`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            otherCost: [{ name: otherCostName, amount: otherCost }],
+          }),
         }
+      );
 
-        const data = await response.json();
-        setTransactionDetails(data.transaction);
-        alert("Saved Successfully!");
-        setOtherCost(0);
-        setOtherCostName(""); // Reset the cost name
-        console.log("Data updated successfully:", data);
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Unable to fetch data: ${errorText}`);
+      }
+
+      const data = await response.json();
+      setTransactionDetails(data.transaction);
+      alert("Saved Successfully!");
+      setOtherCost(0);
+      setOtherCostName(""); // Reset the cost name
+      console.log("Data updated successfully:", data);
     } catch (error) {
-        console.log("Error occurred:", error.message);
+      console.log("Error occurred:", error.message);
     }
-};
-
+  };
 
   const handleDailyCashStack = async (event) => {
     event.preventDefault();
@@ -121,20 +120,26 @@ const TransactionButton = ({ transactionDetails, setTransactionDetails }) => {
               </label>
               <div className="calcu-form-row">
                 <div className="calcu-form-field">
-                  <label htmlFor="otherCostName" className="small-label">
-                    খরচের নাম:
+                  <label
+                    htmlFor="otherCostName"
+                    className="small-label font-weight-bold"
+                  >
+                    খরচের নাম
                   </label>
                   <input
                     type="text"
                     id="otherCostName"
-                    className="calcu-daily-cash-stack-input form-control"
+                    className="calcu-daily-cash-stack-input form-control mb-2"
                     value={otherCostName}
                     onChange={(e) => setOtherCostName(e.target.value)}
                   />
                 </div>
                 <div className="calcu-form-field">
-                  <label htmlFor="otherCost" className="small-label">
-                    অন্যান্য খরচ:
+                  <label
+                    htmlFor="otherCost"
+                    className="small-label font-weight-bold"
+                  >
+                    অন্যান্য খরচ
                   </label>
                   <input
                     type="number"
@@ -147,7 +152,7 @@ const TransactionButton = ({ transactionDetails, setTransactionDetails }) => {
 
                 <button
                   type="button"
-                  className="calcu-daily-cash-stack-submit btn btn-primary"
+                  className="calcu-daily-cash-stack-submit btn btn-primary m-4"
                   onClick={handleOtherCostSubmit}
                 >
                   সংরক্ষণ করুন

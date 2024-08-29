@@ -14,7 +14,6 @@ const DharDetails = () => {
     }
   }, [farmer]);
 
-  // Define the onUpdate function
   const onUpdate = async () => {
     console.log("onUpdate called");
     try {
@@ -22,7 +21,9 @@ const DharDetails = () => {
       if (!userAuthToken) throw new Error("User is not authenticated.");
 
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/farmer/${farmerData.name}`,
+        `${process.env.REACT_APP_BACKEND_URL}/farmer/${encodeURIComponent(
+          farmerData.name
+        )}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -31,7 +32,10 @@ const DharDetails = () => {
         }
       );
 
-      if (!response.ok) throw new Error("Failed to fetch updated farmer data.");
+      if (!response.ok)
+        throw new Error(
+          `Failed to fetch updated farmer data for ${farmerData.name}.`
+        );
 
       const updatedFarmer = await response.json();
       setFarmerData(updatedFarmer);
