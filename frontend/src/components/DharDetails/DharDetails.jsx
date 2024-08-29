@@ -15,15 +15,12 @@ const DharDetails = () => {
   }, [farmer]);
 
   const onUpdate = async () => {
-    console.log("onUpdate called");
     try {
       const userAuthToken = localStorage.getItem("userAuthToken");
       if (!userAuthToken) throw new Error("User is not authenticated.");
 
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/farmer/${encodeURIComponent(
-          farmerData.name
-        )}`,
+        `${process.env.REACT_APP_BACKEND_URL}/get-farmer/${farmerData.name}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -41,6 +38,7 @@ const DharDetails = () => {
       setFarmerData(updatedFarmer);
     } catch (error) {
       console.error("Error fetching updated farmer data:", error);
+      alert(error);
     }
   };
 
