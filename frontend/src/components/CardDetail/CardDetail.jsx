@@ -80,21 +80,7 @@ const CardDetail = () => {
       return;
     }
 
-    if (individualCardDetails?.doneStatus) {
-      setModalTitle("Already Saved");
-      setModalMessage("Already saved once, can't update it!");
-      setModalVisible(true);
-      setFormRows([
-        {
-          farmerName: "",
-          shopName: "",
-          stockName: "",
-          quantity: "",
-          price: "",
-        },
-      ]);
-      return;
-    }
+    
 
     try {
       const newPurchases = formRows.map((row) => ({

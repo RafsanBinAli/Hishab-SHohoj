@@ -105,30 +105,50 @@ exports.updateDealPurchases = async (req, res) => {
   }
 };
 
+// Example of ensuring the full document is returned
 exports.updateCardDetails = async (req, res) => {
   const { khajna, commission, totalAmountToBeGiven, id } = req.body;
-  console.log(req.body);
+
   try {
     const cardDetails = await NewDeal.findById(id);
 
     if (!cardDetails) {
       return res.status(404).json({ message: "Card details not found!" });
     }
-    cardDetails.khajna = khajna;
-    (cardDetails.commission = commission),
-      (cardDetails.totalAmountToBeGiven = totalAmountToBeGiven);
+
+    if (cardDetails.khajna === 0) {
+      cardDetails.khajna = khajna;
+    } else {
+      cardDetails.khajna += Math.max(
+        cardDetails.khajna,
+        cardDetails.khajna - khajna
+      );
+    }
+    if (cardDetails.commission === 0) {
+      cardDetails.commission = commission;
+    } else {
+      cardDetails.commission += Math.max(
+        cardDetails.commission,
+        cardDetails.commission - commission
+      );
+    }
+    cardDetails.totalAmountToBeGiven = totalAmountToBeGiven;
     cardDetails.doneStatus = true;
     await cardDetails.save();
-    res.json({ message: "Card details updated successfully!", cardDetails });
+    
+    // Fetch the updated card details to ensure all fields are included
+    const updatedCardDetails = await NewDeal.findById(id);
+    res.json({ message: "Card details updated successfully!", cardDetails: updatedCardDetails });
   } catch (error) {
     console.error("Error updating card details:", error);
     res.status(500).json({ message: "Error updating card details", error });
   }
 };
 
+
+
 exports.getIncompleteMarketDeals = async (req, res) => {
   try {
-   
     const filter = { doneStatus: false };
     const deals = await NewDeal.find(filter);
     res.status(200).json(deals);
@@ -140,28 +160,28 @@ exports.getIncompleteMarketDeals = async (req, res) => {
 
 exports.getDealsOfParticularDay = async (req, res) => {
   const { date } = req.query;
-  console.log("date",date)
+  console.log("date", date);
   if (!date) {
-    return res.status(400).json({ error: 'Date query parameter is required' });
+    return res.status(400).json({ error: "Date query parameter is required" });
   }
 
   try {
     const dateObj = new Date(date);
 
     if (isNaN(dateObj.getTime())) {
-      return res.status(400).json({ error: 'Invalid date format' });
+      return res.status(400).json({ error: "Invalid date format" });
     }
 
     const deals = await NewDeal.find({
       createdAt: {
         $gte: new Date(dateObj.setHours(0, 0, 0, 0)),
-        $lt: new Date(dateObj.setHours(23, 59, 59, 999)) 
-      }
+        $lt: new Date(dateObj.setHours(23, 59, 59, 999)),
+      },
     });
 
     res.json(deals);
   } catch (error) {
-    console.error('Error fetching deals:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error("Error fetching deals:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };

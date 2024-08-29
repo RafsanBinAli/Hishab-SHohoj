@@ -10,38 +10,58 @@ const DebtHistory = require("../models/DebtHistory");
 
 exports.saveDailyTransaction = async (req, res) => {
   try {
-    const commission = Number(req.body.commission);
-    const khajna = Number(req.body.khajna);
-    const date = new Date(req.body.date);
-    const dateOfTransaction = new Date(
-      Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
-    );
-    console.log(date)
+    const { name, amount: amountStr, commission: commissionStr, khajna: khajnaStr, date } = req.body;
+
+    // Input validation
+    if (!name || isNaN(Number(amountStr)) || isNaN(Number(commissionStr)) || isNaN(Number(khajnaStr))) {
+      return res.status(400).json({ message: "Invalid input data" });
+    }
+
+    const amount = Number(amountStr);
+    const commission = Number(commissionStr);
+    const khajna = Number(khajnaStr);
+    const dateInput = date ? new Date(date) : new Date();
+    const dateOfTransaction = new Date(Date.UTC(dateInput.getFullYear(), dateInput.getMonth(), dateInput.getDate()));
+
+    console.log(`Processing transaction for date: ${dateOfTransaction}`);
+
+    // Fetch the transaction for the given date
     let transaction = await DailyTransaction.findOne({ date: dateOfTransaction });
 
     if (!transaction) {
-      return res
-        .status(404)
-        .json({ message: "Transaction not found for the day!" });
+      return res.status(404).json({ message: "Transaction not found for the specified date." });
     }
+
+    // Update commission and khajna
     transaction.credit.commissions += commission;
     transaction.credit.khajnas += khajna;
 
-    if (req.body.name && req.body.amount) {
-      transaction.debit.farmersPayment.push({
-        name: req.body.name,
-        amount: req.body.amount,
-      });
+    // Update or add farmersPayment entry
+    if (name) {
+      const existingEntry = transaction.debit.farmersPayment.find(entry => entry.name === name);
+
+      if (existingEntry) {
+        // Update the existing entry
+        existingEntry.amount = amount;
+      } else {
+        // Add a new entry
+        transaction.debit.farmersPayment.push({ name, amount });
+      }
     }
 
+    // Save the updated transaction
     await transaction.save();
-    res
-      .status(200)
-      .json({ message: "DailyTransaction saved successfully", transaction });
+
+    res.status(200).json({
+      message: "Daily transaction saved successfully.",
+      transaction
+    });
   } catch (error) {
-    res.status(500).json({ message: "Failed to save DailyTransaction", error });
+    console.error("Error while saving daily transaction:", error.message);
+    res.status(500).json({ message: "An error occurred while saving the daily transaction.", error: error.message });
   }
 };
+
 
 exports.getDailyTransaction = async (req, res) => {
   try {
@@ -176,43 +196,45 @@ exports.updateDailyCashStack = async (req, res) => {
 
 exports.updateOtherCost = async (req, res) => {
   try {
-      const { otherCost } = req.body; // Expecting an array of objects [{ name: 'Example', cost: 100 }, ...]
+    const { otherCost } = req.body; // Expecting an array of objects [{ name: 'Example', cost: 100 }, ...]
 
-      // Find the transaction for the current day
-      const transactionToday = await DailyTransaction.findOne({
-          date: normalizedDate,
+    // Find the transaction for the current day
+    const transactionToday = await DailyTransaction.findOne({
+      date: normalizedDate,
+    });
+
+    if (!transactionToday) {
+      return res
+        .status(404)
+        .json({ message: "Transaction not found for the day!" });
+    }
+
+    // Validate the otherCost input
+    if (
+      Array.isArray(otherCost) &&
+      otherCost.every((item) => item.name && item.amount !== undefined)
+    ) {
+      // Push each new cost into the existing otherCost array
+      transactionToday.debit.otherCost.push(...otherCost);
+      await transactionToday.save();
+
+      return res.status(200).json({
+        message: "Other cost(s) added successfully!",
+        transaction: transactionToday,
       });
-
-      if (!transactionToday) {
-          return res
-              .status(404)
-              .json({ message: "Transaction not found for the day!" });
-      }
-
-      // Validate the otherCost input
-      if (Array.isArray(otherCost) && otherCost.every(item => item.name && item.amount !== undefined)) {
-          // Push each new cost into the existing otherCost array
-          transactionToday.debit.otherCost.push(...otherCost);
-          await transactionToday.save();
-
-          return res.status(200).json({
-              message: "Other cost(s) added successfully!",
-              transaction: transactionToday,
-          });
-      } else {
-          return res.status(400).json({
-              message: "Invalid other cost format! Expected an array of objects with 'name' and 'cost'.",
-          });
-      }
+    } else {
+      return res.status(400).json({
+        message:
+          "Invalid other cost format! Expected an array of objects with 'name' and 'cost'.",
+      });
+    }
   } catch (error) {
-      res.status(500).json({
-          message: "Failed to add other costs!",
-          error: error.message,
-      });
+    res.status(500).json({
+      message: "Failed to add other costs!",
+      error: error.message,
+    });
   }
 };
-
-
 
 exports.createDaily = async (req, res) => {
   try {
@@ -237,14 +259,16 @@ exports.createDaily = async (req, res) => {
     );
     const unpaidDeals = await NewDeal.find({ doneStatus: false });
     const totalUnpaidDealsPrice = unpaidDeals.reduce((sum, deal) => {
-      return sum + deal.purchases.reduce((acc, purchase) => acc + purchase.total, 0);
+      return (
+        sum + deal.purchases.reduce((acc, purchase) => acc + purchase.total, 0)
+      );
     }, 0);
 
     transaction = new DailyTransaction({
       date: normalizedDate,
       totalDebtsOfShops,
       totalDebtsOfFarmers,
-      totalUnpaidDealsPrice
+      totalUnpaidDealsPrice,
     });
 
     await transaction.save();
@@ -279,19 +303,20 @@ exports.updateMyOwnDebt = async (req, res) => {
     }
 
     if (type === "debt") {
-      transactionToday.todayDebt+=amount;
+      transactionToday.todayDebt += amount;
       transactionToday.myOwnDebt.push({ amount, date: normalizedDate });
       transactionToday.totalMyOwnDebt = transactionToday.myOwnDebt.reduce(
         (sum, debt) => sum + debt.amount,
         0
       );
     } else if (type === "repayment") {
-      transactionToday.todayDebtRepay+=amount;
+      transactionToday.todayDebtRepay += amount;
       transactionToday.myOwnDebtRepay.push({ amount, date: normalizedDate });
-      transactionToday.totalMyOwnDebtRepay = transactionToday.myOwnDebtRepay.reduce(
-        (sum, repayment) => sum + repayment.amount,
-        0
-      );
+      transactionToday.totalMyOwnDebtRepay =
+        transactionToday.myOwnDebtRepay.reduce(
+          (sum, repayment) => sum + repayment.amount,
+          0
+        );
     } else {
       return res.status(400).json({ message: "Invalid type provided!" });
     }
@@ -320,7 +345,7 @@ exports.calculateCommissionAndKhajna = async (req, res) => {
     const endDate = new Date(date2);
     let totalCommission = 0;
     let totalKhajna = 0;
-    let totalOtherCost=0;
+    let totalOtherCost = 0;
 
     // Fetch all transactions between the two dates (inclusive)
     const transactions = await DailyTransaction.find({
@@ -341,11 +366,11 @@ exports.calculateCommissionAndKhajna = async (req, res) => {
     res.status(200).json({
       totalCommission,
       totalKhajna,
-      totalOtherCost
+      totalOtherCost,
     });
   } catch (error) {
     res.status(500).json({
-      message: 'Failed to calculate commission and khajna!',
+      message: "Failed to calculate commission and khajna!",
       error: error.message,
     });
   }
