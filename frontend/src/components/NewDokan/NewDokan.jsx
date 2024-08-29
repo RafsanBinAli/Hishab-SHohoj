@@ -1,10 +1,9 @@
-// NewDokan2.js
 import React, { useState, useEffect } from "react";
 import ShopList from "./ShopList";
-import MessageModal from "../Modal/MessageModal"; // Import the MessageModal component
-import "./NewDokan2.css";
+import MessageModal from "../Modal/MessageModal";
+import "./NewDokan.css";
 
-const NewDokan2 = () => {
+const NewDokan = () => {
   const [shops, setShops] = useState([]);
   const [formData, setFormData] = useState({
     shopName: "",
@@ -17,12 +16,33 @@ const NewDokan2 = () => {
   const [modalTitle, setModalTitle] = useState("");
   const [modalMessage, setModalMessage] = useState("");
   const [redirectTo, setRedirectTo] = useState(null);
+  const [errors, setErrors] = useState({});
 
   const handleInputChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
+  };
+
+  const validateForm = () => {
+    const errors = {};
+    if (!formData.shopName.trim()) {
+      errors.shopName = "Shop name is required.";
+    }
+    if (!formData.address.trim()) {
+      errors.address = "Address is required.";
+    }
+    if (!formData.phoneNumber.trim()) {
+      errors.phoneNumber = "Phone number is required.";
+    } else if (!/^\d{10}$/.test(formData.phoneNumber)) {
+      errors.phoneNumber = "Phone number must be 10 digits.";
+    }
+    if (!formData.imageUrl) {
+      errors.imageUrl = "Image is required.";
+    }
+    setErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
   const handleImageChange = async (e) => {
@@ -33,7 +53,7 @@ const NewDokan2 = () => {
 
       try {
         const response = await fetch(
-          "https://api.imgbb.com/1/upload?key=c9af6d674adfdc89791fbbddc0ca6ff6",
+          `https://api.imgbb.com/1/upload?key=${process.env.REACT_APP_IMGBB_KEY}`,
           {
             method: "POST",
             body: imageData,
@@ -59,6 +79,11 @@ const NewDokan2 = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
+
     try {
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/create-shop`,
@@ -77,10 +102,9 @@ const NewDokan2 = () => {
 
       const newShop = await response.json();
 
-      // Set success message and redirect URL
       setModalTitle("Success");
       setModalMessage("নতুন দোকান রেজিট্রেশন সম্পূর্ন হয়েছে !");
-      setRedirectTo("/dokans"); // Set the desired redirect page, if any
+      setRedirectTo("/dokans");
       setModalShow(true);
 
       setFormData({
@@ -92,7 +116,6 @@ const NewDokan2 = () => {
 
       setImagePreview(null);
     } catch (error) {
-      // Set error message
       setModalTitle("Error");
       setModalMessage(error.message);
       setModalShow(true);
@@ -102,7 +125,7 @@ const NewDokan2 = () => {
   const handleModalConfirm = () => {
     setModalShow(false);
     if (redirectTo) {
-      window.location.href = redirectTo; // Redirect to the specified page
+      window.location.href = redirectTo;
     }
   };
 
@@ -135,13 +158,18 @@ const NewDokan2 = () => {
                 </label>
                 <input
                   type="text"
-                  className="form-control"
+                  className={`form-control ${
+                    errors.shopName ? "is-invalid" : ""
+                  }`}
                   id="shopName"
                   name="shopName"
                   value={formData.shopName}
                   onChange={handleInputChange}
                   required
                 />
+                {errors.shopName && (
+                  <div className="invalid-feedback">{errors.shopName}</div>
+                )}
               </div>
               <div className="mb-3">
                 <label htmlFor="address" className="form-label">
@@ -149,13 +177,18 @@ const NewDokan2 = () => {
                 </label>
                 <input
                   type="text"
-                  className="form-control"
+                  className={`form-control ${
+                    errors.address ? "is-invalid" : ""
+                  }`}
                   id="address"
                   name="address"
                   value={formData.address}
                   onChange={handleInputChange}
                   required
                 />
+                {errors.address && (
+                  <div className="invalid-feedback">{errors.address}</div>
+                )}
               </div>
               <div className="mb-3">
                 <label htmlFor="phoneNumber" className="form-label">
@@ -163,13 +196,18 @@ const NewDokan2 = () => {
                 </label>
                 <input
                   type="text"
-                  className="form-control"
+                  className={`form-control ${
+                    errors.phoneNumber ? "is-invalid" : ""
+                  }`}
                   id="phoneNumber"
                   name="phoneNumber"
                   value={formData.phoneNumber}
                   onChange={handleInputChange}
                   required
                 />
+                {errors.phoneNumber && (
+                  <div className="invalid-feedback">{errors.phoneNumber}</div>
+                )}
               </div>
               <div className="mb-3">
                 <label htmlFor="image" className="form-label">
@@ -177,12 +215,17 @@ const NewDokan2 = () => {
                 </label>
                 <input
                   type="file"
-                  className="form-control"
+                  className={`form-control ${
+                    errors.imageUrl ? "is-invalid" : ""
+                  }`}
                   id="image"
                   accept="image/*"
                   onChange={handleImageChange}
                   required
                 />
+                {errors.imageUrl && (
+                  <div className="invalid-feedback">{errors.imageUrl}</div>
+                )}
               </div>
               {imagePreview && (
                 <div className="mb-3">
@@ -202,7 +245,7 @@ const NewDokan2 = () => {
         </div>
       </div>
       <div className="shop-list-container">
-        <ShopList shops={shops} /> {/* Removed loading state */}
+        <ShopList shops={shops} />
       </div>
       <MessageModal
         show={modalShow}
@@ -215,4 +258,4 @@ const NewDokan2 = () => {
   );
 };
 
-export default NewDokan2;
+export default NewDokan;

@@ -9,6 +9,7 @@ var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var transactionRouter = require("./routes/transaction")
 var debtRouter =require("./routes/debt")
+var bankRouter =require("./routes/bank")
 const dotenv = require('dotenv').config()
 require('./config/cronJob'); 
 const connectDB = require("./config/Database")
@@ -34,6 +35,7 @@ app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/transaction",transactionRouter)
 app.use("/debt",debtRouter)
+app.use("/bank",bankRouter)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

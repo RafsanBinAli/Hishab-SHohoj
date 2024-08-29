@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
-import "./Farmer.css";
-import FarmerList from "./FarmerList";
 import MessageModal from "../Modal/MessageModal";
+import BankList from "./BankList";
 
-const Farmer = () => {
+const Bank = () => {
   const [users, setUsers] = useState([]);
   const [newUserInfo, setNewUserInfo] = useState({
-    name: "",
+    bankName: "",
     phoneNumber: "",
     village: "",
     imageUrl: "",
@@ -18,22 +17,22 @@ const Farmer = () => {
   const [redirectTo, setRedirectTo] = useState(null);
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchBanks = async () => {
       try {
         const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/get-all-farmers`
+          `${process.env.REACT_APP_BACKEND_URL}/bank/get-all`
         );
         if (!response.ok) {
-          throw new Error("Failed to fetch users");
+          throw new Error("Failed to fetch banks");
         }
         const data = await response.json();
         setUsers(data);
       } catch (error) {
-        console.error("Error fetching users:", error);
+        console.error("Error fetching banks:", error);
       }
     };
 
-    fetchUsers();
+    fetchBanks();
   }, []);
 
   const handleUserInputChange = (event) => {
@@ -41,40 +40,37 @@ const Farmer = () => {
     setNewUserInfo({ ...newUserInfo, [name]: value });
   };
 
-  const validateInputs = () => {
-    if (!newUserInfo.name) {
-      setModalTitle("Validation Error");
-      setModalMessage("Please enter the farmer's name.");
-      setModalShow(true);
-      return false;
-    }
-    if (!newUserInfo.phoneNumber) {
-      setModalTitle("Validation Error");
-      setModalMessage("Please enter the farmer's phone number.");
-      setModalShow(true);
-      return false;
-    }
-    if (!newUserInfo.village) {
-      setModalTitle("Validation Error");
-      setModalMessage("Please enter the farmer's village.");
-      setModalShow(true);
-      return false;
-    }
-    if (!newUserInfo.imageUrl) {
-      setModalTitle("Validation Error");
-      setModalMessage("Please upload an image.");
-      setModalShow(true);
-      return false;
-    }
-    return true;
-  };
-
   const handleAddUser = async () => {
-    if (!validateInputs()) return;
+
+    const { bankName, phoneNumber, village, imageUrl } = newUserInfo;
+    if (!bankName) {
+      setModalTitle("Validation Error");
+      setModalMessage("Bank নাম পূরণ করুন।");
+      setModalShow(true);
+      return;
+    }
+    if (!phoneNumber) {
+      setModalTitle("Validation Error");
+      setModalMessage("নাম্বার পূরণ করুন।");
+      setModalShow(true);
+      return;
+    }
+    if (!village) {
+      setModalTitle("Validation Error");
+      setModalMessage("গ্রাম পূরণ করুন।");
+      setModalShow(true);
+      return;
+    }
+    if (!imageUrl) {
+      setModalTitle("Validation Error");
+      setModalMessage("ছবি সংযুক্ত করুন।");
+      setModalShow(true);
+      return;
+    }
 
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/create-farmer`,
+        `${process.env.REACT_APP_BACKEND_URL}/bank/create`,
         {
           method: "POST",
           headers: {
@@ -90,9 +86,20 @@ const Farmer = () => {
       }
 
       setModalTitle("Success");
-      setModalMessage("নতুন কৃষক সংযুক্ত হয়েছে!");
-      setRedirectTo("/farmers");
+      setModalMessage("নতুন Bank সংযুক্ত হয়েছে!");
+      setRedirectTo("/banks");
       setModalShow(true);
+
+      setNewUserInfo({
+        bankName: "",
+        phoneNumber: "",
+        village: "",
+        imageUrl: "",
+      });
+      setImagePreview(null);
+
+      const updatedUsers = await response.json();
+      setUsers(updatedUsers);
     } catch (error) {
       setModalTitle("Error");
       setModalMessage(error.message);
@@ -103,24 +110,10 @@ const Farmer = () => {
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Validate file type and size
-      const maxSize = 5 * 1024 * 1024; // 5MB limit
-      if (!file.type.startsWith("image/")) {
-        setModalTitle("Invalid File");
-        setModalMessage("Please upload a valid image file.");
-        setModalShow(true);
-        return;
-      }
-      if (file.size > maxSize) {
-        setModalTitle("File Too Large");
-        setModalMessage("The file size exceeds the 5MB limit. Please upload a smaller file.");
-        setModalShow(true);
-        return;
-      }
-
       const formData = new FormData();
       formData.append("image", file);
-
+      console.log(file);
+      console.log(process.env.REACT_APP_IMGBB_KEY)
       try {
         const response = await fetch(
           `https://api.imgbb.com/1/upload?key=${process.env.REACT_APP_IMGBB_KEY}`,
@@ -162,16 +155,16 @@ const Farmer = () => {
       <div className="d-flex justify-content-center mb-4">
         <div className="card2">
           <div className="card-body2">
-            <h2 className="card-title mb-4">নতুন কৃষকের তথ্য দিন</h2>
+            <h2 className="card-title mb-4">নতুন Bank তথ্য দিন</h2>
             <form>
               <div className="form-group">
-                <label htmlFor="name">কৃষকের নাম</label>
+                <label htmlFor="bankName">Bank নাম</label>
                 <input
                   type="text"
                   className="form-control"
-                  id="name"
-                  name="name"
-                  value={newUserInfo.name}
+                  id="bankName"
+                  name="bankName"
+                  value={newUserInfo.bankName}
                   onChange={handleUserInputChange}
                 />
               </div>
@@ -199,7 +192,7 @@ const Farmer = () => {
               </div>
               <div className="mb-3">
                 <label htmlFor="image" className="form-label">
-                  দোকানের ছবি সংযুক্ত করুন
+                  Bank ছবি সংযুক্ত করুন
                 </label>
                 <input
                   type="file"
@@ -207,6 +200,7 @@ const Farmer = () => {
                   id="image"
                   accept="image/*"
                   onChange={handleImageChange}
+                  required
                 />
               </div>
               {imagePreview && (
@@ -232,8 +226,8 @@ const Farmer = () => {
         </div>
       </div>
 
-      <div className="farmer-list-container">
-        <FarmerList farmers={users} />
+      <div className="bank-list-container">
+        <BankList banks={users} />
       </div>
 
       <MessageModal
@@ -247,4 +241,4 @@ const Farmer = () => {
   );
 };
 
-export default Farmer;
+export default Bank;

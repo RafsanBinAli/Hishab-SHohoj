@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import Loader from "../Loader/Loader"; // Import the Loader component
-
+import Loader from "../Loader/Loader"; 
 const ShopList = ({ shops, loading }) => {
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -24,7 +23,7 @@ const ShopList = ({ shops, loading }) => {
           onChange={handleSearch}
         />
         {loading ? (
-          <Loader /> // Show loader while data is being fetched
+          <Loader /> 
         ) : (
           <div className="table-responsive">
             <table className="table table-bordered table-striped">

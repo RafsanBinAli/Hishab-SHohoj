@@ -78,6 +78,15 @@ const Navbar = ({ setIsUserLoggedIn }) => {
           </button>
 
           <ul className="navbar-nav ml-auto">
+          <li className="nav-item">
+              <Link
+                className="nav-link"
+                to="/banks"
+                onClick={() => setIsOpen(false)}
+              >
+                Bank
+              </Link>
+            </li>
             <li className="nav-item">
               <Link
                 className="nav-link"
