@@ -7,8 +7,7 @@ const BankList = ({ banks }) => {
 
   useEffect(() => {
     if (Array.isArray(banks) && banks.length > 0) {
-      setLoading(false); 
-      setLoading(true);
+      setLoading(false);
     }
   }, [banks]);
 
@@ -45,7 +44,6 @@ const BankList = ({ banks }) => {
                     <th>Bank নাম</th>
                     <th>ঠিকানা</th>
                     <th>মোবাইল নম্বর</th>
-                    <th>বাকি</th>
                     <th>ছবি</th>
                   </tr>
                 </thead>
@@ -56,7 +54,7 @@ const BankList = ({ banks }) => {
                       <td>{bank.bankName}</td>
                       <td>{bank.village}</td>
                       <td>{bank.phoneNumber}</td>
-                      <td>{bank.totalDue}</td>
+
                       <td>
                         {bank.imageUrl && (
                           <img

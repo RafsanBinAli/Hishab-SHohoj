@@ -26,8 +26,8 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 20px;
   margin-bottom: 20px;
-  margin-left: 2rem;
-  margin-right: 28rem;
+  margin-left: 2r0em;
+  margin-right: 18rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between; /* Space between form and button */
@@ -47,6 +47,7 @@
   font-weight: bold;
   color: #333;
   margin-right: 10px; /* Gap between label and input */
+  margin-top: 20px
 }
 
 /* Input Styling */
@@ -74,6 +75,18 @@
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s ease;
+  margin-top: 20px;
+}
+.calcu-daily-cash-stack-submit1 {
+  width: 100px; /* Fixed width for buttons */
+  background-color: #007bff;
+  color: #fff;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  margin-top: 0;
 }
 
 .calcu-daily-cash-stack-submit:hover {
@@ -164,53 +177,80 @@
 
 /* Responsive Styling for Smaller Screens */
 @media (max-width: 768px) {
-  .calcu-row {
-    flex-direction: column; /* Stack items vertically */
-  }
-
-  .calcu-col-md-12 {
-    max-width: 100%; /* Full width column */
-    padding: 0; /* Remove padding */
-  }
-
   .calcu-card {
-    margin-left: 0; /* Remove left margin */
-    margin-right: 0; /* Remove right margin */
+    margin-left: 1rem; /* Reduced margin for smaller screens */
+    margin-right: 1rem; /* Reduced margin for smaller screens */
+    padding: 15px; /* Adjust padding for smaller screens */
+    text-align: center; /* Center-align text inside the card */
+  }
+
+  .calcu-row {
+    flex-direction: column; /* Stack columns vertically */
+    gap: 15px; /* Reduce gap between elements */
+    align-items: center; /* Center-align items */
+  }
+
+  .calcu-form-group {
+    flex-direction: column; /* Stack label and input vertically */
+    align-items: center; /* Center-align items */
+    margin-bottom: 15px; /* Reduced space between form groups */
   }
 
   .calcu-daily-cash-stack-label {
-    flex: 0 0 auto; /* Auto width for labels */
-    margin-right: 0; /* Remove margin on smaller screens */
-    font-size: 0.875rem; /* Slightly smaller font size */
+    flex: 0 0 50px;
+    font-size: 0.9rem; /* Slightly smaller font size for labels */
+    margin-bottom: 0; /* Gap between label and input */
+    text-align: center; /* Center-align label text */
   }
 
   .calcu-daily-cash-stack-input {
-    width: 100%; /* Full width on smaller screens */
-    margin-right: 0; /* Remove margin on smaller screens */
+    width: 100%; /* Full width for input fields */
+    padding: 8px; /* Adjust padding for smaller screens */
+    font-size: 0.9rem; /* Slightly smaller font size for inputs */
+    margin-bottom: 10px; /* Gap between input and button */
+    text-align: center; /* Center-align text inside inputs */
   }
 
-  .calcu-daily-cash-stack-submit {
-    width: auto; /* Auto width for button on smaller screens */
-    padding: 8px; /* Smaller padding */
-    font-size: 0.875rem; /* Slightly smaller font size */
+  .calcu-daily-cash-stack-submit .calcu-daily-cash-stack-submit1 {
+    width: 100%; /* Full width for button on smaller screens */
+    padding: 15px; /* Larger padding for button */
+    font-size: 1rem; /* Increase font size for button */
+    margin-top: 15px; /* Space above button */
+    background-color: #007bff; /* Button color */
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+
+  .calcu-daily-cash-stack-submit:hover {
+    background-color: #0056b3; /* Darker color on hover */
+    transform: translateY(-2px);
+  }
+
+  .calcu-daily-cash-stack-submit:active {
+    background-color: #004085; /* Even darker color when active */
+    transform: translateY(0);
   }
 
   .form-button-container {
     flex-direction: column; /* Stack form and button vertically */
     align-items: center; /* Center align button */
+    gap: 15px; /* Space between form and button */
   }
 
   .final-hishab-button-container {
     justify-content: center; /* Center the button */
-    margin-left: 0;
+    margin-top: 20px; /* Space above button container */
   }
 
   .last-calculation-card {
-    padding: 15px; /* Adjust padding for smaller screens */
+    padding: 10px; /* Further adjust padding for smaller screens */
   }
 
   .last-calculation-header {
-    font-size: 1.25rem; /* Slightly smaller header font size */
+    font-size: 1.2rem; /* Adjust font size for header */
   }
 
   .last-calculation-item {
@@ -220,11 +260,11 @@
 
 @media (max-width: 480px) {
   .last-calculation-card {
-    padding: 10px; /* Further adjust padding */
+    padding: 8px; /* Further adjust padding */
   }
 
   .last-calculation-header {
-    font-size: 1.1rem; /* Further adjust header font size */
+    font-size: 1rem; /* Further adjust header font size */
   }
 
   .last-calculation-item {
