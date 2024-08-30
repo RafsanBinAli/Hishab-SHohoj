@@ -1,19 +1,30 @@
 const DailyTransaction = require("../models/DailyTransaction");
 const NewDeal = require("../models/NewDeal");
+const Shop = require("../models/shop");
+const Farmer = require("../models/Farmer");
+const DebtHistory = require("../models/DebtHistory");
+const moment = require("moment");
 const date = new Date();
 const normalizedDate = new Date(
   Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
 );
-const Shop = require("../models/shop");
-const Farmer = require("../models/Farmer");
-const DebtHistory = require("../models/DebtHistory");
 
 exports.saveDailyTransaction = async (req, res) => {
   try {
-    const { name, amount: amountStr, commission: commissionStr, khajna: khajnaStr, date } = req.body;
+    const {
+      name,
+      amount: amountStr,
+      commission: commissionStr,
+      khajna: khajnaStr,
+      date,
+    } = req.body;
 
-    // Input validation
-    if (!name || isNaN(Number(amountStr)) || isNaN(Number(commissionStr)) || isNaN(Number(khajnaStr))) {
+    if (
+      !name ||
+      isNaN(Number(amountStr)) ||
+      isNaN(Number(commissionStr)) ||
+      isNaN(Number(khajnaStr))
+    ) {
       return res.status(400).json({ message: "Invalid input data" });
     }
 
@@ -21,47 +32,56 @@ exports.saveDailyTransaction = async (req, res) => {
     const commission = Number(commissionStr);
     const khajna = Number(khajnaStr);
     const dateInput = date ? new Date(date) : new Date();
-    const dateOfTransaction = new Date(Date.UTC(dateInput.getFullYear(), dateInput.getMonth(), dateInput.getDate()));
+    const dateOfTransaction = new Date(
+      Date.UTC(
+        dateInput.getFullYear(),
+        dateInput.getMonth(),
+        dateInput.getDate()
+      )
+    );
 
     console.log(`Processing transaction for date: ${dateOfTransaction}`);
 
-    // Fetch the transaction for the given date
-    let transaction = await DailyTransaction.findOne({ date: dateOfTransaction });
+    let transaction = await DailyTransaction.findOne({
+      date: dateOfTransaction,
+    });
 
     if (!transaction) {
-      return res.status(404).json({ message: "Transaction not found for the specified date." });
+      return res
+        .status(404)
+        .json({ message: "Transaction not found for the specified date." });
     }
 
-    // Update commission and khajna
     transaction.credit.commissions += commission;
     transaction.credit.khajnas += khajna;
 
-    // Update or add farmersPayment entry
     if (name) {
-      const existingEntry = transaction.debit.farmersPayment.find(entry => entry.name === name);
+      const existingEntry = transaction.debit.farmersPayment.find(
+        (entry) => entry.name === name
+      );
 
       if (existingEntry) {
-        // Update the existing entry
         existingEntry.amount = amount;
       } else {
-        // Add a new entry
         transaction.debit.farmersPayment.push({ name, amount });
       }
     }
-
-    // Save the updated transaction
     await transaction.save();
 
     res.status(200).json({
       message: "Daily transaction saved successfully.",
-      transaction
+      transaction,
     });
   } catch (error) {
     console.error("Error while saving daily transaction:", error.message);
-    res.status(500).json({ message: "An error occurred while saving the daily transaction.", error: error.message });
+    res
+      .status(500)
+      .json({
+        message: "An error occurred while saving the daily transaction.",
+        error: error.message,
+      });
   }
 };
-
 
 exports.getDailyTransaction = async (req, res) => {
   try {
@@ -196,9 +216,7 @@ exports.updateDailyCashStack = async (req, res) => {
 
 exports.updateOtherCost = async (req, res) => {
   try {
-    const { otherCost } = req.body; // Expecting an array of objects [{ name: 'Example', cost: 100 }, ...]
-
-    // Find the transaction for the current day
+    const { otherCost } = req.body;
     const transactionToday = await DailyTransaction.findOne({
       date: normalizedDate,
     });
@@ -208,13 +226,10 @@ exports.updateOtherCost = async (req, res) => {
         .status(404)
         .json({ message: "Transaction not found for the day!" });
     }
-
-    // Validate the otherCost input
     if (
       Array.isArray(otherCost) &&
       otherCost.every((item) => item.name && item.amount !== undefined)
     ) {
-      // Push each new cost into the existing otherCost array
       transactionToday.debit.otherCost.push(...otherCost);
       await transactionToday.save();
 
@@ -237,15 +252,26 @@ exports.updateOtherCost = async (req, res) => {
 };
 
 exports.createDaily = async (req, res) => {
+  const previousDayDate = new Date(normalizedDate);
+  previousDayDate.setDate(previousDayDate.getDate() - 1);
+
   try {
     let transactionToday = await DailyTransaction.findOne({
       date: normalizedDate,
     });
+    let previousDayTransaction = await DailyTransaction.findOne({
+      date: previousDayDate,
+    });
+    let dailyCashStack = 0;
+    if (previousDayTransaction) {
+      dailyCashStack = previousDayTransaction.netProfit || 0;
+    }
     if (transactionToday) {
       return res
         .status(400)
         .json({ message: "Already exists transaction for the day!" });
     }
+
     const allShops = await Shop.find({});
     const totalDebtsOfShops = allShops.reduce(
       (sum, shop) => sum + shop.totalDue,
@@ -269,6 +295,7 @@ exports.createDaily = async (req, res) => {
       totalDebtsOfShops,
       totalDebtsOfFarmers,
       totalUnpaidDealsPrice,
+      dailyCashStack,
     });
 
     await transaction.save();
@@ -284,13 +311,13 @@ exports.createDaily = async (req, res) => {
 
 exports.updateMyOwnDebt = async (req, res) => {
   try {
-    const { amount, type,bank } = req.body;
+    const { amount, type, bank } = req.body;
 
     const newDebtHistory = new DebtHistory({
       date: normalizedDate,
       amount,
       type,
-      bankName:bank,
+      bankName: bank,
     });
 
     let transactionToday = await DailyTransaction.findOne({
@@ -341,14 +368,12 @@ exports.calculateCommissionAndKhajna = async (req, res) => {
   try {
     const { date1, date2 } = req.query;
 
-    // Convert dates to Date objects for comparison
     const startDate = new Date(date1);
     const endDate = new Date(date2);
     let totalCommission = 0;
     let totalKhajna = 0;
     let totalOtherCost = 0;
 
-    // Fetch all transactions between the two dates (inclusive)
     const transactions = await DailyTransaction.find({
       date: {
         $gte: startDate,
@@ -356,18 +381,18 @@ exports.calculateCommissionAndKhajna = async (req, res) => {
       },
     });
 
-    // Iterate through each transaction and accumulate commission and khajna
     transactions.forEach((transaction) => {
       totalCommission += transaction.credit.commissions || 0;
       totalKhajna += transaction.credit.khajnas || 0;
 
-      // Accumulate the totalOtherCost by iterating over the otherCost array
       if (transaction.debit && transaction.debit.otherCost) {
-        totalOtherCost += transaction.debit.otherCost.reduce((sum, item) => sum + item.amount, 0);
+        totalOtherCost += transaction.debit.otherCost.reduce(
+          (sum, item) => sum + item.amount,
+          0
+        );
       }
     });
 
-    // Return the calculated totals
     res.status(200).json({
       totalCommission,
       totalKhajna,
