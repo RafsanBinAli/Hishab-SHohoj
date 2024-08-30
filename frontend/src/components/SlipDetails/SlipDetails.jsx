@@ -113,7 +113,7 @@ const SlipDetails = () => {
                     <td></td>
                     <td></td>
                     <td>আগের মোট বাকি</td>
-                    <td>{shopDetails?.totalDue} টাকা</td>
+                    <td>{shopDetails?.totalDue - slipDetails?.totalAmount} টাকা</td>
                   </tr>
                   <tr className="slip-row font-weight-bold">
                     <td></td>

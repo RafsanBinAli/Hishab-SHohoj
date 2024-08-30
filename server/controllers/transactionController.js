@@ -19,15 +19,6 @@ exports.saveDailyTransaction = async (req, res) => {
       date,
     } = req.body;
 
-    if (
-      !name ||
-      isNaN(Number(amountStr)) ||
-      isNaN(Number(commissionStr)) ||
-      isNaN(Number(khajnaStr))
-    ) {
-      return res.status(400).json({ message: "Invalid input data" });
-    }
-
     const amount = Number(amountStr);
     const commission = Number(commissionStr);
     const khajna = Number(khajnaStr);
