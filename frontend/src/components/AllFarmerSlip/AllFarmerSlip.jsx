@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import "./AllFarmerSlip.css"; // Import your custom CSS file
+import "./AllFarmerSlip.css"; 
 import { getCurrentDate } from "../../functions/getCurrentDate";
 
 const AllFarmerSlip = () => {
@@ -23,7 +23,7 @@ const AllFarmerSlip = () => {
         }
         const data = await response.json();
         setDeals(data);
-        setFilteredDeals(data); // Initialize filtered deals with all deals
+        setFilteredDeals(data); 
       } catch (error) {
         console.error("Error fetching deals:", error);
       } finally {

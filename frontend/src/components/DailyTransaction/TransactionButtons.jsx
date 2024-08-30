@@ -3,7 +3,7 @@ import "./LastCalcu.css";
 import { Link } from "react-router-dom";
 import BankButton from "./BankButton";
 
-const TransactionButton = ({ transactionDetails, setTransactionDetails }) => {
+const TransactionButton = ({  setTransactionDetails }) => {
   const [otherCost, setOtherCost] = useState(0);
   const [otherCostName, setOtherCostName] = useState("");
   const [dailyCashStack, setDailyCashStack] = useState(0);
@@ -35,7 +35,6 @@ const TransactionButton = ({ transactionDetails, setTransactionDetails }) => {
       alert("Saved Successfully!");
       setOtherCost(0);
       setOtherCostName("");
-      console.log("Data updated successfully:", data);
     } catch (error) {
       console.log("Error occurred:", error.message);
     }
@@ -77,8 +76,6 @@ const TransactionButton = ({ transactionDetails, setTransactionDetails }) => {
     <>
       <div className="calcu-row mb-4">
         <div className="calcu-col-md-12">
-          {" "}
-          {/* Increased card width */}
           <div className="calcu-card">
             <div className="calcu-form-group">
               <label className="calcu-daily-cash-stack-label">
@@ -147,7 +144,6 @@ const TransactionButton = ({ transactionDetails, setTransactionDetails }) => {
                 সংরক্ষণ করুন
               </button>
             </div>
-
             <BankButton setTransactionDetails={setTransactionDetails} />
           </div>
         </div>

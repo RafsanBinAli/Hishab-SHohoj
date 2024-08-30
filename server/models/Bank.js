@@ -48,7 +48,7 @@ const bankSchema = new mongoose.Schema({
     default: 0,
   },
   lastEditedBy: {
-    type: [debtEntrySchema], // Array of debt entries
+    type: [debtEntrySchema], 
   },
 });
 

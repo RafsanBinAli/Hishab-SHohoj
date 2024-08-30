@@ -2,8 +2,6 @@ import React from "react";
 import "./CardDetail.css";
 
 const FarmerDetails = ({ individualFarmerData }) => {
-  console.log(individualFarmerData); // Debugging: Check if data is correct
-
   return (
     <>
       <div className="col-md-4 ml-10">
@@ -42,7 +40,7 @@ const FarmerDetails = ({ individualFarmerData }) => {
       </div>
 
       <div className="col-1 d-flex align-items-center justify-content-center">
-        <div className="vr"></div> {/* Vertical divider */}
+        <div className="vr"></div>
       </div>
     </>
   );

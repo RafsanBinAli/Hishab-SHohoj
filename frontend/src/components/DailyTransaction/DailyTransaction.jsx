@@ -7,11 +7,8 @@ import KhajnaCommissionTable from "./KhajnaCommissionTable";
 
 const DailyTransaction = () => {
   const [transactionDetails, setTransactionDetails] = useState(null);
-  const [totalIncome, setTotalIncome] = useState(0);
-  const [totalExpense, setTotalExpense] = useState(0);
   const [khajna, setKhajna] = useState(0);
   const [commission, setCommission] = useState(0);
-  const [totalDifference, setTotalDifference] = useState(0);
 
   const dateNow = new Date();
   const normalizedDate = new Date(
@@ -37,57 +34,19 @@ const DailyTransaction = () => {
         }
         const data = await response.json();
         setTransactionDetails(data);
-
-        // Calculate the totals
-        const income = calculateTotalIncome(data);
-        const expense = calculateTotalExpense(data);
-        setTotalIncome(income);
-        setTotalExpense(expense);
-        setTotalDifference(income - expense);
-
-        // Set Khajna and Commission values
         setKhajna(data.credit?.khajnas || 0);
         setCommission(data.credit?.commissions || 0);
       } catch (error) {
         console.log("Error occurred", error);
-        // Optionally, show an error message to users here
+       
       }
     };
     fetchTransactionDetails();
   }, [selectedDate]);
 
-  const calculateTotalIncome = (data) => {
-    return [
-      data?.dailyCashStack || 0,
-      data?.credit?.dokanPayment || [],
-      data?.credit?.dharReturns || [],
-      data?.todayDebt || 0,
-    ].reduce((total, section) => {
-      if (Array.isArray(section)) {
-        return total + section.reduce((sum, item) => sum + item.amount, 0);
-      } else if (typeof section === "number") {
-        return total + section;
-      }
-      return total;
-    }, 0);
-  };
+ 
 
-  const calculateTotalExpense = (data) => {
-    return [
-      data?.debit?.farmersPayment || [],
-      data?.debit?.dhar || [],
-      data?.debit?.otherCost || [],
-      data?.todayDebtRepay || [],
-    ].reduce((total, section) => {
-      if (Array.isArray(section)) {
-        return total + section.reduce((sum, item) => sum + item.amount, 0);
-      } else if (typeof section === "number") {
-        return total + section;
-      }
-      return total;
-    }, 0);
-  };
-
+  
   return (
     <div className="container-dailyTransaction mt-4">
       <h2 className="text-center my-4 py-2 font-weight-bold">আজকের হিসাব</h2>
@@ -170,9 +129,7 @@ const DailyTransaction = () => {
         <div className="col-md-6">
           <LastCalculation
             transactionDetails={transactionDetails}
-            totalIncome={totalIncome}
-            totalExpense={totalExpense}
-            totalDifference={totalDifference}
+           
           />
         </div>
       </div>

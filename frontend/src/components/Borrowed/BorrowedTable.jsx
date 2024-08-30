@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Borrowed.css";
 import Loader from "../Loader/Loader";
+import { fetchFarmers } from "../../utils/dataService";
 
 const BorrowedTable = () => {
   const [editingFarmerName, setEditingFarmerName] = useState(null);
@@ -15,24 +16,14 @@ const BorrowedTable = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchFarmerData = async () => {
+    const loadFarmers = async () => {
       setLoading(true);
-      try {
-        const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/get-all-farmers`
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch farmer data");
-        }
-        const data = await response.json();
-        setFarmerList(data);
-      } catch (error) {
-        console.error("Error fetching farmer data:", error);
-      } finally {
-        setLoading(false);
-      }
+      const data = await fetchFarmers();
+      setFarmerList(data);
+      setLoading(false);
     };
-    fetchFarmerData();
+
+    loadFarmers();
   }, []);
 
   const handleSearch = (e) => {

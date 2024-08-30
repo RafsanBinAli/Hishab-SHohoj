@@ -81,7 +81,6 @@ exports.getCardDetailsById = async (req, res) => {
 exports.updateDealPurchases = async (req, res) => {
   const { id } = req.params;
   const { purchases } = req.body;
-  console.log(purchases);
 
   if (!Array.isArray(purchases)) {
     return res.status(400).json({ message: "Invalid request data" });
@@ -116,36 +115,25 @@ exports.updateCardDetails = async (req, res) => {
       return res.status(404).json({ message: "Card details not found!" });
     }
 
-    if (cardDetails.khajna === 0) {
-      cardDetails.khajna = khajna;
-    } else {
-      cardDetails.khajna += Math.max(
-        cardDetails.khajna,
-        cardDetails.khajna - khajna
-      );
-    }
-    if (cardDetails.commission === 0) {
-      cardDetails.commission = commission;
-    } else {
-      cardDetails.commission += Math.max(
-        cardDetails.commission,
-        cardDetails.commission - commission
-      );
-    }
+    cardDetails.khajna = khajna;
+
+    cardDetails.commission = commission;
+
     cardDetails.totalAmountToBeGiven = totalAmountToBeGiven;
     cardDetails.doneStatus = true;
     await cardDetails.save();
-    
+
     // Fetch the updated card details to ensure all fields are included
     const updatedCardDetails = await NewDeal.findById(id);
-    res.json({ message: "Card details updated successfully!", cardDetails: updatedCardDetails });
+    res.json({
+      message: "Card details updated successfully!",
+      cardDetails: updatedCardDetails,
+    });
   } catch (error) {
     console.error("Error updating card details:", error);
     res.status(500).json({ message: "Error updating card details", error });
   }
 };
-
-
 
 exports.getIncompleteMarketDeals = async (req, res) => {
   try {
@@ -160,7 +148,6 @@ exports.getIncompleteMarketDeals = async (req, res) => {
 
 exports.getDealsOfParticularDay = async (req, res) => {
   const { date } = req.query;
-  console.log("date", date);
   if (!date) {
     return res.status(400).json({ error: "Date query parameter is required" });
   }

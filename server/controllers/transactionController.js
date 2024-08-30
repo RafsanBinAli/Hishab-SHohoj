@@ -31,8 +31,6 @@ exports.saveDailyTransaction = async (req, res) => {
       )
     );
 
-    console.log(`Processing transaction for date: ${dateOfTransaction}`);
-
     let transaction = await DailyTransaction.findOne({
       date: dateOfTransaction,
     });
@@ -65,12 +63,10 @@ exports.saveDailyTransaction = async (req, res) => {
     });
   } catch (error) {
     console.error("Error while saving daily transaction:", error.message);
-    res
-      .status(500)
-      .json({
-        message: "An error occurred while saving the daily transaction.",
-        error: error.message,
-      });
+    res.status(500).json({
+      message: "An error occurred while saving the daily transaction.",
+      error: error.message,
+    });
   }
 };
 
@@ -84,7 +80,6 @@ exports.getDailyTransaction = async (req, res) => {
         .status(404)
         .json({ message: "Transaction not found for the day!" });
     }
-    console.log(transaction);
     res.status(200).json(transaction);
   } catch (error) {
     res.status(500).json({ message: "Failed to save DailyTransaction", error });

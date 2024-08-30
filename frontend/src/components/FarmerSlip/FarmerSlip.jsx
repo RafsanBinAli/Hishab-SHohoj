@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import "./FarmerSlip.css"; // Import your custom CSS file
+import "./FarmerSlip.css"; 
 
 const FarmerSlip = () => {
   const [deals, setDeals] = useState([]);
@@ -21,7 +21,7 @@ const FarmerSlip = () => {
         }
         const data = await response.json();
         setDeals(data);
-        setFilteredDeals(data); // Initialize filtered deals with all deals
+        setFilteredDeals(data);
       } catch (error) {
         console.error("Error fetching deals:", error);
       } finally {

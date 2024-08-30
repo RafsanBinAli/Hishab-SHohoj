@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import MessageModal from "../Modal/MessageModal"; // Adjust the import path as needed
+import MessageModal from "../Modal/MessageModal"; 
 import "./Signup.css";
 
 const Signup = () => {
@@ -32,10 +32,10 @@ const Signup = () => {
         {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("userAuthToken")}`, // Adding the userAuthToken to headers
-            "Content-Type": "application/x-www-form-urlencoded", // Adjusted content type
+            Authorization: `Bearer ${localStorage.getItem("userAuthToken")}`, 
+            "Content-Type": "application/x-www-form-urlencoded",
           },
-          body: new URLSearchParams(formData).toString(), // Properly format the form data
+          body: new URLSearchParams(formData).toString(), 
         }
       );
       const data = await response.json();
@@ -43,7 +43,7 @@ const Signup = () => {
         setModalTitle("Success");
         setModalMessage("Registration successful");
         setShowModal(true);
-        setTimeout(() => navigate("/home"), 2000); // Redirect after 2 seconds
+        setTimeout(() => navigate("/home"), 2000); 
       } else {
         setModalTitle("Error");
         setModalMessage(data.message || "Registration failed");

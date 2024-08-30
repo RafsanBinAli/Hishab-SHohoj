@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import ShopList from "./ShopList";
 import MessageModal from "../Modal/MessageModal";
 import "./NewDokan.css";
+import { fetchShops } from "../../utils/dataService";
 
 const NewDokan = () => {
   const [shops, setShops] = useState([]);
@@ -76,6 +77,14 @@ const NewDokan = () => {
       }
     }
   };
+  useEffect(() => {
+    const loadShops = async () => {
+      const data = await fetchShops();
+      setShops(data);
+    };
+
+    loadShops();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -129,21 +138,6 @@ const NewDokan = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchShops = async () => {
-      try {
-        const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/get-all-shops`
-        );
-        const data = await response.json();
-        setShops(data);
-      } catch (error) {
-        console.error("Error fetching shop data:", error);
-      }
-    };
-
-    fetchShops();
-  }, []);
 
   return (
     <div className="container mt-4 p-2">

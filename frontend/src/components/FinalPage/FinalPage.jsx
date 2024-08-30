@@ -10,7 +10,7 @@ const FinalPage = () => {
   const [transactionDetails2, setTransactionDetails2] = useState({});
   const [showSummary, setShowSummary] = useState(false);
   const [summaryDetails, setSummaryDetails] = useState(null);
-  // Function to format date as YYYY-MM-DD
+
   const formatDate = (date) => {
     const day = String(date.getDate()).padStart(2, "0");
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -60,7 +60,7 @@ const FinalPage = () => {
 
       setSummaryDetails(data);
 
-      setShowSummary(true); // Show the summary after data is fetched
+      setShowSummary(true);
     } catch (error) {
       console.log("Error occurred:", error);
     }

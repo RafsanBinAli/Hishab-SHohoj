@@ -23,8 +23,6 @@ exports.createSlip = async (shopName, startOfDay) => {
     });
 
     await slip.save();
-    console.log("Created new slip:", slip._id);
-
     return slip;
   } catch (error) {
     console.error("Error creating slip:", error);

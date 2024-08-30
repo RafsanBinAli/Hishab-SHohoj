@@ -1,22 +1,21 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { format } from "date-fns";
-import Loader from "../Loader/Loader"; // Import the Loader component
-import { getCurrentDate } from "../../functions/getCurrentDate"; // Import the getCurrentDate function
-import "./SlipDetails.css"; // Custom CSS for styling
-import handleDownload from "../../functions/handleDownload"; // Import the handleDownload function
+import Loader from "../Loader/Loader";
+import { getCurrentDate } from "../../functions/getCurrentDate";
+import handleDownload from "../../functions/handleDownload";
 
 const SlipDetails = () => {
-  const { shopName } = useParams(); // Get shopName from URL parameter
-  const [selectedDate, setSelectedDate] = useState(getCurrentDate()); // Initialize with today's date from getCurrentDate function
+  const { shopName } = useParams();
+  const [selectedDate, setSelectedDate] = useState(getCurrentDate());
   const [slipDetails, setSlipDetails] = useState(null);
   const [shopDetails, setShopDetails] = useState(null);
-  const [loading, setLoading] = useState(true); // Initialize loading state
-  const slipRef = useRef(null); // Ref to capture the slip details
+  const [loading, setLoading] = useState(true);
+  const slipRef = useRef(null);
 
   useEffect(() => {
     const fetchSlipDetails = async () => {
-      setLoading(true); // Start loading
+      setLoading(true);
       try {
         const formattedDate = format(new Date(selectedDate), "yyyy-MM-dd"); // Format date as yyyy-MM-dd
         const response = await fetch(
@@ -30,7 +29,7 @@ const SlipDetails = () => {
       } catch (error) {
         console.error("Error fetching slip details:", error);
       } finally {
-        setLoading(false); // Stop loading
+        setLoading(false);
       }
     };
 
@@ -75,7 +74,7 @@ const SlipDetails = () => {
         />
       </div>
       {loading ? (
-        <Loader /> // Show loader while data is being fetched
+        <Loader />
       ) : slipDetails ? (
         <div className="slip-card" ref={slipRef}>
           <div className="card">
@@ -113,7 +112,9 @@ const SlipDetails = () => {
                     <td></td>
                     <td></td>
                     <td>আগের মোট বাকি</td>
-                    <td>{shopDetails?.totalDue - slipDetails?.totalAmount} টাকা</td>
+                    <td>
+                      {shopDetails?.totalDue - slipDetails?.totalAmount} টাকা
+                    </td>
                   </tr>
                   <tr className="slip-row font-weight-bold">
                     <td></td>
@@ -131,7 +132,7 @@ const SlipDetails = () => {
 
           <button
             className="download-button"
-            onClick={() => handleDownload(slipRef)} // Use the imported handleDownload function
+            onClick={() => handleDownload(slipRef)} 
           >
             পিডিএফ ডাউনলোড করুন
           </button>

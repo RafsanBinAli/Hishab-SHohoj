@@ -63,11 +63,7 @@ const FarmerSlipDetailsPaidUnpaid = () => {
       return;
     }
 
-    const finalCommission = commission + extraCommission;
-    const finalKhajna = khajna + extraKhajna;
-
     try {
-      // Save daily transaction
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/transaction/save-daily`,
         {
@@ -75,9 +71,8 @@ const FarmerSlipDetailsPaidUnpaid = () => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             date: slipDetails?.createdAt,
-            commission:
-              extraCommission === 0 ? finalCommission : extraCommission,
-            khajna: extraKhajna === 0 ? finalKhajna : extraKhajna,
+            commission: extraCommission === 0 ? commission : extraCommission,
+            khajna: extraKhajna === 0 ? khajna : extraKhajna,
             name: slipDetails?.farmerName,
             amount: finalAmount,
           }),
@@ -86,7 +81,6 @@ const FarmerSlipDetailsPaidUnpaid = () => {
 
       if (!response.ok) throw new Error("Failed to save daily transaction");
 
-      // Update card details
       const updateResponse = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/card-details-update-secondary`,
         {
@@ -94,8 +88,8 @@ const FarmerSlipDetailsPaidUnpaid = () => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             id: slipDetails?._id,
-            khajna: finalKhajna,
-            commission: finalCommission,
+            khajna: khajna,
+            commission: commission,
             totalAmountToBeGiven: finalAmount,
           }),
         }
@@ -105,14 +99,11 @@ const FarmerSlipDetailsPaidUnpaid = () => {
 
       const data = await updateResponse.json();
       alert("Commissions and khajnas saved successfully and updated!");
-
-      // Update slip details and recalculate totals
       setSlipDetails(data.cardDetails);
-      setCommission(finalCommission);
-      setKhajna(finalKhajna);
+      setCommission(commission);
+      setKhajna(khajna);
 
-      // Recalculate finalAmount after saving
-      setFinalAmount(totalAmount - finalCommission - finalKhajna);
+      setFinalAmount(totalAmount - commission - khajna);
     } catch (error) {
       console.error("Error occurred:", error);
       alert("An error occurred while saving transaction or updating details");
@@ -120,13 +111,10 @@ const FarmerSlipDetailsPaidUnpaid = () => {
   };
 
   const handleEditSave = () => {
-    // Update commission and khajna with extra values
     setCommission((prev) => prev + extraCommission);
     setKhajna((prev) => prev + extraKhajna);
 
     setEditing(false);
-
-    // Recalculate finalAmount
     setFinalAmount(
       totalAmount - (commission + extraCommission) - (khajna + extraKhajna)
     );

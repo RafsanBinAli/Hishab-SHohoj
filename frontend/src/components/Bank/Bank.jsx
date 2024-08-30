@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import MessageModal from "../Modal/MessageModal";
 import BankList from "./BankList";
+import { fetchBanks } from "../../utils/dataService";
 
 const Bank = () => {
   const [users, setUsers] = useState([]);
@@ -17,22 +18,12 @@ const Bank = () => {
   const [redirectTo, setRedirectTo] = useState(null);
 
   useEffect(() => {
-    const fetchBanks = async () => {
-      try {
-        const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/bank/get-all`
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch banks");
-        }
-        const data = await response.json();
-        setUsers(data);
-      } catch (error) {
-        console.error("Error fetching banks:", error);
-      }
+    const loadBanks = async () => {
+      const data = await fetchBanks();
+      setUsers(data);
     };
 
-    fetchBanks();
+    loadBanks();
   }, []);
 
   const handleUserInputChange = (event) => {

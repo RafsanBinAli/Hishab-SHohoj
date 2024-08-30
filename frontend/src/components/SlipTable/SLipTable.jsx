@@ -3,7 +3,7 @@ import "./SlipTable.css";
 import Loader from "../Loader/Loader";
 import { getCurrentDate } from "../../functions/getCurrentDate";
 import MessageModal from "../Modal/MessageModal";
-import { fetchShops } from "../../utils/dataService"; // Import fetchShops utility function
+import { fetchShops } from "../../utils/dataService"; 
 
 const SlipTable = () => {
   const [slips, setSlips] = useState([]);
@@ -220,8 +220,6 @@ const SlipTable = () => {
           )}
         </>
       )}
-
-      {/* Message Modal */}
       <MessageModal
         show={modalShow}
         onHide={() => setModalShow(false)}

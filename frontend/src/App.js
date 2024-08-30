@@ -8,9 +8,7 @@ import {
 import { useState, useEffect } from "react";
 
 import Navbar from "./components/Navbar/Navbar";
-import NewDeal from "./components/Farmer/Farmer";
 import CardDetail from "./components/CardDetail/CardDetail";
-import DokanCardDetails from "./components/DokanCardDetails/DokanCardDetails";
 import Borrowed from "./components/Borrowed/Borrowed";
 import NewDokan from "./components/NewDokan/NewDokan";
 import DokanerSlip from "./components/DokanerSlip/DokanerSLip";
@@ -23,7 +21,6 @@ import DharDetails from "./components/DharDetails/DharDetails";
 import Farmer from "./components/Farmer/Farmer";
 import FinalPage from "./components/FinalPage/FinalPage";
 import FarmerSlip from "./components/FarmerSlip/FarmerSlip";
-import FarmerSlipDetails from "./components/CardDetail/FarmerSlipDetails";
 import FarmerSlipDetailsPaidUnpaid from "./components/FarmerSlip/FarmerSlipDetailsPaidUnpaid";
 import AllFarmerSlip from "./components/AllFarmerSlip/AllFarmerSlip";
 import OwnDebtTable from "./components/OwnDebtTable/OwnDebtTable";
@@ -93,10 +90,7 @@ function App() {
             path="/dokans"
             element={<PrivateRoute element={<NewDokan />} />}
           />
-          <Route
-            path="/dokan-details"
-            element={<PrivateRoute element={<DokanCardDetails />} />}
-          />
+          
           <Route
             path="/borrow"
             element={<PrivateRoute element={<Borrowed />} />}

@@ -44,7 +44,6 @@ exports.updateTotalDue = async (req, res) => {
     shop.totalDue -= paidAmount;
 
     const updatedShop = await shop.save();
-    console.log(updatedShop);
     res.status(200).json(updatedShop);
   } catch (error) {
     console.error("Error updating totalDue:", error);

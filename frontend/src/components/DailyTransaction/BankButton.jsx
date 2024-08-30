@@ -31,7 +31,6 @@ const BankButton = ({ setTransactionDetails }) => {
     }
 
     try {
-      // Call the first API for debt or repayment
       const debtResponse = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/transaction/handle-my-own-debt`,
         {
@@ -54,7 +53,6 @@ const BankButton = ({ setTransactionDetails }) => {
 
       const debtData = await debtResponse.json();
 
-      // Call the second API to update the bank's debt details
       const bankResponse = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/bank/update-debt/${selectedBank}`,
         {
@@ -80,12 +78,11 @@ const BankButton = ({ setTransactionDetails }) => {
       setTransactionDetails(debtData.transaction);
       alert("Transaction and bank details saved successfully!");
 
-      // Reset fields after successful submission
       setMyOwnDebtAmount(0);
       setMyOwnDebtRepayAmount(0);
       setSelectedBankDebt("");
       setSelectedBankRepay("");
-      console.log("Data updated successfully:", debtData, bankData);
+      
     } catch (error) {
       console.log("Error occurred:", error.message);
     }
@@ -93,7 +90,6 @@ const BankButton = ({ setTransactionDetails }) => {
 
   return (
     <>
-      {/* My Own Debt Section */}
       <div className="calcu-form-group">
         <label htmlFor="myOwnDebt" className="calcu-daily-cash-stack-label">
           নিজের ধার :
@@ -140,7 +136,6 @@ const BankButton = ({ setTransactionDetails }) => {
         </button>
       </div>
 
-      {/* My Own Debt Repayment Section */}
       <div className="calcu-form-group">
         <label
           htmlFor="myOwnDebtRepay"

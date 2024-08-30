@@ -32,11 +32,11 @@ const Login = ({ setIsUserLoggedIn }) => {
       if (response.ok) {
         localStorage.setItem("isUserLoggedIn", "true");
         localStorage.setItem("userAuthToken", data.token);
-        setIsUserLoggedIn(true); // Update the state to re-render the Navbar
+        setIsUserLoggedIn(true); 
         setModalTitle("Success");
         setModalMessage("Login Successful");
         setShowModal(true);
-        setTimeout(() => navigate("/"), 2000); // Redirect after 2 seconds
+        setTimeout(() => navigate("/"), 2000); 
       } else {
         setModalTitle("Error");
         setModalMessage(data.message || "Invalid Username or Password");
@@ -53,7 +53,7 @@ const Login = ({ setIsUserLoggedIn }) => {
   const handleModalConfirm = () => {
     setShowModal(false);
     if (modalTitle === "Success") {
-      navigate("/"); // Redirect if login is successful
+      navigate("/"); 
     }
   };
 

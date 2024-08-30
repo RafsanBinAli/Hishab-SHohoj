@@ -55,8 +55,6 @@ const DharDetails = () => {
             <div className="card-section">
               <div className="card-section-left">
                 <h2 className="entries-header font-weight-bold">কৃষকের ধার</h2>
-
-                {/* Farmer Image */}
                 <div className="dhar-farmer-image-container">
                   <img
                     src={farmerData.imageUrl || "placeholder-image-url.jpg"}

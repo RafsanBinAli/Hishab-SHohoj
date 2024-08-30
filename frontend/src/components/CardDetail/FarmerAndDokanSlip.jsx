@@ -15,7 +15,6 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
   const [modalShow, setModalShow] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [modalMessage, setModalMessage] = useState("");
-  const [isSuccess, setIsSuccess] = useState(false);
 
   useEffect(() => {
     if (individualCardDetails?.purchases) {
@@ -29,7 +28,6 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
 
       setCommission(fetchedCommission);
       setKhajna(fetchedKhajna);
-
       setFinalAmount(totalAmount - fetchedCommission - fetchedKhajna);
     }
   }, [individualCardDetails]);
@@ -105,19 +103,16 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
         throw new Error("Error updating card details");
       }
 
-      // Set the payment as completed
       setIsPaid(true);
-
       setModalTitle("Success");
       setModalMessage(
         "Commissions and khajnas saved successfully and updated!"
       );
-      setIsSuccess(true);
+
       setModalShow(true);
     } catch (error) {
       setModalTitle("Error");
       setModalMessage("An error occurred while processing the payment.");
-      setIsSuccess(false);
       setModalShow(true);
     }
   };

@@ -36,12 +36,6 @@ const FarmerDetailsToggler = ({ farmer, onUpdate }) => {
     setModalShow(true);
   };
 
-  const hideModal = () => {
-    setModalShow(false);
-    setModalTitle("");
-    setModalMessage("");
-  };
-
   const handleSaveDebtClick = async () => {
     if (newFarmerData.newDhar <= 0) {
       showModal(
@@ -87,7 +81,6 @@ const FarmerDetailsToggler = ({ farmer, onUpdate }) => {
         throw new Error("Failed to update transaction details");
 
       showModal("Success", "ধারের ডাটা সংরক্ষণ হয়েছে!");
-      // Call onUpdate to fetch updated data
       await onUpdate();
     } catch (error) {
       showModal("Error", error.message || "Failed to save debt data");
@@ -139,7 +132,7 @@ const FarmerDetailsToggler = ({ farmer, onUpdate }) => {
         throw new Error("Failed to update transaction details");
 
       showModal("Success", "পরিশোধের ডাটা সংরক্ষণ হয়েছে!");
-      // Call onUpdate to fetch updated data
+     
       await onUpdate();
     } catch (error) {
       showModal("Error", error.message || "Failed to save payment data");
@@ -179,7 +172,7 @@ const FarmerDetailsToggler = ({ farmer, onUpdate }) => {
   const handleModalConfirm = () => {
     setModalShow(false);
     if (redirectTo) {
-      window.location.href = redirectTo; // Redirect to the specified page
+      window.location.href = redirectTo; 
     }
   };
 

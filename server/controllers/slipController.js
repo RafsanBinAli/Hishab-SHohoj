@@ -12,7 +12,6 @@ exports.findOrCreateSlip = async (req, res) => {
   const endOfDay = new Date(Date.UTC(year, month - 1, day, 23, 59, 59, 999));
 
   try {
-    console.log("shopName is", shopName);
     let slip = await Slip.findOneAndUpdate(
       {
         shopName,

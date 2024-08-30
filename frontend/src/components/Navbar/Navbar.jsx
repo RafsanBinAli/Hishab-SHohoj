@@ -65,7 +65,6 @@ const Navbar = ({ setIsUserLoggedIn }) => {
           className={`collapse navbar-collapse ${isOpen ? "show" : ""}`}
           id="navbarNav"
         >
-          {/* Close icon for smaller screens */}
           <button
             className={`navbar-toggler d-lg-none ${
               isOpen ? "d-block ml-auto mt-2" : "d-none"
@@ -156,8 +155,8 @@ const Navbar = ({ setIsUserLoggedIn }) => {
                 className="nav-link"
                 to="/"
                 onClick={() => {
-                  setIsOpen(false); // Close the navbar if it's open
-                  handleLogout(); // Call logout function to clear localStorage
+                  setIsOpen(false); 
+                  handleLogout(); 
                 }}
               >
                 Log Out

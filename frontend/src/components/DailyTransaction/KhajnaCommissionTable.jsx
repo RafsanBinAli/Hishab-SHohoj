@@ -2,8 +2,6 @@ import React from "react";
 import "./DailyTransaction.css"; 
 
 const KhajnaCommissionTable = ({ khajna, commission }) => {
- 
-  const total = khajna + commission;
 
   return (
     <div className="khajna-commission-table">
@@ -19,7 +17,7 @@ const KhajnaCommissionTable = ({ khajna, commission }) => {
           <tr>
             <td>{khajna}</td>
             <td>{commission}</td>
-            <td>{total}</td> 
+            <td>{khajna + commission}</td> 
           </tr>
         </tbody>
       </table>

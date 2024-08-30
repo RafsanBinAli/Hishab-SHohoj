@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./CardDetail.css";
 import FarmerSlipDetails from "./FarmerSlipDetails";
-import MessageModal from "../Modal/MessageModal"; // Import the MessageModal component
+import MessageModal from "../Modal/MessageModal"; 
 import {
   fetchShops,
   fetchFarmers,
@@ -20,7 +20,6 @@ const CardDetail = () => {
     { farmerName: "", shopName: "", stockName: "", quantity: "", price: "" },
   ]);
 
-  // State for managing the modal
   const [modalVisible, setModalVisible] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [modalMessage, setModalMessage] = useState("");
@@ -81,7 +80,7 @@ const CardDetail = () => {
       return;
     }
 
-    setIsSaving(true); // Set saving state to true
+    setIsSaving(true); 
 
     try {
       const newPurchases = formRows.map((row) => ({
@@ -202,7 +201,7 @@ const CardDetail = () => {
         })
       );
 
-      // Refresh card details after successful save
+      
       const refreshedCardDetails = await fetchCardDetails();
       const updatedCardDetails = refreshedCardDetails.find(
         (card) => card.farmerName === individualFarmerData.name
@@ -219,7 +218,7 @@ const CardDetail = () => {
       setModalMessage("An error occurred during save operation.");
       setModalVisible(true);
     } finally {
-      setIsSaving(false); // Reset saving state
+      setIsSaving(false); 
     }
   };
 
@@ -351,10 +350,9 @@ const CardDetail = () => {
         <button
           className="btn1 btn-success mt-3"
           onClick={handleSave}
-          disabled={isSaving} // Disable button while saving
+          disabled={isSaving} 
         >
-          {isSaving ? "Wait..." : "সেভ করুন"}{" "}
-          {/* Show "Wait..." text while saving */}
+          {isSaving ? "Wait..." : "সেভ করুন"}
         </button>
       </div>
 
@@ -364,7 +362,6 @@ const CardDetail = () => {
         individualCardDetails={individualCardDetails}
       />
 
-      {/* Render the MessageModal component */}
       <MessageModal
         show={modalVisible}
         onHide={() => setModalVisible(false)}

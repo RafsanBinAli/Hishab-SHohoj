@@ -1,6 +1,6 @@
 import "./LastCalcu.css";
 
-const LastCalculation = ({ transactionDetails, totalIncome, totalExpense }) => {
+const LastCalculation = ({ transactionDetails }) => {
   return (
     <div className="last-calculation-container">
       <div className="last-calculation-card">

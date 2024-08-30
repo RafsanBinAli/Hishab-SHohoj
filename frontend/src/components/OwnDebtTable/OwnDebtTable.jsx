@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
-import "./OwnDebtTable.css"; // Create and style this CSS file
-import Loader from "../Loader/Loader"; // Import the Loader component
+import "./OwnDebtTable.css"; 
+import Loader from "../Loader/Loader"; 
 
 const OwnDebtTable = () => {
   const [debtHistory, setDebtHistory] = useState([]);
-
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -20,8 +19,6 @@ const OwnDebtTable = () => {
         }
 
         const data = await response.json();
-
-        console.log(data);
         setDebtHistory(data);
       } catch (error) {
         console.error("Error fetching debt data:", error);
@@ -39,7 +36,6 @@ const OwnDebtTable = () => {
         <Loader />
       ) : (
         <div className="tables-wrapper">
-          {/* Table for Debt Taken */}
           <div className="debt-table">
             <h3>ধার হিসাব
             </h3>
@@ -65,7 +61,6 @@ const OwnDebtTable = () => {
             </table>
           </div>
   
-          {/* Table for Repayment */}
           <div className="debt-table">
             <h3>পরিশোধ হিসাব
             </h3>

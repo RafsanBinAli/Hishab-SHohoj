@@ -40,7 +40,6 @@ const DokanerSlip = () => {
     setSearchTerm(e.target.value);
   };
 
-  // Filter shops by the search term
   const filteredShops = shops.filter((shop) =>
     shop.shopName.toLowerCase().includes(searchTerm.toLowerCase())
   );

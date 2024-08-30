@@ -20,7 +20,7 @@ exports.createFarmer = async (req, res) => {
 };
 
 exports.findFarmerByName = async (req, res) => {
-  const { name } = req.params; // Assuming name is passed as a route parameter
+  const { name } = req.params; 
   try {
     const farmer = await Farmer.findOne({ name });
     if (!farmer) {
