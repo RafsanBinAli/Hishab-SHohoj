@@ -41,12 +41,14 @@ const OwnDebtTable = () => {
         <div className="tables-wrapper">
           {/* Table for Debt Taken */}
           <div className="debt-table">
-            <h3>Debt Taken</h3>
+            <h3>ধার হিসাব
+            </h3>
             <table className="table">
               <thead>
                 <tr>
+                <th>Bank Name</th>
                   <th>Amount</th>
-                  <th>Date</th>
+                  <th>তারিখ</th>
                 </tr>
               </thead>
               <tbody>
@@ -54,7 +56,8 @@ const OwnDebtTable = () => {
                   .filter((entry) => entry.type === "debt")
                   .map((debt, index) => (
                     <tr key={index}>
-                      <td>{debt.amount}</td>
+                      <td>{debt.bankName}</td>
+                      <td>{debt.amount} টাকা</td>
                       <td>{new Date(debt.date).toLocaleDateString()}</td>
                     </tr>
                   ))}
@@ -64,12 +67,14 @@ const OwnDebtTable = () => {
   
           {/* Table for Repayment */}
           <div className="debt-table">
-            <h3>Repayment</h3>
+            <h3>পরিশোধ হিসাব
+            </h3>
             <table className="table">
               <thead>
                 <tr>
+                <th>Bank Name</th>
                   <th>Amount</th>
-                  <th>Date</th>
+                  <th>তারিখ</th>
                 </tr>
               </thead>
               <tbody>
@@ -77,7 +82,8 @@ const OwnDebtTable = () => {
                   .filter((entry) => entry.type === "repayment")
                   .map((repayment, index) => (
                     <tr key={index}>
-                      <td>{repayment.amount}</td>
+                      <td> {repayment.bankName}</td>
+                      <td>{repayment.amount} টাকা</td>
                       <td>{new Date(repayment.date).toLocaleDateString()}</td>
                     </tr>
                   ))}

@@ -119,7 +119,7 @@ const BorrowedTable = () => {
             </thead>
             <tbody>
               {filteredFarmersList.map((farmer) => (
-                <tr key={farmer.id}>
+                <tr key={farmer._id}>
                   <td>{farmer.name}</td>
                   <td>
                     {editingFarmerName === farmer.name ? (

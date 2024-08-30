@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
 
 const debtHistorySchema = new mongoose.Schema({
+  bankName: {
+    type: String,
+    require: true,
+  },
   date: {
     type: Date,
     required: true,
@@ -13,7 +17,7 @@ const debtHistorySchema = new mongoose.Schema({
   type: {
     type: String,
     required: true,
-    enum: ["debt", "repayment"], // The 'type' field can only be either 'debt' or 'repay'
+    enum: ["debt", "repayment"], 
   },
 });
 

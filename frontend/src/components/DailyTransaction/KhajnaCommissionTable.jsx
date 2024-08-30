@@ -1,8 +1,8 @@
 import React from "react";
-import "./DailyTransaction.css"; // Make sure to import the correct CSS file
+import "./DailyTransaction.css"; 
 
 const KhajnaCommissionTable = ({ khajna, commission }) => {
-  // Calculate the total of khajna and commission
+ 
   const total = khajna + commission;
 
   return (
@@ -12,14 +12,14 @@ const KhajnaCommissionTable = ({ khajna, commission }) => {
           <tr>
             <th>খাজনা</th>
             <th>কমিশন</th>
-            <th>মোট</th> {/* Header for Total column */}
+            <th>মোট</th> 
           </tr>
         </thead>
         <tbody>
           <tr>
             <td>{khajna}</td>
             <td>{commission}</td>
-            <td>{total}</td> {/* Display total */}
+            <td>{total}</td> 
           </tr>
         </tbody>
       </table>

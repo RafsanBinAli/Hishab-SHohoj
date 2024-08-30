@@ -159,14 +159,14 @@ transactionSchema.pre("save", function (next) {
   const totalProfit =
     this.credit.dharReturns.reduce((sum, item) => sum + item.amount, 0) +
     this.credit.dokanPayment.reduce((sum, item) => sum + item.amount, 0) +
-    this.dailyCashStack+
-    this.totalUnpaidDealsPrice
-    ;
-
+    this.dailyCashStack +
+    this.totalUnpaidDealsPrice +
+    this.todayDebt;
   const totalCost =
     this.debit.dhar.reduce((sum, item) => sum + item.amount, 0) +
     this.debit.farmersPayment.reduce((sum, item) => sum + item.amount, 0) +
-    this.debit.otherCost.reduce((sum, item) => sum + item.amount, 0);
+    this.debit.otherCost.reduce((sum, item) => sum + item.amount, 0) +
+    this.todayDebtRepay;
 
   const netProfit = totalProfit - totalCost;
 

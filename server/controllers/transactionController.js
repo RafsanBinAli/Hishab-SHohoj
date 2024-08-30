@@ -284,12 +284,13 @@ exports.createDaily = async (req, res) => {
 
 exports.updateMyOwnDebt = async (req, res) => {
   try {
-    const { amount, type } = req.body;
+    const { amount, type,bank } = req.body;
 
     const newDebtHistory = new DebtHistory({
       date: normalizedDate,
       amount,
       type,
+      bankName:bank,
     });
 
     let transactionToday = await DailyTransaction.findOne({

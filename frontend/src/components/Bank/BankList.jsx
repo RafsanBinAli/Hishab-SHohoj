@@ -44,6 +44,7 @@ const BankList = ({ banks }) => {
                     <th>Bank নাম</th>
                     <th>ঠিকানা</th>
                     <th>মোবাইল নম্বর</th>
+                    <th> Payment Due</th>
                     <th>ছবি</th>
                   </tr>
                 </thead>
@@ -54,7 +55,7 @@ const BankList = ({ banks }) => {
                       <td>{bank.bankName}</td>
                       <td>{bank.village}</td>
                       <td>{bank.phoneNumber}</td>
-
+                      <td> {bank.paymentDue}</td>
                       <td>
                         {bank.imageUrl && (
                           <img

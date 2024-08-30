@@ -39,7 +39,7 @@ const bankSchema = new mongoose.Schema({
   imageUrl: {
     type: String,
   },
-  paymentDueaymentDue: {
+  paymentDue: {
     type: Number,
     default: 0,
   },
