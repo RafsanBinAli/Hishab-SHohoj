@@ -1,8 +1,14 @@
 const Shop = require("../models/shop");
+
 exports.createShop = async (req, res) => {
   try {
     const { shopName, address, phoneNumber, imageUrl } = req.body;
-    console.log(req.body);
+
+    const existingShop = await Shop.findOne({ shopName });
+    if (existingShop) {
+      return res.status(400).json({ message: "Shop with this name already exists" });
+    }
+
     const newShop = new Shop({
       shopName,
       address,

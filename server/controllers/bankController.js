@@ -2,7 +2,6 @@ const Bank = require("../models/Bank");
 
 exports.createBank = async (req, res) => {
   const { bankName, village, imageUrl, phoneNumber } = req.body;
-console.log(req.body)
   try {
     const existingBank = await Bank.findOne({ bankName });
 
@@ -23,7 +22,7 @@ console.log(req.body)
 };
 
 exports.findBankByName = async (req, res) => {
-  const { bankName } = req.params; // Assuming name is passed as a route parameter
+  const { bankName } = req.params;
   try {
     const bank = await Bank.findOne({ bankName });
     if (!bank) {

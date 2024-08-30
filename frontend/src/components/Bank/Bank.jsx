@@ -112,8 +112,6 @@ const Bank = () => {
     if (file) {
       const formData = new FormData();
       formData.append("image", file);
-      console.log(file);
-      console.log(process.env.REACT_APP_IMGBB_KEY)
       try {
         const response = await fetch(
           `https://api.imgbb.com/1/upload?key=${process.env.REACT_APP_IMGBB_KEY}`,

@@ -35,7 +35,7 @@ const NewDokan = () => {
     }
     if (!formData.phoneNumber.trim()) {
       errors.phoneNumber = "Phone number is required.";
-    } else if (!/^\d{10}$/.test(formData.phoneNumber)) {
+    } else if (!/^\d{11}$/.test(formData.phoneNumber)) {
       errors.phoneNumber = "Phone number must be 10 digits.";
     }
     if (!formData.imageUrl) {

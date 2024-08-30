@@ -1,26 +1,18 @@
 const Farmer = require("../models/Farmer");
 
 exports.createFarmer = async (req, res) => {
-  console.log(req.body);
   const { name, village, imageUrl, phoneNumber } = req.body;
 
   try {
-    // Check if a farmer with the same name already exists
     const existingFarmer = await Farmer.findOne({ name });
-
     if (existingFarmer) {
       return res
         .status(400)
         .json({ error: "Farmer with this name already exists." });
     }
-
-    // Create a new farmer instance
     const newFarmer = new Farmer({ name, village, imageUrl, phoneNumber });
 
-    // Save the new farmer to the database
     await newFarmer.save();
-
-    // Respond with success message and new farmer data
     res.status(201).json(newFarmer);
   } catch (err) {
     res.status(500).json({ message: "Server Error" });
