@@ -124,7 +124,6 @@ const FarmerSlipDetailsPaidUnpaid = () => {
     setCommission((prev) => prev + extraCommission);
     setKhajna((prev) => prev + extraKhajna);
 
-    
     setEditing(false);
 
     // Recalculate finalAmount
@@ -138,8 +137,10 @@ const FarmerSlipDetailsPaidUnpaid = () => {
   return (
     <div className="dokaner-slip-container">
       <h2 className="dokaner-slip-title font-weight-bold">
-        {slipDetails?.farmerName} স্লিপ Date:{" "}
-        {new Date(slipDetails?.createdAt).toISOString().split("T")[0]}
+        {slipDetails?.farmerName} স্লিপ
+        <p>
+          Date: {new Date(slipDetails?.createdAt).toISOString().split("T")[0]}{" "}
+        </p>
       </h2>
       <div className="slip-card">
         <div className="card" ref={cardRef}>

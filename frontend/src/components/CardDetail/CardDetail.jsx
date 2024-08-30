@@ -9,6 +9,7 @@ import {
 } from "../../utils/dataService";
 
 const CardDetail = () => {
+  const [isSaving, setIsSaving] = useState(false);
   const [loadedData, setLoadedData] = useState(null);
   const [shops, setShops] = useState([]);
   const [farmers, setFarmers] = useState([]);
@@ -80,7 +81,7 @@ const CardDetail = () => {
       return;
     }
 
-    
+    setIsSaving(true); // Set saving state to true
 
     try {
       const newPurchases = formRows.map((row) => ({
@@ -217,6 +218,8 @@ const CardDetail = () => {
       setModalTitle("Error");
       setModalMessage("An error occurred during save operation.");
       setModalVisible(true);
+    } finally {
+      setIsSaving(false); // Reset saving state
     }
   };
 
@@ -345,8 +348,13 @@ const CardDetail = () => {
             ))}
           </tbody>
         </table>
-        <button className="btn1 btn-success mt-3" onClick={handleSave}>
-          সেভ করুন
+        <button
+          className="btn1 btn-success mt-3"
+          onClick={handleSave}
+          disabled={isSaving} // Disable button while saving
+        >
+          {isSaving ? "Wait..." : "সেভ করুন"}{" "}
+          {/* Show "Wait..." text while saving */}
         </button>
       </div>
 

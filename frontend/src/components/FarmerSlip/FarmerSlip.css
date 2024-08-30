@@ -1,5 +1,9 @@
 /* FarmerSlip.css */
 
+p{
+  font-size: 20px;
+}
+
 .farmer-slip {
   padding: 0 15px;
   max-width: 1320px;
