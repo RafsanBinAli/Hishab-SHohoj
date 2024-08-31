@@ -53,7 +53,16 @@
 /* Input Styling */
 .calcu-daily-cash-stack-input {
   flex: 1; /* Takes remaining space */
-  padding: 10px;
+  padding: 9px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-right: 72px; /* Gap between input and button */
+}
+
+.calcu-daily-cash-stack-input1 {
+  flex: 1; /* Takes remaining space */
+  padding: 9px;
   font-size: 1rem;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -75,7 +84,7 @@
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s ease;
-  margin-top: 20px;
+  margin-top: 30px;
 }
 .calcu-daily-cash-stack-submit1 {
   width: 100px; /* Fixed width for buttons */
@@ -89,12 +98,12 @@
   margin-top: 0;
 }
 
-.calcu-daily-cash-stack-submit:hover {
+.calcu-daily-cash-stack-submit  .calcu-daily-cash-stack-submit1:hover {
   background-color: #0056b3;
   transform: translateY(-2px);
 }
 
-.calcu-daily-cash-stack-submit:active {
+.calcu-daily-cash-stack-submit  .calcu-daily-cash-stack-submit1:active {
   background-color: #004085;
   transform: translateY(0);
 }
@@ -211,9 +220,9 @@
     text-align: center; /* Center-align text inside inputs */
   }
 
-  .calcu-daily-cash-stack-submit .calcu-daily-cash-stack-submit1 {
-    width: 100%; /* Full width for button on smaller screens */
-    padding: 15px; /* Larger padding for button */
+  .calcu-daily-cash-stack-submit {
+    width: 50%; /* Full width for button on smaller screens */
+    padding: 10px; /* Larger padding for button */
     font-size: 1rem; /* Increase font size for button */
     margin-top: 15px; /* Space above button */
     background-color: #007bff; /* Button color */
@@ -224,12 +233,25 @@
     transition: background-color 0.3s ease, transform 0.2s ease;
   }
 
-  .calcu-daily-cash-stack-submit:hover {
+  .calcu-daily-cash-stack-submit1 {
+    width: 50%; /* Full width for button on smaller screens */
+    padding: 10px; /* Larger padding for button */
+    font-size: 1rem; /* Increase font size for button */
+    margin-top: 15px; /* Space above button */
+    background-color: #007bff; /* Button color */
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+
+  .calcu-daily-cash-stack-submit .calcu-daily-cash-stack-submit1:hover {
     background-color: #0056b3; /* Darker color on hover */
     transform: translateY(-2px);
   }
 
-  .calcu-daily-cash-stack-submit:active {
+  .calcu-daily-cash-stack-submit   .calcu-daily-cash-stack-submit1:active {
     background-color: #004085; /* Even darker color when active */
     transform: translateY(0);
   }

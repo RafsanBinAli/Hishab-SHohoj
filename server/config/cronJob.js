@@ -3,7 +3,7 @@ const axios = require("axios");
 
 // Schedule a cron job to run daily at 1 AM
 cron.schedule(
-  "31 1 * * *",
+  "54 2 * * *",
   async () => {
     try {
       const response = await axios.post(

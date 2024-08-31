@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { fetchBanks } from "../../utils/dataService";
+import MessageModal from "../Modal/MessageModal";
 
 const BankButton = ({ setTransactionDetails }) => {
   const [myOwnDebtAmount, setMyOwnDebtAmount] = useState(0);
@@ -7,6 +8,11 @@ const BankButton = ({ setTransactionDetails }) => {
   const [selectedBankDebt, setSelectedBankDebt] = useState("");
   const [selectedBankRepay, setSelectedBankRepay] = useState("");
   const [bankDetails, setBankDetails] = useState([]);
+
+  // State for the MessageModal
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalTitle, setModalTitle] = useState("");
+  const [modalMessage, setModalMessage] = useState("");
 
   useEffect(() => {
     const fetchBankData = async () => {
@@ -26,7 +32,9 @@ const BankButton = ({ setTransactionDetails }) => {
     const actionType = isRepayment ? "repayment" : "debt";
 
     if (!selectedBank || amount <= 0) {
-      alert("Please select a bank and enter a valid amount.");
+      alert(
+        "অনুগ্রহ করে একটি ব্যাংক নির্বাচন করুন এবং একটি বৈধ পরিমাণ প্রবেশ করুন।"
+      );
       return;
     }
 
@@ -76,15 +84,18 @@ const BankButton = ({ setTransactionDetails }) => {
       const bankData = await bankResponse.json();
 
       setTransactionDetails(debtData.transaction);
-      alert("Transaction and bank details saved successfully!");
+      setModalTitle("Success");
+      setModalMessage("লেনদেন এবং ব্যাংক তথ্য সফলভাবে সংরক্ষণ করা হয়েছে!");
+      setModalVisible(true);
 
       setMyOwnDebtAmount(0);
       setMyOwnDebtRepayAmount(0);
       setSelectedBankDebt("");
       setSelectedBankRepay("");
-      
     } catch (error) {
-      console.log("Error occurred:", error.message);
+      setModalTitle("Error");
+      setModalMessage(`An error occurred: ${error.message}`);
+      setModalVisible(true);
     }
   };
 
@@ -187,6 +198,15 @@ const BankButton = ({ setTransactionDetails }) => {
           সংরক্ষণ করুন
         </button>
       </div>
+
+      {/* MessageModal component */}
+      <MessageModal
+        show={modalVisible}
+        onHide={() => setModalVisible(false)}
+        title={modalTitle}
+        message={modalMessage}
+        onConfirm={() => setModalVisible(false)}
+      />
     </>
   );
 };

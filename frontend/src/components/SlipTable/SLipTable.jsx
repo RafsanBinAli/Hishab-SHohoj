@@ -3,7 +3,7 @@ import "./SlipTable.css";
 import Loader from "../Loader/Loader";
 import { getCurrentDate } from "../../functions/getCurrentDate";
 import MessageModal from "../Modal/MessageModal";
-import { fetchShops } from "../../utils/dataService"; 
+import { fetchShops } from "../../utils/dataService";
 
 const SlipTable = () => {
   const [slips, setSlips] = useState([]);
@@ -23,8 +23,10 @@ const SlipTable = () => {
     const fetchAllDokanDetails = async () => {
       const shops = await fetchShops();
       if (shops.length === 0) {
-        setModalTitle("Error");
-        setModalMessage("Failed to fetch dokan details. Please try again.");
+        setModalTitle("ত্রুটি");
+        setModalMessage(
+          "দোকানের বিস্তারিত তথ্য আনতে ব্যর্থ হয়েছে। আবার চেষ্টা করুন।"
+        );
         setModalShow(true);
       } else {
         setAllDokanDetails(shops);
@@ -54,8 +56,8 @@ const SlipTable = () => {
       } catch (error) {
         console.error("Error fetching slips:", error);
         setNoInfo(true);
-        setModalTitle("Error");
-        setModalMessage("Failed to fetch slips. Please try again.");
+        setModalTitle("ত্রুটি");
+        setModalMessage("স্লিপ আনতে ব্যর্থ হয়েছে। আবার চেষ্টা করুন।");
         setModalShow(true);
       } finally {
         setLoading(false);
@@ -78,14 +80,16 @@ const SlipTable = () => {
 
   const handleSave = async (slip) => {
     if (slip.paidAmount === slip.totalAmount) {
-      alert("সকল টাকা পরিশোধ করা হয়েছে");
+      setModalTitle("Message");
+      setModalMessage("এই স্লিপের সকল টাকা ইতিমধ্যে পরিশোধ করা হয়েছে।");
+      setModalShow(true);
       return;
     }
 
     const paidAmount = Number(paidInputs[slip.shopName] || 0);
     if (isNaN(paidAmount) || paidAmount <= 0) {
-      setModalTitle("Invalid Input");
-      setModalMessage("Please enter a valid payment amount.");
+      setModalTitle("Invalid input");
+      setModalMessage("একটি বৈধ পরিশোধের পরিমাণ লিখুন।");
       setModalShow(true);
       return;
     }
@@ -102,7 +106,7 @@ const SlipTable = () => {
         }
       );
       if (!updateShopResponse.ok)
-        throw new Error("Failed to update shop's totalDue");
+        throw new Error("দোকানের মোট বাকি আপডেট করতে ব্যর্থ হয়েছে");
 
       const updatePurchaseResponse = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/slip/update-editStatus-paid`,
@@ -113,7 +117,7 @@ const SlipTable = () => {
         }
       );
       if (!updatePurchaseResponse.ok)
-        throw new Error("Failed to update slip's remainingTotal");
+        throw new Error("স্লিপের বাকি আপডেট করতে ব্যর্থ হয়েছে");
 
       const transactionResponse = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/transaction/dokan-payment`,
@@ -124,15 +128,15 @@ const SlipTable = () => {
         }
       );
       if (!transactionResponse.ok)
-        throw new Error("Error setting dokan payment");
+        throw new Error("দোকানের পেমেন্ট সেট করতে ত্রুটি হয়েছে");
 
       setModalTitle("Success");
-      setModalMessage("Slip & Transaction saved successfully");
+      setModalMessage("স্লিপ ও লেনদেন সফলভাবে সংরক্ষণ করা হয়েছে");
       setModalShow(true);
     } catch (error) {
       console.error("Error saving slip:", error);
       setModalTitle("Error");
-      setModalMessage("Error saving slip. Please try again.");
+      setModalMessage("স্লিপ সংরক্ষণ করতে ত্রুটি হয়েছে। আবার চেষ্টা করুন।");
       setModalShow(true);
     } finally {
       setLoading(false);
@@ -172,7 +176,7 @@ const SlipTable = () => {
         <>
           {noInfo ? (
             <div className="no-info">
-              No information available for this date.
+              এই তারিখের জন্য কোনো তথ্য পাওয়া যায়নি।
             </div>
           ) : (
             <div className="table-responsive">
@@ -193,7 +197,12 @@ const SlipTable = () => {
                     <tr key={index}>
                       <td>{slip.shopName}</td>
                       <td>{slip.totalAmount}</td>
-                      <td>{Math.max(0, getTotalDue(slip.shopName) - slip.totalAmount)}</td>
+                      <td>
+                        {Math.max(
+                          0,
+                          getTotalDue(slip.shopName) - slip.totalAmount
+                        )}
+                      </td>
                       <td>{getTotalDue(slip.shopName)}</td>
                       <td>{slip.paidAmount}</td>
                       <td>

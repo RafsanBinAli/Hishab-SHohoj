@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./CardDetail.css";
 import FarmerSlipDetails from "./FarmerSlipDetails";
-import MessageModal from "../Modal/MessageModal"; 
+import MessageModal from "../Modal/MessageModal";
 import {
   fetchShops,
   fetchFarmers,
@@ -80,7 +80,7 @@ const CardDetail = () => {
       return;
     }
 
-    setIsSaving(true); 
+    setIsSaving(true);
 
     try {
       const newPurchases = formRows.map((row) => ({
@@ -201,7 +201,6 @@ const CardDetail = () => {
         })
       );
 
-      
       const refreshedCardDetails = await fetchCardDetails();
       const updatedCardDetails = refreshedCardDetails.find(
         (card) => card.farmerName === individualFarmerData.name
@@ -218,7 +217,7 @@ const CardDetail = () => {
       setModalMessage("An error occurred during save operation.");
       setModalVisible(true);
     } finally {
-      setIsSaving(false); 
+      setIsSaving(false);
     }
   };
 
@@ -350,9 +349,9 @@ const CardDetail = () => {
         <button
           className="btn1 btn-success mt-3"
           onClick={handleSave}
-          disabled={isSaving} 
+          disabled={isSaving}
         >
-          {isSaving ? "Wait..." : "সেভ করুন"}
+          {isSaving ? "Saving..." : "সেভ করুন"}
         </button>
       </div>
 

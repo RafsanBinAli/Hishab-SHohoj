@@ -122,7 +122,10 @@ const SlipDetails = () => {
                     <td></td>
                     <td>চূড়ান্ত মোট </td>
                     <td>
-                      {shopDetails?.totalDue + slipDetails?.totalAmount} টাকা
+                      {shopDetails?.totalDue -
+                        slipDetails?.totalAmount +
+                        slipDetails?.totalAmount}{" "}
+                      টাকা
                     </td>
                   </tr>
                 </tbody>
@@ -132,7 +135,7 @@ const SlipDetails = () => {
 
           <button
             className="download-button"
-            onClick={() => handleDownload(slipRef)} 
+            onClick={() => handleDownload(slipRef)}
           >
             পিডিএফ ডাউনলোড করুন
           </button>

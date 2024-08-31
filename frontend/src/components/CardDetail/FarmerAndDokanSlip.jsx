@@ -100,19 +100,19 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
       );
 
       if (!updateResponse.ok) {
-        throw new Error("Error updating card details");
+        throw new Error("কার্ডের বিবরণ আপডেট করতে ত্রুটি ঘটেছে।");
       }
 
       setIsPaid(true);
       setModalTitle("Success");
       setModalMessage(
-        "Commissions and khajnas saved successfully and updated!"
+        "কমিশন এবং খাজনা সফলভাবে সংরক্ষণ করা হয়েছে এবং আপডেট করা হয়েছে!"
       );
 
       setModalShow(true);
     } catch (error) {
       setModalTitle("Error");
-      setModalMessage("An error occurred while processing the payment.");
+      setModalMessage("পেমেন্ট প্রক্রিয়াকরণের সময় একটি ত্রুটি ঘটেছে।");
       setModalShow(true);
     }
   };

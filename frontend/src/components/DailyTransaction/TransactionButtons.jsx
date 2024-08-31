@@ -2,12 +2,16 @@ import React, { useState } from "react";
 import "./LastCalcu.css";
 import { Link } from "react-router-dom";
 import BankButton from "./BankButton";
+import MessageModal from "../Modal/MessageModal"; // Import the MessageModal
 
-const TransactionButton = ({  setTransactionDetails }) => {
+const TransactionButton = ({ setTransactionDetails }) => {
   const [otherCost, setOtherCost] = useState(0);
   const [otherCostName, setOtherCostName] = useState("");
   const [dailyCashStack, setDailyCashStack] = useState(0);
   const [dailyCashStackName, setDailyCashStackName] = useState("");
+  const [modalShow, setModalShow] = useState(false); // State to control modal visibility
+  const [modalTitle, setModalTitle] = useState(""); // State for modal title
+  const [modalMessage, setModalMessage] = useState(""); // State for modal message
 
   const handleOtherCostSubmit = async (e) => {
     e.preventDefault();
@@ -32,11 +36,16 @@ const TransactionButton = ({  setTransactionDetails }) => {
 
       const data = await response.json();
       setTransactionDetails(data.transaction);
-      alert("Saved Successfully!");
+      setModalTitle("Success"); // Set success title
+      setModalMessage("সফলভাবে সংরক্ষণ হয়েছে!"); // Set success message
       setOtherCost(0);
       setOtherCostName("");
     } catch (error) {
       console.log("Error occurred:", error.message);
+      setModalTitle("Error"); // Set error title
+      setModalMessage(`Error occurred: ${error.message}`); // Set error message
+    } finally {
+      setModalShow(true); // Show the modal
     }
   };
 
@@ -63,11 +72,16 @@ const TransactionButton = ({  setTransactionDetails }) => {
       }
       const data = await response.json();
       setTransactionDetails(data.transaction);
-      alert("Saved Successfully!");
+      setModalTitle("Success"); // Set success title
+      setModalMessage("সফলভাবে সংরক্ষণ হয়েছে!"); // Set success message
       setDailyCashStack(0);
       setDailyCashStackName("");
     } catch (error) {
       console.log("Error occurred:", error.message);
+      setModalTitle("Error"); // Set error title
+      setModalMessage(`Error occurred: ${error.message}`); // Set error message
+    } finally {
+      setModalShow(true); // Show the modal
     }
     console.log("Daily Cash Stack:", dailyCashStack);
   };
@@ -132,7 +146,7 @@ const TransactionButton = ({  setTransactionDetails }) => {
               <input
                 type="number"
                 id="dailyCashStack"
-                className="calcu-daily-cash-stack-input form-control"
+                className="calcu-daily-cash-stack-input1 form-control"
                 value={dailyCashStack}
                 onChange={(e) => setDailyCashStack(Number(e.target.value))}
               />
@@ -154,6 +168,15 @@ const TransactionButton = ({  setTransactionDetails }) => {
           </Link>
         </div>
       </div>
+
+      {/* MessageModal for success or error messages */}
+      <MessageModal
+        show={modalShow}
+        onHide={() => setModalShow(false)}
+        title={modalTitle}
+        message={modalMessage}
+        onConfirm={() => setModalShow(false)}
+      />
     </>
   );
 };

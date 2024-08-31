@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import Loader from "../Loader/Loader";
 import handleDownload from "../../functions/handleDownload";
+import MessageModal from "../Modal/MessageModal";
 
 const FarmerSlipDetailsPaidUnpaid = () => {
   const cardRef = useRef();
@@ -15,6 +16,9 @@ const FarmerSlipDetailsPaidUnpaid = () => {
   const [extraCommission, setExtraCommission] = useState(0);
   const [extraKhajna, setExtraKhajna] = useState(0);
   const [editing, setEditing] = useState(false);
+  const [modalShow, setModalShow] = useState(false);
+  const [modalTitle, setModalTitle] = useState("");
+  const [modalMessage, setModalMessage] = useState("");
 
   useEffect(() => {
     const fetchDeal = async () => {
@@ -30,7 +34,11 @@ const FarmerSlipDetailsPaidUnpaid = () => {
         setKhajna(data.khajna || 0);
       } catch (error) {
         console.error("Error fetching deal:", error);
-        alert("Failed to fetch slip details. Please try again.");
+        setModalTitle("ত্রুটি");
+        setModalMessage(
+          "স্লিপের বিস্তারিত আনতে ব্যর্থ হয়েছে। আবার চেষ্টা করুন।"
+        );
+        setModalShow(true);
       } finally {
         setLoading(false);
       }
@@ -52,13 +60,15 @@ const FarmerSlipDetailsPaidUnpaid = () => {
 
   const handlePayNow = async () => {
     if (khajna < 0 || commission < 0) {
-      alert("Commission and Khajna must be non-negative.");
+      setModalTitle("ত্রুটি");
+      setModalMessage("কমিশন এবং খাজনা নেতিবাচক হতে পারে না।");
+      setModalShow(true);
       return;
     }
 
     if (
       khajna === 0 &&
-      !window.confirm("Khajna is 0. Are you sure you want to proceed?")
+      !window.confirm("খাজনা ০। আপনি কি নিশ্চিত যে আপনি চালিয়ে যেতে চান?")
     ) {
       return;
     }
@@ -98,15 +108,20 @@ const FarmerSlipDetailsPaidUnpaid = () => {
       if (!updateResponse.ok) throw new Error("Error updating card details");
 
       const data = await updateResponse.json();
-      alert("Commissions and khajnas saved successfully and updated!");
+      setModalTitle("সফল");
+      setModalMessage("কমিশন এবং খাজনা সফলভাবে সংরক্ষিত এবং আপডেট হয়েছে!");
       setSlipDetails(data.cardDetails);
       setCommission(commission);
       setKhajna(khajna);
-
       setFinalAmount(totalAmount - commission - khajna);
     } catch (error) {
       console.error("Error occurred:", error);
-      alert("An error occurred while saving transaction or updating details");
+      setModalTitle("ত্রুটি");
+      setModalMessage(
+        "লেনদেন সংরক্ষণ অথবা আপডেট করতে ত্রুটি ঘটেছে। আবার চেষ্টা করুন।"
+      );
+    } finally {
+      setModalShow(true);
     }
   };
 
@@ -127,7 +142,7 @@ const FarmerSlipDetailsPaidUnpaid = () => {
       <h2 className="dokaner-slip-title font-weight-bold">
         {slipDetails?.farmerName} স্লিপ
         <p>
-          Date: {new Date(slipDetails?.createdAt).toISOString().split("T")[0]}{" "}
+          তারিখ: {new Date(slipDetails?.createdAt).toISOString().split("T")[0]}{" "}
         </p>
       </h2>
       <div className="slip-card">
@@ -158,16 +173,16 @@ const FarmerSlipDetailsPaidUnpaid = () => {
                 )}
                 <tr>
                   <td colSpan="4" className="text-right font-weight-bold">
-                    Total Amount
+                    মোট টাকা
                   </td>
                   <td>{totalAmount} টাকা</td>
                 </tr>
                 <tr>
                   <td colSpan="4" className="text-right font-weight-bold">
                     {slipDetails?.doneStatus && !editing ? (
-                      "Commission:"
+                      "কমিশন:"
                     ) : (
-                      <label htmlFor="commission">Commission:</label>
+                      <label htmlFor="commission">কমিশন:</label>
                     )}
                   </td>
                   <td>
@@ -190,9 +205,9 @@ const FarmerSlipDetailsPaidUnpaid = () => {
                 <tr>
                   <td colSpan="4" className="text-right font-weight-bold">
                     {slipDetails?.doneStatus && !editing ? (
-                      "Khajna:"
+                      "খাজনা:"
                     ) : (
-                      <label htmlFor="khajna">Khajna:</label>
+                      <label htmlFor="khajna">খাজনা:</label>
                     )}
                   </td>
                   <td>
@@ -214,7 +229,7 @@ const FarmerSlipDetailsPaidUnpaid = () => {
                 </tr>
                 <tr>
                   <td colSpan="4" className="text-right font-weight-bold">
-                    Subtotal
+                    সাবটোটাল
                   </td>
                   <td>{finalAmount} টাকা</td>
                 </tr>
@@ -223,30 +238,38 @@ const FarmerSlipDetailsPaidUnpaid = () => {
 
             {editing && (
               <>
+                <div className="d-flex justify-content-end">
+                  <button className="btn btn-primary" onClick={handleEditSave}>
+                    সংরক্ষণ করুন
+                  </button>
+                </div>
                 <div className="form-group">
-                  <label htmlFor="extraCommission">Add Extra Commission:</label>
+                  <label htmlFor="extraCommission">অতিরিক্ত কমিশন:</label>
                   <input
                     type="number"
                     className="form-control"
                     id="extraCommission"
                     value={extraCommission}
+                    min="0"
                     onChange={(e) =>
                       setExtraCommission(Math.max(0, Number(e.target.value)))
                     }
                   />
                 </div>
                 <div className="form-group">
-                  <label htmlFor="extraKhajna">Add Extra Khajna:</label>
+                  <label htmlFor="extraKhajna">অতিরিক্ত খাজনা:</label>
                   <input
                     type="number"
                     className="form-control"
                     id="extraKhajna"
                     value={extraKhajna}
+                    min="0"
                     onChange={(e) =>
                       setExtraKhajna(Math.max(0, Number(e.target.value)))
                     }
                   />
                 </div>
+
                 <button
                   className="btn btn-success m-2"
                   onClick={handleEditSave}
@@ -281,6 +304,12 @@ const FarmerSlipDetailsPaidUnpaid = () => {
           </div>
         </div>
       </div>
+      <MessageModal
+        show={modalShow}
+        title={modalTitle}
+        message={modalMessage}
+        onHide={() => setModalShow(false)}
+      />
     </div>
   );
 };
