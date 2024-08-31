@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
+import "./FarmerSlipDetailsPaidUnpaid.css";
 import { useParams } from "react-router-dom";
 import Loader from "../Loader/Loader";
 import handleDownload from "../../functions/handleDownload";
 import MessageModal from "../Modal/MessageModal";
 
 const FarmerSlipDetailsPaidUnpaid = () => {
-  const cardRef = useRef();
+  const slipRef = useRef();
   const { id } = useParams();
   const [totalAmount, setTotalAmount] = useState(0);
   const [finalAmount, setFinalAmount] = useState(0);
@@ -34,7 +35,7 @@ const FarmerSlipDetailsPaidUnpaid = () => {
         setKhajna(data.khajna || 0);
       } catch (error) {
         console.error("Error fetching deal:", error);
-        setModalTitle("ত্রুটি");
+        setModalTitle("Error");
         setModalMessage(
           "স্লিপের বিস্তারিত আনতে ব্যর্থ হয়েছে। আবার চেষ্টা করুন।"
         );
@@ -60,7 +61,7 @@ const FarmerSlipDetailsPaidUnpaid = () => {
 
   const handlePayNow = async () => {
     if (khajna < 0 || commission < 0) {
-      setModalTitle("ত্রুটি");
+      setModalTitle("Error");
       setModalMessage("কমিশন এবং খাজনা নেতিবাচক হতে পারে না।");
       setModalShow(true);
       return;
@@ -108,7 +109,7 @@ const FarmerSlipDetailsPaidUnpaid = () => {
       if (!updateResponse.ok) throw new Error("Error updating card details");
 
       const data = await updateResponse.json();
-      setModalTitle("সফল");
+      setModalTitle("Success");
       setModalMessage("কমিশন এবং খাজনা সফলভাবে সংরক্ষিত এবং আপডেট হয়েছে!");
       setSlipDetails(data.cardDetails);
       setCommission(commission);
@@ -116,7 +117,7 @@ const FarmerSlipDetailsPaidUnpaid = () => {
       setFinalAmount(totalAmount - commission - khajna);
     } catch (error) {
       console.error("Error occurred:", error);
-      setModalTitle("ত্রুটি");
+      setModalTitle("Error");
       setModalMessage(
         "লেনদেন সংরক্ষণ অথবা আপডেট করতে ত্রুটি ঘটেছে। আবার চেষ্টা করুন।"
       );
@@ -146,95 +147,97 @@ const FarmerSlipDetailsPaidUnpaid = () => {
         </p>
       </h2>
       <div className="slip-card">
-        <div className="card" ref={cardRef}>
+        <div className="card">
           <div className="card-body">
-            <h3 className="card-title">{slipDetails?.farmerName}</h3>
-            <table className="table table-striped slip-table">
-              <thead>
-                <tr>
-                  <th>কৃষকের নাম</th>
-                  <th>পণ্যের নাম</th>
-                  <th>পরিমাণ (কেজি)</th>
-                  <th>দাম (টাকা/কেজি)</th>
-                  <th>মোট টাকা</th>
-                </tr>
-              </thead>
-              <tbody>
-                {slipDetails?.purchases?.map(
-                  ({ shopName, stockName, quantity, price }, index) => (
-                    <tr key={index} className="slip-row">
-                      <td>{shopName}</td>
-                      <td>{stockName}</td>
-                      <td>{quantity}</td>
-                      <td>{price}</td>
-                      <td>{quantity * price}</td>
-                    </tr>
-                  )
-                )}
-                <tr>
-                  <td colSpan="4" className="text-right font-weight-bold">
-                    মোট টাকা
-                  </td>
-                  <td>{totalAmount} টাকা</td>
-                </tr>
-                <tr>
-                  <td colSpan="4" className="text-right font-weight-bold">
-                    {slipDetails?.doneStatus && !editing ? (
-                      "কমিশন:"
-                    ) : (
-                      <label htmlFor="commission">কমিশন:</label>
-                    )}
-                  </td>
-                  <td>
-                    {slipDetails?.doneStatus && !editing ? (
-                      <span>{commission} টাকা</span>
-                    ) : (
-                      <input
-                        type="number"
-                        className="form-control"
-                        id="commission"
-                        value={commission}
-                        min="0"
-                        onChange={(e) =>
-                          setCommission(Math.max(0, Number(e.target.value)))
-                        }
-                      />
-                    )}
-                  </td>
-                </tr>
-                <tr>
-                  <td colSpan="4" className="text-right font-weight-bold">
-                    {slipDetails?.doneStatus && !editing ? (
-                      "খাজনা:"
-                    ) : (
-                      <label htmlFor="khajna">খাজনা:</label>
-                    )}
-                  </td>
-                  <td>
-                    {slipDetails?.doneStatus && !editing ? (
-                      <span>{khajna} টাকা</span>
-                    ) : (
-                      <input
-                        type="number"
-                        className="form-control"
-                        id="khajna"
-                        value={khajna}
-                        min="0"
-                        onChange={(e) =>
-                          setKhajna(Math.max(0, Number(e.target.value)))
-                        }
-                      />
-                    )}
-                  </td>
-                </tr>
-                <tr>
-                  <td colSpan="4" className="text-right font-weight-bold">
-                    সাবটোটাল
-                  </td>
-                  <td>{finalAmount} টাকা</td>
-                </tr>
-              </tbody>
-            </table>
+            <div ref={slipRef}>
+              <h3 className="card-title">{slipDetails?.farmerName}</h3>
+              <table className="table table-striped slip-table">
+                <thead>
+                  <tr>
+                    <th>কৃষকের নাম</th>
+                    <th>পণ্যের নাম</th>
+                    <th>পরিমাণ (কেজি)</th>
+                    <th>দাম (টাকা/কেজি)</th>
+                    <th>মোট টাকা</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {slipDetails?.purchases?.map(
+                    ({ shopName, stockName, quantity, price }, index) => (
+                      <tr key={index} className="slip-row">
+                        <td>{shopName}</td>
+                        <td>{stockName}</td>
+                        <td>{quantity}</td>
+                        <td>{price}</td>
+                        <td>{quantity * price}</td>
+                      </tr>
+                    )
+                  )}
+                  <tr>
+                    <td colSpan="4" className="text-right font-weight-bold">
+                      মোট টাকা
+                    </td>
+                    <td>{totalAmount} টাকা</td>
+                  </tr>
+                  <tr>
+                    <td colSpan="4" className="text-right font-weight-bold">
+                      {slipDetails?.doneStatus && !editing ? (
+                        "কমিশন:"
+                      ) : (
+                        <label htmlFor="commission">কমিশন:</label>
+                      )}
+                    </td>
+                    <td>
+                      {slipDetails?.doneStatus && !editing ? (
+                        <span>{commission} টাকা</span>
+                      ) : (
+                        <input
+                          type="number"
+                          className="form-control"
+                          id="commission"
+                          value={commission}
+                          min="0"
+                          onChange={(e) =>
+                            setCommission(Math.max(0, Number(e.target.value)))
+                          }
+                        />
+                      )}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colSpan="4" className="text-right font-weight-bold">
+                      {slipDetails?.doneStatus && !editing ? (
+                        "খাজনা:"
+                      ) : (
+                        <label htmlFor="khajna">খাজনা:</label>
+                      )}
+                    </td>
+                    <td>
+                      {slipDetails?.doneStatus && !editing ? (
+                        <span>{khajna} টাকা</span>
+                      ) : (
+                        <input
+                          type="number"
+                          className="form-control"
+                          id="khajna"
+                          value={khajna}
+                          min="0"
+                          onChange={(e) =>
+                            setKhajna(Math.max(0, Number(e.target.value)))
+                          }
+                        />
+                      )}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colSpan="4" className="text-right font-weight-bold">
+                      সাবটোটাল
+                    </td>
+                    <td>{finalAmount} টাকা</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
 
             {editing && (
               <>
@@ -282,7 +285,7 @@ const FarmerSlipDetailsPaidUnpaid = () => {
             <div className="btn-group">
               <button
                 className="btn btn-primary m-2"
-                onClick={() => handleDownload(cardRef.current)}
+                onClick={() => handleDownload(slipRef)}
               >
                 Download PDF
               </button>

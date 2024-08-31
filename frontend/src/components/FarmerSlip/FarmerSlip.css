@@ -204,6 +204,8 @@ p{
   padding: 10px;
 }
 
+
+
 /* Responsive adjustments */
 @media (max-width: 1024px) {
   .farmer-slip-card-container {

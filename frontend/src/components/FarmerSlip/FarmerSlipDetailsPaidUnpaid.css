@@ -1,0 +1,218 @@
+.dokaner-slip-container {
+    padding: 20px;
+  }
+  
+  .dokaner-slip-title {
+    font-size: 28px; /* Increased font size */
+    margin-bottom: 20px;
+  }
+  
+  .slip-card {
+    margin-bottom: 20px;
+  }
+  
+  .slip-table th,
+  .slip-table td {
+    font-size: 16px; /* Increased font size */
+    padding: 10px;
+  }
+  
+  .slip-row td {
+    font-size: 16px; /* Increased font size */
+  }
+  
+  .btn-group {
+    
+    justify-content: space-between;
+    flex-wrap: wrap; /* Allows wrapping in smaller screens */
+  }
+  
+  .btn-group button {
+    font-size: 16px; /* Increased font size */
+    padding: 10px 14px;
+    margin: 5px; /* Margin to add space between buttons */
+  }
+  
+  .form-group label {
+    font-size: 16px; /* Increased font size */
+  }
+  
+  .form-control {
+    font-size: 16px; /* Increased font size */
+    padding: 10px;
+  }
+  
+  /* Ensure Save button is styled the same as other buttons */
+  .save-button {
+    font-size: 16px; /* Consistent font size */
+    padding: 10px 14px;
+    margin: 5px;
+  }
+  
+  /* Responsive styles for smaller screens */
+  @media (max-width: 1200px) {
+    .dokaner-slip-title {
+      font-size: 26px;
+    }
+    
+    .slip-table th,
+    .slip-table td {
+      font-size: 15px;
+      padding: 8px;
+    }
+  
+    .slip-row td {
+      font-size: 15px;
+    }
+  
+    .btn-group button {
+      font-size: 15px;
+      padding: 9px 12px;
+    }
+  
+    .form-group label,
+    .form-control {
+      font-size: 15px;
+      padding: 9px;
+    }
+  }
+  
+  @media (max-width: 992px) {
+    .dokaner-slip-title {
+      font-size: 24px;
+      text-align: center;
+    }
+  
+    .slip-table th,
+    .slip-table td {
+      font-size: 14px;
+      padding: 7px;
+    }
+  
+    .slip-row td {
+      font-size: 14px;
+    }
+  
+    .btn-group {
+      justify-content: center; /* Centers the buttons on smaller screens */
+    }
+  
+    .btn-group button {
+      font-size: 14px;
+      padding: 8px 10px;
+    }
+  
+    .form-group label,
+    .form-control {
+      font-size: 14px;
+      padding: 8px;
+    }
+  
+    .form-group {
+      margin-bottom: 15px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .dokaner-slip-title {
+      font-size: 22px;
+    }
+  
+    .slip-table th,
+    .slip-table td {
+      font-size: 13px;
+      padding: 6px;
+    }
+  
+    .slip-row td {
+      font-size: 13px;
+    }
+  
+    .btn-group button {
+      font-size: 13px;
+      padding: 7px 9px;
+    }
+  
+    .form-group label,
+    .form-control {
+      font-size: 13px;
+      padding: 7px;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .dokaner-slip-title {
+      font-size: 20px;
+      margin-bottom: 15px;
+    }
+  
+    .slip-card {
+      margin-bottom: 15px;
+    }
+  
+    .slip-table th,
+    .slip-table td {
+      font-size: 12px;
+      padding: 5px;
+    }
+  
+    .slip-row td {
+      font-size: 12px;
+    }
+  
+    .btn-group {
+      justify-content: space-around; /* Keeps the buttons in a row */
+    }
+  
+    .btn-group button {
+      font-size: 12px;
+      padding: 6px 8px;
+    }
+  
+    .form-group label,
+    .form-control {
+      font-size: 12px;
+      padding: 6px;
+    }
+  
+    .form-group {
+      margin-bottom: 12px;
+    }
+  }
+  
+  @media (max-width: 400px) {
+    .dokaner-slip-title {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+  
+    .slip-table th,
+    .slip-table td {
+      font-size: 11px;
+      padding: 4px;
+    }
+  
+    .slip-row td {
+      font-size: 11px;
+    }
+  
+    .btn-group {
+      justify-content: space-between; /* Keeps buttons in a row */
+    }
+  
+    .btn-group button {
+      font-size: 11px;
+      padding: 5px 7px;
+    }
+  
+    .form-group label,
+    .form-control {
+      font-size: 11px;
+      padding: 5px;
+    }
+  
+    .form-group {
+      margin-bottom: 10px;
+    }
+  }
+  
