@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import "./FarmerSlip.css"; 
+import "./FarmerSlip.css";
 
 const FarmerSlip = () => {
   const [deals, setDeals] = useState([]);
@@ -103,7 +103,9 @@ const FarmerSlip = () => {
               </div>
             ))
           ) : (
-            <div className="farmer-slip-no-deals">No deals available</div>
+            <div className="farmer-slip-no-deals">
+              এই তারিখের জন্য কোনো তথ্য পাওয়া যায়নি।
+            </div>
           )}
         </div>
       )}

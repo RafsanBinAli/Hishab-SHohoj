@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import Loader from "../Loader/Loader";
 import { getCurrentDate } from "../../functions/getCurrentDate";
 import handleDownload from "../../functions/handleDownload";
+import "./SlipDetails.css";
 
 const SlipDetails = () => {
   const { shopName } = useParams();
@@ -122,9 +123,9 @@ const SlipDetails = () => {
                     <td></td>
                     <td>চূড়ান্ত মোট </td>
                     <td>
-                      {shopDetails?.totalDue -
-                        slipDetails?.totalAmount +
-                        slipDetails?.totalAmount}{" "}
+                      {Math.abs(
+                        shopDetails?.totalDue - slipDetails?.totalAmount
+                      ) + slipDetails?.totalAmount}{" "}
                       টাকা
                     </td>
                   </tr>
@@ -141,7 +142,7 @@ const SlipDetails = () => {
           </button>
         </div>
       ) : (
-        <p className="loading-text">No slip details found.</p>
+        <p className="loading-text">এই তারিখের জন্য কোনো তথ্য পাওয়া যায়নি।</p>
       )}
     </div>
   );

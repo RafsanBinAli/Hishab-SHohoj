@@ -113,8 +113,9 @@
 
 /* No deals message */
 .all-deals-no-deals {
+  grid-column: 2 / 3;
   text-align: center;
-  font-size: 1.4rem;
+  font-size: 1.1rem;
   color: #888;
   margin-top: 20px;
 }

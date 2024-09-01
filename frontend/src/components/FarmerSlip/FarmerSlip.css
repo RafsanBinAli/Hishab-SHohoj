@@ -172,8 +172,9 @@ p{
 }
 
 .farmer-slip-no-deals {
+  grid-column: 2 / 3;
   text-align: center;
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   color: #666;
   margin-top: 20px;
 }

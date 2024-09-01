@@ -42,7 +42,7 @@ const AllFarmerSlipList = ({ filteredDeals, loading }) => {
             ))
           ) : (
             <div className="all-deals-no-deals">
-              No deals available for this date
+              এই তারিখের জন্য কোনো তথ্য পাওয়া যায়নি।
             </div>
           )}
         </div>
