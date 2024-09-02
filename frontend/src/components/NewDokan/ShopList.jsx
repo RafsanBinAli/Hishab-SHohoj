@@ -1,7 +1,10 @@
-import React, { useState } from "react";
-import Loader from "../Loader/Loader"; 
+import React, { useState, useRef } from "react";
+import Loader from "../Loader/Loader";
+import handleDownload from "../../functions/handleDownload"; // Import the download function
+
 const ShopList = ({ shops, loading }) => {
   const [searchTerm, setSearchTerm] = useState("");
+  const slipRef = useRef(null);
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
@@ -11,10 +14,22 @@ const ShopList = ({ shops, loading }) => {
     shop.shopName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // Function to generate PDF
+  const downloadPdf = () => {
+    handleDownload(slipRef, "Farmer List"); // Pass the heading as the title
+  };
+
   return (
     <div className="card">
       <div className="card-body">
-        <h2 className="card-title mb-4">দোকানের লিস্ট</h2>
+        <div className="d-flex justify-content-between align-items-center mb-4">
+          <div className="flex-grow-1 d-flex justify-content-center">
+            <h2 className="card-title">দোকানের লিস্ট</h2>
+          </div>
+          <button onClick={downloadPdf} className="btn btn-primary">
+            Download PDF
+          </button>
+        </div>
         <input
           type="text"
           className="form-control mb-3"
@@ -23,14 +38,14 @@ const ShopList = ({ shops, loading }) => {
           onChange={handleSearch}
         />
         {loading ? (
-          <Loader /> 
+          <Loader />
         ) : (
-          <div className="table-responsive">
+          <div className="table-responsive" ref={slipRef}>
             <table className="table table-bordered table-striped">
               <thead>
                 <tr>
                   <th>#</th>
-                  <th>দোকানের নাম</th>
+                  <th className="text-center">দোকানের নাম</th>
                   <th>ঠিকানা</th>
                   <th>মোবাইল নম্বর</th>
                   <th>বাকি</th>
@@ -41,7 +56,7 @@ const ShopList = ({ shops, loading }) => {
                 {filteredShops.map((shop, index) => (
                   <tr key={index}>
                     <td>{index + 1}</td>
-                    <td>{shop.shopName}</td>
+                    <td className="text-center">{shop.shopName}</td>
                     <td>{shop.address}</td>
                     <td>{shop.phoneNumber}</td>
                     <td>{shop.totalDue}</td>

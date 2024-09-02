@@ -56,7 +56,7 @@ const SlipTable = () => {
       } catch (error) {
         console.error("Error fetching slips:", error);
         setNoInfo(true);
-        setModalTitle("ত্রুটি");
+        setModalTitle("Error");
         setModalMessage("স্লিপ আনতে ব্যর্থ হয়েছে। আবার চেষ্টা করুন।");
         setModalShow(true);
       } finally {

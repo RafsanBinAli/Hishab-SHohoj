@@ -1,36 +1,49 @@
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 
-const handleDownload = (slipRef) => {
-  // Convert the element referenced by slipRef to a canvas using html2canvas
+const handleDownload = (slipRef, title) => {
+  const pdf = new jsPDF({
+    orientation: "portrait", // Choose portrait or landscape orientation
+    unit: "mm",
+    format: "a4", // You can use "a4" or customize the size
+  });
+
+  // Custom heading added to the PDF using the passed title parameter
+  pdf.setFontSize(18);
+  pdf.text(title, pdf.internal.pageSize.getWidth() / 2, 20, {
+    align: "center",
+  });
+
+  // Calculate the starting Y position after the heading
+  let yPosition = 30;
+
   html2canvas(slipRef.current).then((canvas) => {
     const imgData = canvas.toDataURL("image/png");
-    const pdf = new jsPDF();
 
-    // A4 size dimensions in mm
-    const pageWidth = 210;
-    const pageHeight = 297;
-
-    // Set margins in mm
-    const margin = 15;
-    const imgWidth = pageWidth - 2 * margin;
+    // Calculate dimensions
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    const imgWidth = pageWidth - 20; // 10mm margin on both sides
     const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
+    let position = yPosition;
     let heightLeft = imgHeight;
-    let position = margin;
 
-    // Add the image content to the PDF with margins
-    pdf.addImage(imgData, "PNG", margin, position, imgWidth, imgHeight);
-    heightLeft -= pageHeight - 2 * margin;
+    // Add the first page
+    pdf.addImage(imgData, "PNG", 10, position, imgWidth, imgHeight);
+    heightLeft -= pageHeight - position;
 
-    while (heightLeft >= 0) {
-      position = heightLeft - imgHeight + margin;
+    // Add more pages if needed
+    while (heightLeft > 0) {
+      position = heightLeft - imgHeight + yPosition;
       pdf.addPage();
-      pdf.addImage(imgData, "PNG", margin, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight - 2 * margin;
+      pdf.addImage(imgData, "PNG", 10, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
     }
 
-    pdf.save("slip-details.pdf");
+    // Save the PDF with a dynamic filename
+    const fileName = `${title}.pdf`;
+    pdf.save(fileName);
   });
 };
 

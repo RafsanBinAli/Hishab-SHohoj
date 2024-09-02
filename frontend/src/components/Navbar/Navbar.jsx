@@ -77,7 +77,7 @@ const Navbar = ({ setIsUserLoggedIn }) => {
           </button>
 
           <ul className="navbar-nav ml-auto">
-          <li className="nav-item">
+            <li className="nav-item">
               <Link
                 className="nav-link"
                 to="/banks"
@@ -147,7 +147,7 @@ const Navbar = ({ setIsUserLoggedIn }) => {
                 to="/signup-new-member"
                 onClick={() => setIsOpen(false)}
               >
-                Add Dokan Member <FontAwesomeIcon icon={faUserPlus} />
+                Add Member <FontAwesomeIcon icon={faUserPlus} />
               </Link>
             </li>
             <li className="nav-item">
@@ -155,8 +155,8 @@ const Navbar = ({ setIsUserLoggedIn }) => {
                 className="nav-link"
                 to="/"
                 onClick={() => {
-                  setIsOpen(false); 
-                  handleLogout(); 
+                  setIsOpen(false);
+                  handleLogout();
                 }}
               >
                 Log Out

@@ -1,10 +1,11 @@
-// FarmerList.js
-import React, { useState, useEffect } from "react";
-import Loader from "../Loader/Loader"; // Import the Loader component
+import React, { useState, useEffect, useRef } from "react";
+import Loader from "../Loader/Loader";
+import handleDownload from "../../functions/handleDownload"; // Import the download function
 
 const FarmerList = ({ farmers }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
+  const slipRef = useRef(null);
 
   useEffect(() => {
     if (farmers.length > 0) {
@@ -20,11 +21,23 @@ const FarmerList = ({ farmers }) => {
     farmer.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // Example call to generate a PDF with a custom title
+  const downloadPdf = () => {
+    handleDownload(slipRef, "Farmer List"); // Pass the heading as the title
+  };
+
   return (
     <>
       <div className="card">
         <div className="card-body">
-          <h2 className="card-title mb-4">কৃষকের লিস্ট </h2>
+          <div className="d-flex justify-content-between align-items-center mb-4">
+            <div className="flex-grow-1 d-flex justify-content-center">
+              <h2 className="card-title">কৃষকের লিস্ট </h2>
+            </div>
+            <button onClick={downloadPdf} className="btn btn-primary">
+              Download PDF
+            </button>
+          </div>
           <input
             type="text"
             className="form-control mb-3"
@@ -32,7 +45,7 @@ const FarmerList = ({ farmers }) => {
             value={searchTerm}
             onChange={handleSearch}
           />
-          <div className="table-responsive">
+          <div className="table-responsive" ref={slipRef}>
             {loading ? (
               <Loader /> // Show loader while data is being fetched
             ) : (
@@ -40,9 +53,9 @@ const FarmerList = ({ farmers }) => {
                 <thead>
                   <tr>
                     <th>#</th>
-                    <th>কৃষকের নাম </th>
-                    <th>ঠিকানা </th>
-                    <th>মোবাইল নম্বর </th>
+                    <th className="text-center">কৃষকের নাম</th>
+                    <th>ঠিকানা</th>
+                    <th>মোবাইল নম্বর</th>
                     <th>বাকি</th>
                     <th>ছবি</th>
                   </tr>
@@ -51,7 +64,7 @@ const FarmerList = ({ farmers }) => {
                   {filteredFarmers.map((farmer, index) => (
                     <tr key={index}>
                       <td>{index + 1}</td>
-                      <td>{farmer.name}</td>
+                      <td className="text-center">{farmer.name}</td>
                       <td>{farmer.village}</td>
                       <td>{farmer.phoneNumber}</td>
                       <td>{farmer.totalDue}</td>

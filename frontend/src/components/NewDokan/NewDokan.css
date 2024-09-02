@@ -1,66 +1,112 @@
-
 .card-body2 {
-    padding: 20px;
+  padding: 20px;
+  width: 100%;
+}
+
+.card2 {
+  border: 1px solid black;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 50%;
+  margin-bottom: 20px;
+}
+
+.card-title {
+  font-weight: bolder;
+}
+
+.shop-list-container {
+  border: 1px solid #000000;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+  padding: 20px;
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  max-width: 100%;
+  margin-bottom: 1rem;
+  background-color: transparent;
+}
+
+.table th,
+.table td {
+  padding: 8px;
+  vertical-align: middle;
+  text-align: center;
+  word-wrap: break-word; /* Allows long words to break and wrap onto the next line */
+  overflow-wrap: break-word; /* Ensures long words break to prevent overflow */
+  hyphens: auto; /* Automatically adds hyphens to break words */
+}
+
+.table img {
+  max-height: 50px;
+  max-width: 50px;
+}
+
+@media (max-width: 1200px) {
+  .card2 {
+    width: 70%;
+  }
+}
+
+@media (max-width: 992px) {
+  .card2 {
+    width: 80%;
+  }
+}
+
+@media (max-width: 768px) {
+  .card2 {
+    width: 90%;
+  }
+
+  .card-body2 {
+    padding: 15px;
+  }
+
+  .shop-list-container {
+    padding: 15px;
+  }
+
+  .table th,
+  .table td {
+    font-size: 14px;
+    padding: 6px;
+  }
+
+  .table img {
+    max-height: 40px;
+    max-width: 40px;
+  }
+}
+
+@media (max-width: 576px) {
+  .card2 {
     width: 100%;
   }
-  .card2 {
-    border: 1px solid black;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 50%;
-    margin-bottom: 20px;
+
+  .card-body2 {
+    padding: 10px;
   }
 
-  .card-title{
-    font-weight: bolder;
-  }
-  
   .shop-list-container {
-    border: 1px solid #000000;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: box-shadow 0.3s ease;
-    padding: 20px;
+    padding: 10px;
   }
-  
- 
-  @media (max-width: 1200px) {
-    .card2 {
-      width: 70%;
-    }
+
+  .table th,
+  .table td {
+    font-size: 12px;
+    padding: 4px;
   }
-  
-  @media (max-width: 992px) {
-    .card2 {
-      width: 80%;
-    }
+
+  .table img {
+    max-height: 30px;
+    max-width: 30px;
   }
-  
-  @media (max-width: 768px) {
-    .card2 {
-      width: 90%;
-    }
-  
-    .card-body2 {
-      padding: 15px;
-    }
-  
-    .shop-list-container {
-      padding: 15px;
-    }
-  }
-  
-  @media (max-width: 576px) {
-    .card2 {
-      width: 100%;
-    }
-  
-    .card-body2 {
-      padding: 10px;
-    }
-  
-    .shop-list-container {
-      padding: 10px;
-    }
-  }
-  
+}

@@ -136,6 +136,11 @@ const FarmerSlipDetailsPaidUnpaid = () => {
     );
   };
 
+  // Example call to generate a PDF with a custom title
+  const downloadPdf = () => {
+    handleDownload(slipRef, "Farmer Slip");
+  };
+
   if (loading) return <Loader />;
 
   return (
@@ -154,7 +159,7 @@ const FarmerSlipDetailsPaidUnpaid = () => {
               <table className="table table-striped slip-table">
                 <thead>
                   <tr>
-                    <th>কৃষকের নাম</th>
+                    <th>দোকানের নাম</th>
                     <th>পণ্যের নাম</th>
                     <th>পরিমাণ (কেজি)</th>
                     <th>দাম (টাকা/কেজি)</th>
@@ -283,10 +288,7 @@ const FarmerSlipDetailsPaidUnpaid = () => {
             )}
 
             <div className="btn-group">
-              <button
-                className="btn btn-primary m-2"
-                onClick={() => handleDownload(slipRef)}
-              >
+              <button className="btn btn-primary m-2" onClick={downloadPdf}>
                 Download PDF
               </button>
               <button

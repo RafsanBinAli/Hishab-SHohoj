@@ -52,6 +52,11 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
     setCommission(commissionValue);
   };
 
+  // Example call to generate a PDF with a custom title
+  const downloadPdf = () => {
+    handleDownload(slipRef, "Farmer Slip"); // Pass the heading as the title
+  };
+
   const handlePayNow = async () => {
     if (khajna === 0) {
       const isConfirmed = window.confirm(
@@ -202,10 +207,7 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
         </div>
 
         {isPaid ? (
-          <button
-            className="btn btn-primary m-2"
-            onClick={() => handleDownload(slipRef)}
-          >
+          <button className="btn btn-primary m-2" onClick={downloadPdf}>
             পিডিএফ ডাউনলোড করুন
           </button>
         ) : (

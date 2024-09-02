@@ -60,6 +60,11 @@ const SlipDetails = () => {
     setSelectedDate(event.target.value);
   };
 
+  // Example call to generate a PDF with a custom title
+  const downloadPdf = () => {
+    handleDownload(slipRef, "Shop Slip");
+  };
+
   return (
     <div className="slip-details-container">
       <h2 className="slip-details-heading font-weight-bold">হিসাবের বিবরণ</h2>
@@ -134,10 +139,7 @@ const SlipDetails = () => {
             </div>
           </div>
 
-          <button
-            className="download-button"
-            onClick={() => handleDownload(slipRef)}
-          >
+          <button className="download-button" onClick={downloadPdf}>
             পিডিএফ ডাউনলোড করুন
           </button>
         </div>
