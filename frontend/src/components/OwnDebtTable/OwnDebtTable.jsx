@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import "./OwnDebtTable.css"; 
-import Loader from "../Loader/Loader"; 
+import "./OwnDebtTable.css";
+import Loader from "../Loader/Loader";
 
 const OwnDebtTable = () => {
   const [debtHistory, setDebtHistory] = useState([]);
@@ -37,12 +37,11 @@ const OwnDebtTable = () => {
       ) : (
         <div className="tables-wrapper">
           <div className="debt-table">
-            <h3>ধার হিসাব
-            </h3>
+            <h3 className="font-weight-bold">ধার হিসাব</h3>
             <table className="table">
               <thead>
                 <tr>
-                <th>Bank Name</th>
+                  <th>Bank Name</th>
                   <th>Amount</th>
                   <th>তারিখ</th>
                 </tr>
@@ -60,14 +59,13 @@ const OwnDebtTable = () => {
               </tbody>
             </table>
           </div>
-  
+
           <div className="debt-table">
-            <h3>পরিশোধ হিসাব
-            </h3>
+            <h3 className="font-weight-bold">পরিশোধ হিসাব</h3>
             <table className="table">
               <thead>
                 <tr>
-                <th>Bank Name</th>
+                  <th>Bank Name</th>
                   <th>Amount</th>
                   <th>তারিখ</th>
                 </tr>
@@ -89,6 +87,6 @@ const OwnDebtTable = () => {
       )}
     </div>
   );
-}  
+};
 
 export default OwnDebtTable;
