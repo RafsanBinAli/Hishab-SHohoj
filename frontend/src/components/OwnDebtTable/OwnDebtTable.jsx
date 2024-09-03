@@ -30,10 +30,10 @@ const OwnDebtTable = () => {
     fetchDebtData(); // Fetch data when component mounts
   }, []);
 
-  const handleHideEntry = async (id) => {
+  const handleHideEntry = async (id, name) => {
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/debt/update-status/${id}`,
+        `${process.env.REACT_APP_BACKEND_URL}/bank/debt/update-status/${id}`,
         {
           method: "PATCH",
           headers: {
@@ -73,7 +73,7 @@ const OwnDebtTable = () => {
               </thead>
               <tbody>
                 {debtHistory
-                  .filter((entry) => entry.type === "debt") // No need to filter by status, as data is already filtered
+                  .filter((entry) => entry.type === "debt" && entry.status) // No need to filter by status, as data is already filtered
                   .map((debt, index) => (
                     <tr key={index}>
                       <td>{debt.bankName}</td>
@@ -82,7 +82,7 @@ const OwnDebtTable = () => {
                       <td>
                         <button
                           className="btn btn-danger"
-                          onClick={() => handleHideEntry(debt._id)}
+                          onClick={() => handleHideEntry(debt._id, debt.bankName)}
                         >
                           Hide
                         </button>
@@ -106,7 +106,7 @@ const OwnDebtTable = () => {
               </thead>
               <tbody>
                 {debtHistory
-                  .filter((entry) => entry.type === "repayment") // No need to filter by status, as data is already filtered
+                  .filter((entry) => entry.type === "repayment" && entry.status) // No need to filter by status, as data is already filtered
                   .map((repayment, index) => (
                     <tr key={index}>
                       <td>{repayment.bankName}</td>

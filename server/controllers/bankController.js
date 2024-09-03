@@ -1,5 +1,5 @@
 const Bank = require("../models/Bank");
-
+const Debt = require("../models/DebtHistory")
 // Create a new bank
 exports.createBank = async (req, res) => {
   const { bankName, village, imageUrl, phoneNumber } = req.body;
@@ -56,17 +56,21 @@ exports.showAllBanks = async (req, res) => {
 
 // Update the status of a bank by its name
 exports.updateEntryStatus = async (req, res) => {
-  const { id } = req.params;
-  const { status } = req.body; // Expecting true or false
+  const { id } = req.params; // Get debt entry ID from route parameters
+  const { status } = req.body; // Get the new status from the request body
 
   try {
+    // Find the specific debt entry by its ID
     const debt = await Debt.findById(id);
 
     if (!debt) {
-      return res.status(404).json({ message: "Debt entry not found" });
+      return res.status(404).json({ message: "Debt not found" });
     }
 
+    // Update the status of the debt entry
     debt.status = status;
+
+    // Save the updated debt document
     await debt.save();
 
     res.status(200).json({ message: `Entry status updated to ${status}` });
@@ -75,6 +79,7 @@ exports.updateEntryStatus = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
+
 
 // Update bank debt and add a debt entry by bank name
 exports.updateBankDebtByName = async (req, res) => {

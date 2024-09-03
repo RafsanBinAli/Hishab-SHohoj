@@ -22,11 +22,7 @@ const debtEntrySchema = new mongoose.Schema({
     type: String,
     enum: ["newDebt", "repayDebt"],
     required: true,
-  },
-  status: {
-    type: Boolean,
-    default: true,
-  },
+  }
 });
 
 const bankSchema = new mongoose.Schema({

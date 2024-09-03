@@ -19,6 +19,10 @@ const debtHistorySchema = new mongoose.Schema({
     required: true,
     enum: ["debt", "repayment"], 
   },
+  status: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 const DebtHistory = mongoose.model("DebtHistory", debtHistorySchema);
