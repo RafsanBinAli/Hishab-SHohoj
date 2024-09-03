@@ -153,6 +153,8 @@ const SlipTable = () => {
     window.location.reload();
   };
 
+  const isToday = selectedDate === getCurrentDate();
+
   return (
     <div className="slip-table-container">
       <h2 className="table-title text-center my-4 py-2 font-weight-bold">
@@ -188,8 +190,8 @@ const SlipTable = () => {
                     <th>আগের বাকি টাকা</th>
                     <th>পরিশোধ করতে হবে টাকা</th>
                     <th>আজকের পরিশোধ টাকা</th>
-                    <th>পরিশোধ</th>
-                    <th>Status</th>
+                    {isToday && <th>পরিশোধ</th>}
+                    {isToday && <th>Status</th>}
                   </tr>
                 </thead>
                 <tbody>
@@ -205,22 +207,28 @@ const SlipTable = () => {
                       </td>
                       <td>{getTotalDue(slip.shopName)}</td>
                       <td>{slip.paidAmount}</td>
-                      <td>
-                        <input
-                          type="number"
-                          value={paidInputs[slip.shopName] || ""}
-                          onChange={(e) => handlePaidChange(e, slip.shopName)}
-                          className="paid-input"
-                        />
-                      </td>
-                      <td>
-                        <button
-                          className="save-button"
-                          onClick={() => handleSave(slip)}
-                        >
-                          সেভ করুন
-                        </button>
-                      </td>
+                      {isToday && (
+                        <>
+                          <td>
+                            <input
+                              type="number"
+                              value={paidInputs[slip.shopName] || ""}
+                              onChange={(e) =>
+                                handlePaidChange(e, slip.shopName)
+                              }
+                              className="paid-input"
+                            />
+                          </td>
+                          <td>
+                            <button
+                              className="save-button"
+                              onClick={() => handleSave(slip)}
+                            >
+                              সেভ করুন
+                            </button>
+                          </td>
+                        </>
+                      )}
                     </tr>
                   ))}
                 </tbody>
