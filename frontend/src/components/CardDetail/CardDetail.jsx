@@ -91,10 +91,14 @@ const CardDetail = () => {
         price: row.price,
         total: row.quantity * row.price,
       }));
+      const totalUnpaidDealsPrice = newPurchases.reduce(
+        (acc, purchase) => acc + purchase.total,
+        0
+      );
+      console.log(totalUnpaidDealsPrice)
 
       let id = individualCardDetails?._id;
       if (id === undefined) {
-        console.log("farmer Name: ", individualFarmerData.name);
         const createCardDetailsResponse = await fetch(
           `${process.env.REACT_APP_BACKEND_URL}/create-deal`,
           {
@@ -112,6 +116,23 @@ const CardDetail = () => {
         setIndividualCardDetails(data);
         console.log("response", createCardDetailsResponse);
         id = data._id;
+
+        const transactionUnpaidResponse = await fetch(
+          `${process.env.REACT_APP_BACKEND_URL}/transaction/unpaid-deal-addition`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ totalUnpaidDealsPrice }),
+          }
+        );
+        if (!transactionUnpaidResponse.ok) {
+          throw new Error("Failed to create new Card!");
+        }
+        const responseData = await transactionUnpaidResponse.json();
+
+        console.log("response", responseData);
       }
 
       const updateCardResponse = await fetch(

@@ -60,7 +60,7 @@ const RightTable = ({ startDate2 }) => {
           </tr>
           <tr>
             <td>নিজের ধার</td>
-            <td>{transactionDetails2.totalMyOwnDebt || 0}</td>
+            <td>{transactionDetails2.totalDebtToShownInFinal|| 0}</td>
           </tr>
           <tr>
             <td>Unpaid Deals</td>

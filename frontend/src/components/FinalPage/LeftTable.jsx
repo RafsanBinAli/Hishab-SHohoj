@@ -57,7 +57,7 @@ const LeftTable = ({ startDate1 }) => {
         </tr>
         <tr>
           <td>নিজের ধার</td>
-          <td>{transactionDetails1.totalMyOwnDebt || 0}</td>
+          <td>{transactionDetails1.totalDebtToShownInFinal || 0}</td>
         </tr>
         <tr>
           <td>Unpaid Deals</td>

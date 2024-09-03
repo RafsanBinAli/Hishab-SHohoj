@@ -275,6 +275,17 @@ exports.createDaily = async (req, res) => {
         sum + deal.purchases.reduce((acc, purchase) => acc + purchase.total, 0)
       );
     }, 0);
+    const debtHistory = await DebtHistory.find({
+      date: { $lte: normalizedDate },
+    });
+    const totalDebtToShownInFinal = debtHistory.reduce((total, entry) => {
+      if (entry.type === "debt") {
+        return total + entry.amount;
+      } else if (entry.type === "repayment") {
+        return total - entry.amount;
+      }
+      return total;
+    }, 0);
 
     transaction = new DailyTransaction({
       date: normalizedDate,
@@ -282,6 +293,7 @@ exports.createDaily = async (req, res) => {
       totalDebtsOfFarmers,
       totalUnpaidDealsPrice,
       dailyCashStack,
+      totalDebtToShownInFinal,
     });
 
     await transaction.save();
@@ -296,8 +308,10 @@ exports.createDaily = async (req, res) => {
 };
 
 exports.updateMyOwnDebt = async (req, res) => {
+  let type;
   try {
-    const { amount, type, bank } = req.body;
+    const { amount, bank } = req.body;
+    type = req.body.type;
 
     const newDebtHistory = new DebtHistory({
       date: normalizedDate,
@@ -318,6 +332,7 @@ exports.updateMyOwnDebt = async (req, res) => {
 
     if (type === "debt") {
       transactionToday.todayDebt += amount;
+      transactionToday.totalDebtToShownInFinal += amount;
       transactionToday.myOwnDebt.push({ amount, date: normalizedDate });
       transactionToday.totalMyOwnDebt = transactionToday.myOwnDebt.reduce(
         (sum, debt) => sum + debt.amount,
@@ -325,6 +340,7 @@ exports.updateMyOwnDebt = async (req, res) => {
       );
     } else if (type === "repayment") {
       transactionToday.todayDebtRepay += amount;
+      transactionToday.totalDebtToShownInFinal -= amount;
       transactionToday.myOwnDebtRepay.push({ amount, date: normalizedDate });
       transactionToday.totalMyOwnDebtRepay =
         transactionToday.myOwnDebtRepay.reduce(
@@ -389,5 +405,86 @@ exports.calculateCommissionAndKhajna = async (req, res) => {
       message: "Failed to calculate commission and khajna!",
       error: error.message,
     });
+  }
+};
+
+exports.addUnpaidDeal = async (req, res) => {
+  try {
+    const totalUnpaidDealsPrice = Number(req.body.totalUnpaidDealsPrice);
+
+    if (isNaN(totalUnpaidDealsPrice)) {
+      return res
+        .status(400)
+        .json({ message: "Total unpaid deals price must be a valid number." });
+    }
+
+    let transaction = await DailyTransaction.findOne({
+      date: normalizedDate,
+    });
+    if (!transaction) {
+      return res
+        .status(404)
+        .json({ message: "Transaction Details not found!" });
+    }
+
+    transaction.totalUnpaidDealsPrice += totalUnpaidDealsPrice;
+
+    await transaction.save();
+
+    res.status(200).json({
+      message: "Unpaid deals total updated successfully",
+      transaction,
+    });
+  } catch (error) {
+    console.error("Error updating unpaid deals total:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+exports.subUnpaidDeal = async (req, res) => {
+  try {
+    let date;
+    if (!!req.body.date) {
+      const providedDate = new Date(req.body.date);
+      date = new Date(
+        Date.UTC(
+          providedDate.getFullYear(),
+          providedDate.getMonth(),
+          providedDate.getDate()
+        )
+      );
+      console.log(date);
+    } else {
+      date = normalizedDate;
+    }
+    const totalUnpaidDealsPrice = Number(req.body.totalUnpaidDealsPrice);
+    console.log(totalUnpaidDealsPrice);
+    if (isNaN(totalUnpaidDealsPrice)) {
+      return res
+        .status(400)
+        .json({ message: "Total unpaid deals price must be a valid number." });
+    }
+
+    let transaction = await DailyTransaction.findOne({
+      date,
+    });
+    console.log(transaction);
+    if (!transaction) {
+      return res
+        .status(404)
+        .json({ message: "Transaction Details not found!" });
+    }
+
+    transaction.totalUnpaidDealsPrice -= totalUnpaidDealsPrice;
+
+    await transaction.save();
+
+    res.status(200).json({
+      message: "Unpaid deals total updated successfully",
+      transaction,
+    });
+  } catch (error) {
+    console.error("Error updating unpaid deals total:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };

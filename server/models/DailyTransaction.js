@@ -152,6 +152,10 @@ const transactionSchema = new Schema({
     type: Number,
     default: 0,
   },
+  totalDebtToShownInFinal:{
+    type:Number,
+    default:0
+  }
 });
 
 // Pre-save middleware to calculate totals

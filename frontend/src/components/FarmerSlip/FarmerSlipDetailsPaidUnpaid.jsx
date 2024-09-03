@@ -47,7 +47,7 @@ const FarmerSlipDetailsPaidUnpaid = () => {
 
     fetchDeal();
   }, [id]);
-
+console.log(slipDetails?.doneStatus)
   useEffect(() => {
     if (slipDetails) {
       const newTotalAmount = slipDetails.purchases.reduce(
@@ -91,6 +91,23 @@ const FarmerSlipDetailsPaidUnpaid = () => {
       );
 
       if (!response.ok) throw new Error("Failed to save daily transaction");
+
+      if (!slipDetails?.doneStatus) {
+        const transactionUnpaidResponse = await fetch(
+          `${process.env.REACT_APP_BACKEND_URL}/transaction/unpaid-deal-subtraction`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              date: slipDetails?.createdAt,
+              totalUnpaidDealsPrice: finalAmount + commission + khajna,
+            }),
+          }
+        );
+
+        if (!transactionUnpaidResponse.ok)
+          throw new Error("Failed to save daily transaction");
+      }
 
       const updateResponse = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/card-details-update-secondary`,

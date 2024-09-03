@@ -83,8 +83,20 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
           }),
         }
       );
+      const transactionUnpaidResponse = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/transaction/unpaid-deal-subtraction`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            totalUnpaidDealsPrice: commission + khajna + finalAmount,
+          }),
+        }
+      );
 
-      if (!response.ok) {
+      if (!response.ok || ! transactionUnpaidResponse.ok) {
         throw new Error("Daily transaction save failed");
       }
 
