@@ -1,22 +1,63 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Loader from "../Loader/Loader";
 import handleDownload from "../../functions/handleDownload"; // Import the download function
 
 const ShopList = ({ shops, loading }) => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(30);
   const slipRef = useRef(null);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 768) {
+        setItemsPerPage(10);
+      } else {
+        setItemsPerPage(30);
+      }
+      setCurrentPage(1); // Reset to first page when itemsPerPage changes
+    };
+
+    handleResize(); // Set initial items per page
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (window.innerWidth <= 768) {
+      setItemsPerPage(10);
+    } else {
+      setItemsPerPage(30);
+    }
+  }, []);
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
+    setCurrentPage(1); // Reset to first page on new search
   };
 
   const filteredShops = shops.filter((shop) =>
     shop.shopName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // Pagination calculations
+  const totalPages = Math.ceil(filteredShops.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const currentShops = filteredShops.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  );
+
   // Function to generate PDF
   const downloadPdf = () => {
-    handleDownload(slipRef, "Farmer List"); // Pass the heading as the title
+    handleDownload(slipRef, "Shop List"); // Pass the heading as the title
+  };
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
   };
 
   return (
@@ -53,9 +94,9 @@ const ShopList = ({ shops, loading }) => {
                 </tr>
               </thead>
               <tbody>
-                {filteredShops.map((shop, index) => (
+                {currentShops.map((shop, index) => (
                   <tr key={index}>
-                    <td>{index + 1}</td>
+                    <td>{startIndex + index + 1}</td>
                     <td className="text-center">{shop.shopName}</td>
                     <td>{shop.address}</td>
                     <td>{shop.phoneNumber}</td>
@@ -76,6 +117,19 @@ const ShopList = ({ shops, loading }) => {
             </table>
           </div>
         )}
+      </div>
+      <div className="pagination">
+        {Array.from({ length: totalPages }, (_, index) => (
+          <button
+            key={index}
+            className={`page-button ${
+              currentPage === index + 1 ? "active" : ""
+            }`}
+            onClick={() => handlePageChange(index + 1)}
+          >
+            {index + 1}
+          </button>
+        ))}
       </div>
     </div>
   );

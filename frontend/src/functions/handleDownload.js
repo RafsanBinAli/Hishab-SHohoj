@@ -3,48 +3,55 @@ import html2canvas from "html2canvas";
 
 const handleDownload = (slipRef, title) => {
   const pdf = new jsPDF({
-    orientation: "portrait", // Choose portrait or landscape orientation
+    orientation: "portrait",
     unit: "mm",
-    format: "a4", // You can use "a4" or customize the size
+    format: "a4",
   });
 
-  // Custom heading added to the PDF using the passed title parameter
   pdf.setFontSize(18);
   pdf.text(title, pdf.internal.pageSize.getWidth() / 2, 20, {
     align: "center",
   });
 
-  // Calculate the starting Y position after the heading
-  let yPosition = 30;
+  const element = slipRef.current;
 
-  html2canvas(slipRef.current).then((canvas) => {
-    const imgData = canvas.toDataURL("image/png");
+  // Temporarily adjust the table to fit its full content
+  const originalStyles = element.style.cssText;
+  element.style.width = "auto"; // Adjust width to fit content
+  element.style.overflowX = "visible"; // Ensure no horizontal scroll
 
-    // Calculate dimensions
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const pageHeight = pdf.internal.pageSize.getHeight();
-    const imgWidth = pageWidth - 20; // 10mm margin on both sides
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+  html2canvas(element, { useCORS: true })
+    .then((canvas) => {
+      // Restore original styles
+      element.style.cssText = originalStyles;
 
-    let position = yPosition;
-    let heightLeft = imgHeight;
+      const imgData = canvas.toDataURL("image/png");
 
-    // Add the first page
-    pdf.addImage(imgData, "PNG", 10, position, imgWidth, imgHeight);
-    heightLeft -= pageHeight - position;
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const imgWidth = pageWidth - 20; // 10mm margin on both sides
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-    // Add more pages if needed
-    while (heightLeft > 0) {
-      position = heightLeft - imgHeight + yPosition;
-      pdf.addPage();
+      let yPosition = 30;
+      let heightLeft = imgHeight;
+      let position = yPosition;
+
       pdf.addImage(imgData, "PNG", 10, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-    }
+      heightLeft -= pageHeight - position;
 
-    // Save the PDF with a dynamic filename
-    const fileName = `${title}.pdf`;
-    pdf.save(fileName);
-  });
+      while (heightLeft > 0) {
+        position = heightLeft - imgHeight + yPosition;
+        pdf.addPage();
+        pdf.addImage(imgData, "PNG", 10, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+
+      const fileName = `${title}.pdf`;
+      pdf.save(fileName);
+    })
+    .catch((error) => {
+      console.error("Error generating PDF:", error);
+    });
 };
 
 export default handleDownload;

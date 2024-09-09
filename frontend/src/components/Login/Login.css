@@ -14,13 +14,6 @@ a {
   color: #666666;
   margin: 0px;
   transition: all 0.4s;
-  -webkit-transition: all 0.4s;
-  -o-transition: all 0.4s;
-  -moz-transition: all 0.4s;
-}
-
-a:focus {
-  outline: none !important;
 }
 
 a:hover {
@@ -49,18 +42,11 @@ li {
   list-style-type: none;
 }
 
-/*---------------------------------------------*/
 input {
   outline: none;
   border: none;
 }
 
-textarea {
-  outline: none;
-  border: none;
-}
-
-/*---------------------------------------------*/
 button {
   outline: none !important;
   border: none;
@@ -71,12 +57,6 @@ button:hover {
   cursor: pointer;
 }
 
-iframe {
-  border: none !important;
-}
-
-/*//////////////////////////////////////////////////////////////////
-    [ Utility ]*/
 .txt1 {
   line-height: 1.5;
   color: #999999;
@@ -87,9 +67,6 @@ iframe {
   color: #666666;
 }
 
-/*//////////////////////////////////////////////////////////////////
-    [ login ]*/
-
 .limiter {
   width: 100%;
   margin: 0 auto;
@@ -98,19 +75,12 @@ iframe {
 .container-login100 {
   width: 100%;
   min-height: 100vh;
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -moz-box;
-  display: -ms-flexbox;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
   padding: 15px;
-  background: #9053c7;
   background: -webkit-linear-gradient(-135deg, #c850c0, #4158d0);
-  background: -o-linear-gradient(-135deg, #c850c0, #4158d0);
-  background: -moz-linear-gradient(-135deg, #c850c0, #4158d0);
   background: linear-gradient(-135deg, #c850c0, #4158d0);
 }
 
@@ -119,19 +89,12 @@ iframe {
   background: #fff;
   border-radius: 10px;
   overflow: hidden;
-
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -moz-box;
-  display: -ms-flexbox;
   display: flex;
-
   justify-content: space-between;
   padding: 110px 120px 80px 80px;
 }
 
-/*------------------------------------------------------------------
-    [  ]*/
+/* Image on left */
 .login100-pic {
   width: 316px;
 }
@@ -140,8 +103,7 @@ iframe {
   max-width: 100%;
 }
 
-/*------------------------------------------------------------------
-    [  ]*/
+/* Form on right */
 .login100-form {
   width: 290px;
 }
@@ -150,14 +112,11 @@ iframe {
   color: #333333;
   line-height: 1.2;
   text-align: center;
-  font-family:'Times New Roman', Times, serif;
+  font-family: "Times New Roman", Times, serif;
   font-weight: 700;
-  width: 100%;
-  display: block;
   padding-bottom: 20px;
 }
 
-/*---------------------------------------------*/
 .wrap-input100 {
   position: relative;
   width: 100%;
@@ -168,7 +127,6 @@ iframe {
 .input100 {
   line-height: 1.5;
   color: #666666;
-
   display: block;
   width: 100%;
   background: #e6e6e6;
@@ -177,16 +135,9 @@ iframe {
   padding: 0 30px 0 68px;
 }
 
-/*------------------------------------------------------------------
-    [ Button ]*/
 .container-login100-form-btn {
   width: 100%;
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -moz-box;
-  display: -ms-flexbox;
   display: flex;
-  flex-wrap: wrap;
   justify-content: center;
   padding-top: 20px;
 }
@@ -195,23 +146,13 @@ iframe {
   line-height: 1.5;
   color: #fff;
   text-transform: uppercase;
-
   width: 100%;
   height: 50px;
   border-radius: 25px;
   background: #57b846;
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -moz-box;
-  display: -ms-flexbox;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0 25px;
-
-  -webkit-transition: all 0.4s;
-  -o-transition: all 0.4s;
-  -moz-transition: all 0.4s;
   transition: all 0.4s;
 }
 
@@ -219,12 +160,10 @@ iframe {
   background: #333333;
 }
 
-/*------------------------------------------------------------------
-    [ Responsive ]*/
-
+/* Responsive Styles */
 @media (max-width: 992px) {
   .wrap-login100 {
-    padding: 177px 90px 33px 85px;
+    padding: 100px 80px;
   }
 
   .login100-pic {
@@ -238,20 +177,32 @@ iframe {
 
 @media (max-width: 768px) {
   .wrap-login100 {
-    padding: 100px 80px 33px 80px;
+    flex-direction: column; /* Stack items vertically */
+    padding: 50px 20px; /* Adjust padding */
   }
 
   .login100-pic {
-    display: none;
+    width: 100%; /* Image takes full width */
+    margin-bottom: 30px; /* Add some space between image and form */
   }
 
   .login100-form {
-    width: 100%;
+    width: 100%; /* Form takes full width */
   }
 }
 
 @media (max-width: 576px) {
   .wrap-login100 {
-    padding: 100px 15px 33px 15px;
+    padding: 30px 15px; /* Further reduce padding for smaller screens */
+  }
+
+  .login100-pic img {
+    max-width: 80%; /* Reduce image size a little on very small screens */
+    margin: 0 auto; /* Center the image */
+    display: block;
+  }
+
+  .login100-form-title {
+    font-size: 22px;
   }
 }

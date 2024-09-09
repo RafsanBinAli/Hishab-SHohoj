@@ -6,6 +6,7 @@ import "./Login.css";
 const Login = ({ setIsUserLoggedIn }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoggingIn, setIsLoggingIn] = useState(false); // Track login status
   const [showModal, setShowModal] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [modalMessage, setModalMessage] = useState("");
@@ -13,6 +14,17 @@ const Login = ({ setIsUserLoggedIn }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    // Check if either field is empty
+    if (!username || !password) {
+      setModalTitle("Error");
+      setModalMessage("Username and Password cannot be empty.");
+      setShowModal(true);
+      return; // Stop the submission if fields are empty
+    }
+
+    setIsLoggingIn(true); // Disable inputs and change button text
+
     try {
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/users/login`,
@@ -32,28 +44,29 @@ const Login = ({ setIsUserLoggedIn }) => {
       if (response.ok) {
         localStorage.setItem("isUserLoggedIn", "true");
         localStorage.setItem("userAuthToken", data.token);
-        setIsUserLoggedIn(true); 
+        setIsUserLoggedIn(true);
         setModalTitle("Success");
         setModalMessage("Login Successful");
         setShowModal(true);
-        setTimeout(() => navigate("/"), 2000); 
       } else {
         setModalTitle("Error");
         setModalMessage(data.message || "Invalid Username or Password");
         setShowModal(true);
+        setIsLoggingIn(false); // Enable inputs if login fails
       }
     } catch (error) {
       console.error("Error logging in:", error);
       setModalTitle("Error");
       setModalMessage("Failed to login. Please try again later.");
       setShowModal(true);
+      setIsLoggingIn(false); // Enable inputs if there's an error
     }
   };
 
   const handleModalConfirm = () => {
     setShowModal(false);
     if (modalTitle === "Success") {
-      navigate("/"); 
+      navigate("/"); // Redirect to homepage on success
     }
   };
 
@@ -82,6 +95,7 @@ const Login = ({ setIsUserLoggedIn }) => {
                 value={username}
                 placeholder="username"
                 onChange={(e) => setUsername(e.target.value)}
+                disabled={isLoggingIn} // Disable input when logging in
               />
               <span className="focus-input100"></span>
               <span className="symbol-input100">
@@ -99,6 +113,7 @@ const Login = ({ setIsUserLoggedIn }) => {
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                disabled={isLoggingIn} // Disable input when logging in
               />
               <span className="focus-input100"></span>
               <span className="symbol-input100">
@@ -107,8 +122,13 @@ const Login = ({ setIsUserLoggedIn }) => {
             </div>
 
             <div className="container-login100-form-btn">
-              <button className="login100-form-btn" type="submit">
-                Login
+              <button
+                className="login100-form-btn"
+                type="submit"
+                disabled={isLoggingIn}
+              >
+                {isLoggingIn ? "Logging in..." : "Login"}{" "}
+                {/* Change button text */}
               </button>
             </div>
           </form>

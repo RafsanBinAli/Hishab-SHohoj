@@ -49,6 +49,36 @@
   max-width: 50px;
 }
 
+/* General styles for pagination controls */
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.page-button {
+  border: 1px solid #ddd;
+  background-color: #fff;
+  padding: 10px 15px;
+  margin: 0 5px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.page-button.active {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.page-button:hover {
+  background-color: #f1f1f1;
+}
+
+/* Responsive design for table and pagination */
+.table-responsive {
+  overflow-x: auto;
+}
+
 @media (max-width: 1200px) {
   .card2 {
     width: 70%;
@@ -84,6 +114,17 @@
     max-height: 40px;
     max-width: 40px;
   }
+  .pagination {
+    flex-wrap: wrap;
+  }
+
+  .page-button {
+    padding: 5px 10px;
+  }
+
+  .table {
+    font-size: 14px;
+  }
 }
 
 @media (max-width: 576px) {
@@ -108,5 +149,16 @@
   .table img {
     max-height: 30px;
     max-width: 30px;
+  }
+  .pagination {
+    font-size: 12px;
+  }
+
+  .page-button {
+    padding: 4px 8px;
+  }
+
+  .table {
+    font-size: 12px;
   }
 }

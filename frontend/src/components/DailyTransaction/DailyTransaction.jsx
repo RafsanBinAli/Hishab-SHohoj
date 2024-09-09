@@ -38,15 +38,13 @@ const DailyTransaction = () => {
         setCommission(data.credit?.commissions || 0);
       } catch (error) {
         console.log("Error occurred", error);
-       
       }
     };
     fetchTransactionDetails();
   }, [selectedDate]);
 
- 
+  const isToday = selectedDate === formatDate(normalizedDate);
 
-  
   return (
     <div className="container-dailyTransaction mt-4">
       <h2 className="text-center my-4 py-2 font-weight-bold">আজকের হিসাব</h2>
@@ -62,10 +60,14 @@ const DailyTransaction = () => {
           className="ml-2"
         />
       </div>
-      <TransactionButton
-        transactionDetails={transactionDetails}
-        setTransactionDetails={setTransactionDetails}
-      />
+
+      {/* Conditionally render TransactionButton only for today's date */}
+      {isToday && (
+        <TransactionButton
+          transactionDetails={transactionDetails}
+          setTransactionDetails={setTransactionDetails}
+        />
+      )}
 
       <div className="row mb-4">
         <div className="col-md-6">
@@ -90,7 +92,8 @@ const DailyTransaction = () => {
               },
               {
                 title: "Unpaid Deals",
-                transactionData: transactionDetails?.totalUnpaidDealsPrice || [],
+                transactionData:
+                  transactionDetails?.totalUnpaidDealsPrice || [],
               },
             ]}
           />
@@ -102,7 +105,8 @@ const DailyTransaction = () => {
             data={[
               {
                 title: "কৃষকের টাকা(খরচ)",
-                transactionData: transactionDetails?.debit?.farmersPayment || [],
+                transactionData:
+                  transactionDetails?.debit?.farmersPayment || [],
               },
               {
                 title: "ধার (খরচ)",
@@ -116,7 +120,6 @@ const DailyTransaction = () => {
                 title: "নিজের ধার পরিশোধ",
                 transactionData: transactionDetails?.todayDebtRepay || [],
               },
-              
             ]}
           />
         </div>
@@ -127,10 +130,7 @@ const DailyTransaction = () => {
           <KhajnaCommissionTable khajna={khajna} commission={commission} />
         </div>
         <div className="col-md-6">
-          <LastCalculation
-            transactionDetails={transactionDetails}
-           
-          />
+          <LastCalculation transactionDetails={transactionDetails} />
         </div>
       </div>
     </div>

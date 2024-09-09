@@ -5,6 +5,8 @@ import handleDownload from "../../functions/handleDownload"; // Import the downl
 const FarmerList = ({ farmers }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(30);
   const slipRef = useRef(null);
 
   useEffect(() => {
@@ -13,17 +15,47 @@ const FarmerList = ({ farmers }) => {
     }
   }, [farmers]);
 
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 768) {
+        setItemsPerPage(10);
+      } else {
+        setItemsPerPage(30);
+      }
+    };
+
+    handleResize(); // Set initial items per page
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
+    setCurrentPage(1); // Reset to first page on new search
   };
 
   const filteredFarmers = farmers.filter((farmer) =>
     farmer.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // Pagination calculations
+  const totalPages = Math.ceil(filteredFarmers.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const currentFarmers = filteredFarmers.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  );
+
   // Example call to generate a PDF with a custom title
   const downloadPdf = () => {
     handleDownload(slipRef, "Farmer List"); // Pass the heading as the title
+  };
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
   };
 
   return (
@@ -49,40 +81,55 @@ const FarmerList = ({ farmers }) => {
             {loading ? (
               <Loader /> // Show loader while data is being fetched
             ) : (
-              <table className="table table-bordered table-striped">
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th className="text-center">কৃষকের নাম</th>
-                    <th>ঠিকানা</th>
-                    <th>মোবাইল নম্বর</th>
-                    <th>বাকি</th>
-                    <th>ছবি</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredFarmers.map((farmer, index) => (
-                    <tr key={index}>
-                      <td>{index + 1}</td>
-                      <td className="text-center">{farmer.name}</td>
-                      <td>{farmer.village}</td>
-                      <td>{farmer.phoneNumber}</td>
-                      <td>{farmer.totalDue}</td>
-                      <td>
-                        {farmer.imageUrl && (
-                          <img
-                            src={farmer.imageUrl}
-                            alt="Farmer"
-                            className="img-thumbnail"
-                            style={{ maxHeight: "50px", maxWidth: "50px" }}
-                          />
-                        )}
-                      </td>
+              <>
+                <table className="table table-bordered table-striped">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th className="text-center">কৃষকের নাম</th>
+                      <th>ঠিকানা</th>
+                      <th>মোবাইল নম্বর</th>
+                      <th>বাকি</th>
+                      <th>ছবি</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {currentFarmers.map((farmer, index) => (
+                      <tr key={index}>
+                        <td>{startIndex + index + 1}</td>
+                        <td className="text-center">{farmer.name}</td>
+                        <td>{farmer.village}</td>
+                        <td>{farmer.phoneNumber}</td>
+                        <td>{farmer.totalDue}</td>
+                        <td>
+                          {farmer.imageUrl && (
+                            <img
+                              src={farmer.imageUrl}
+                              alt="Farmer"
+                              className="img-thumbnail"
+                              style={{ maxHeight: "50px", maxWidth: "50px" }}
+                            />
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </>
             )}
+          </div>
+          <div className="pagination">
+            {Array.from({ length: totalPages }, (_, index) => (
+              <button
+                key={index}
+                className={`page-button ${
+                  currentPage === index + 1 ? "active" : ""
+                }`}
+                onClick={() => handlePageChange(index + 1)}
+              >
+                {index + 1}
+              </button>
+            ))}
           </div>
         </div>
       </div>

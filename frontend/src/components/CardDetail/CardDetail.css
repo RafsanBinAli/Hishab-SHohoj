@@ -16,6 +16,9 @@
   margin-bottom: 50px;
   width: 7rem;
   height: 3rem;
+  display: block;
+  margin-left: auto;
+  margin-right: auto; /* Center align the button */
 }
 
 .container-card-details .row .card-text {
@@ -131,7 +134,6 @@
   transform: scale(1.05); /* Slight zoom effect on hover */
 }
 
-
 /* Responsive Styles */
 @media (max-width: 991.98px) {
   .container-card-details .card-body {
@@ -167,13 +169,19 @@
 
   .container-card-details .row .card-body {
     font-size: 16px; /* Further adjust font size for smaller screens */
-    overflow-x: hidden; /* Hide horizontal overflow */
+    overflow-x: auto; /* Allow horizontal scrolling for overflow */
   }
 
-  /* Table styling */
+  /* Add container for scrollable tables */
+  .scrollable-table-container {
+    overflow-x: auto; /* Enable horizontal scrolling */
+    width: 100%; /* Ensure full width */
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on touch devices */
+  }
+
   table {
     width: 100%; /* Ensure table fits within container */
-    table-layout: fixed; /* Fixed table layout */
+    table-layout: auto; /* Fixed table layout */
     border-collapse: collapse; /* Remove space between borders */
   }
 
@@ -247,20 +255,7 @@
     font-size: 14px; /* Adjust font size */
   }
 
-  .label {
-    margin-right: 10px; /* Adjust margin */
-    font-size: 14px;
-  }
-
-  .value {
-    font-size: 12px;
-    word-wrap: break-word; /* Ensure text wraps within the value container */
-    overflow-wrap: break-word; /* Break long words to fit within container */
-  }
-
-  /* Responsive Table Adjustments */
-  th, td {
-    white-space: normal; /* Allow wrapping for table headers and cells */
-    word-wrap: break-word; /* Break long words */
+  .label, .value {
+    width: auto; /* Adjust width for smaller screens */
   }
 }

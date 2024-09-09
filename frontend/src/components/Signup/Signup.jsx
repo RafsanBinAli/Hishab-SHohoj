@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import MessageModal from "../Modal/MessageModal"; 
+import MessageModal from "../Modal/MessageModal";
 import "./Signup.css";
 
 const Signup = () => {
@@ -12,6 +12,7 @@ const Signup = () => {
     password: "",
     confirmPassword: "",
   });
+  const [isSaving, setIsSaving] = useState(false); // Track saving status
   const [showModal, setShowModal] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [modalMessage, setModalMessage] = useState("");
@@ -19,6 +20,8 @@ const Signup = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    // Check if passwords match
     if (formData.password !== formData.confirmPassword) {
       setModalTitle("Error");
       setModalMessage("Passwords do not match");
@@ -26,16 +29,18 @@ const Signup = () => {
       return;
     }
 
+    setIsSaving(true); // Start saving process
+
     try {
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/users/signup`,
         {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("userAuthToken")}`, 
+            Authorization: `Bearer ${localStorage.getItem("userAuthToken")}`,
             "Content-Type": "application/x-www-form-urlencoded",
           },
-          body: new URLSearchParams(formData).toString(), 
+          body: new URLSearchParams(formData).toString(),
         }
       );
       const data = await response.json();
@@ -43,17 +48,18 @@ const Signup = () => {
         setModalTitle("Success");
         setModalMessage("Registration successful");
         setShowModal(true);
-        setTimeout(() => navigate("/home"), 2000); 
       } else {
         setModalTitle("Error");
         setModalMessage(data.message || "Registration failed");
         setShowModal(true);
+        setIsSaving(false); // Re-enable the form in case of failure
       }
     } catch (error) {
       console.error("Error registering user:", error);
       setModalTitle("Error");
       setModalMessage("Failed to register user. Please try again later.");
       setShowModal(true);
+      setIsSaving(false); // Re-enable the form in case of error
     }
   };
 
@@ -86,6 +92,7 @@ const Signup = () => {
                 value={formData.fullName}
                 onChange={handleChange}
                 required
+                disabled={isSaving} // Disable input when saving
               />
             </div>
             <div className="input-box">
@@ -97,6 +104,7 @@ const Signup = () => {
                 value={formData.username}
                 onChange={handleChange}
                 required
+                disabled={isSaving} // Disable input when saving
               />
             </div>
             <div className="input-box">
@@ -108,6 +116,7 @@ const Signup = () => {
                 value={formData.phoneNumber}
                 onChange={handleChange}
                 required
+                disabled={isSaving} // Disable input when saving
               />
             </div>
             <div className="input-box">
@@ -119,6 +128,7 @@ const Signup = () => {
                 value={formData.village}
                 onChange={handleChange}
                 required
+                disabled={isSaving} // Disable input when saving
               />
             </div>
             <div className="input-box">
@@ -130,6 +140,7 @@ const Signup = () => {
                 value={formData.password}
                 onChange={handleChange}
                 required
+                disabled={isSaving} // Disable input when saving
               />
             </div>
             <div className="input-box">
@@ -141,11 +152,16 @@ const Signup = () => {
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 required
+                disabled={isSaving} // Disable input when saving
               />
             </div>
           </div>
           <div className="button">
-            <input type="submit" value="Register" />
+            <input
+              type="submit"
+              value={isSaving ? "Saving..." : "Register"} // Change button text
+              disabled={isSaving} // Disable button when saving
+            />
           </div>
         </form>
       </div>
