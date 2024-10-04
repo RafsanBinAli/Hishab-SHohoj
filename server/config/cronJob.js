@@ -1,10 +1,10 @@
 const cron = require("node-cron");
 const axios = require("axios");
 
-const baseUrl = process.env.BASE_URL || 'http://localhost:4000';
+const baseUrl = 'http://localhost:4000';
 
 cron.schedule(
-  '05 0 * * *',
+  '02 0 * * *',
   async () => {
     try {
       const response = await axios.post(`${baseUrl}/transaction/create-daily`);

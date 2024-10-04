@@ -30,9 +30,9 @@ exports.saveDailyTransaction = async (req, res) => {
         dateInput.getDate()
       )
     );
-
+    
     let transaction = await DailyTransaction.findOne({
-      date: dateOfTransaction,
+      date: normalizedDate,
     });
 
     if (!transaction) {
@@ -41,20 +41,27 @@ exports.saveDailyTransaction = async (req, res) => {
         .json({ message: "Transaction not found for the specified date." });
     }
 
-    transaction.credit.commissions += commission;
-    transaction.credit.khajnas += khajna;
+    if (dateOfTransaction.getTime() !== normalizedDate.getTime()) {
+      transaction.debit.farmersPaymentLater.push({ name, amount });
+      transaction.credit.commissions += commission;
+      transaction.credit.khajnas += khajna;
+    } else {
+      transaction.credit.commissions += commission;
+      transaction.credit.khajnas += khajna;
 
-    if (name) {
-      const existingEntry = transaction.debit.farmersPayment.find(
-        (entry) => entry.name === name
-      );
+      if (name) {
+        const existingEntry = transaction.debit.farmersPayment.find(
+          (entry) => entry.name === name
+        );
 
-      if (existingEntry) {
-        existingEntry.amount = amount;
-      } else {
-        transaction.debit.farmersPayment.push({ name, amount });
+        if (existingEntry) {
+          existingEntry.amount = amount;
+        } else {
+          transaction.debit.farmersPayment.push({ name, amount });
+        }
       }
     }
+
     await transaction.save();
 
     res.status(200).json({

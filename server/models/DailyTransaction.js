@@ -41,6 +41,18 @@ const transactionSchema = new Schema({
     },
   },
   debit: {
+   farmersPaymentLater: [
+      {
+        name: {
+          type: String,
+          required: true,
+        },
+        amount: {
+          type: Number,
+          required: true,
+        },
+      },
+    ],
     dhar: [
       {
         name: {
@@ -164,12 +176,12 @@ transactionSchema.pre("save", function (next) {
     this.credit.dharReturns.reduce((sum, item) => sum + item.amount, 0) +
     this.credit.dokanPayment.reduce((sum, item) => sum + item.amount, 0) +
     this.dailyCashStack +
-    this.totalUnpaidDealsPrice +
     this.todayDebt;
   const totalCost =
     this.debit.dhar.reduce((sum, item) => sum + item.amount, 0) +
     this.debit.farmersPayment.reduce((sum, item) => sum + item.amount, 0) +
     this.debit.otherCost.reduce((sum, item) => sum + item.amount, 0) +
+    this.debit.farmersPaymentLater+
     this.todayDebtRepay;
 
   const netProfit = totalProfit - totalCost;
