@@ -107,7 +107,6 @@ exports.updateDealPurchases = async (req, res) => {
 // Example of ensuring the full document is returned
 exports.updateCardDetails = async (req, res) => {
   const { khajna, commission, totalAmountToBeGiven, id } = req.body;
-
   try {
     const cardDetails = await NewDeal.findById(id);
 
@@ -123,11 +122,10 @@ exports.updateCardDetails = async (req, res) => {
     cardDetails.doneStatus = true;
     await cardDetails.save();
 
-    // Fetch the updated card details to ensure all fields are included
-    const updatedCardDetails = await NewDeal.findById(id);
+   
     res.json({
       message: "Card details updated successfully!",
-      cardDetails: updatedCardDetails,
+      cardDetails: cardDetails,
     });
   } catch (error) {
     console.error("Error updating card details:", error);

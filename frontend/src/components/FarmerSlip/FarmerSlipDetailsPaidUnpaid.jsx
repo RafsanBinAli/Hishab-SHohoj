@@ -14,13 +14,14 @@ const FarmerSlipDetailsPaidUnpaid = () => {
   const [loading, setLoading] = useState(true);
   const [commission, setCommission] = useState(0);
   const [khajna, setKhajna] = useState(0);
-  const [extraCommission, setExtraCommission] = useState(0);
-  const [extraKhajna, setExtraKhajna] = useState(0);
   const [editing, setEditing] = useState(false);
   const [modalShow, setModalShow] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [modalMessage, setModalMessage] = useState("");
+  const [fixedCommission, setFixedCommission] = useState(0);
+  const [fixedKhajna, setFixedKhajna] = useState(0);
 
+  
   useEffect(() => {
     const fetchDeal = async () => {
       setLoading(true);
@@ -33,6 +34,8 @@ const FarmerSlipDetailsPaidUnpaid = () => {
         setSlipDetails(data);
         setCommission(data.commission || 0);
         setKhajna(data.khajna || 0);
+        setFixedCommission(data.commission || 0);
+        setFixedKhajna(data.khajna || 0);
       } catch (error) {
         console.error("Error fetching deal:", error);
         setModalTitle("Error");
@@ -47,7 +50,7 @@ const FarmerSlipDetailsPaidUnpaid = () => {
 
     fetchDeal();
   }, [id]);
-console.log(slipDetails?.doneStatus)
+
   useEffect(() => {
     if (slipDetails) {
       const newTotalAmount = slipDetails.purchases.reduce(
@@ -57,7 +60,7 @@ console.log(slipDetails?.doneStatus)
       setTotalAmount(newTotalAmount);
       setFinalAmount(newTotalAmount - commission - khajna);
     }
-  }, [slipDetails, commission, khajna, extraCommission, extraKhajna]);
+  }, [slipDetails, commission, khajna]);
 
   const handlePayNow = async () => {
     if (khajna < 0 || commission < 0) {
@@ -82,8 +85,12 @@ console.log(slipDetails?.doneStatus)
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             date: slipDetails?.createdAt,
-            commission: extraCommission === 0 ? commission : extraCommission,
-            khajna: extraKhajna === 0 ? khajna : extraKhajna,
+            commission: slipDetails?.doneStatus
+              ? Math.abs(commission - fixedCommission)
+              : commission,
+            khajna: slipDetails?.doneStatus
+              ? Math.abs(khajna - fixedKhajna)
+              : khajna,
             name: slipDetails?.farmerName,
             amount: finalAmount,
           }),
@@ -92,22 +99,22 @@ console.log(slipDetails?.doneStatus)
 
       if (!response.ok) throw new Error("Failed to save daily transaction");
 
-      if (!slipDetails?.doneStatus) {
-        const transactionUnpaidResponse = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/transaction/unpaid-deal-subtraction`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              date: slipDetails?.createdAt,
-              totalUnpaidDealsPrice: finalAmount + commission + khajna,
-            }),
-          }
-        );
+      // if (!slipDetails?.doneStatus) {
+      //   const transactionUnpaidResponse = await fetch(
+      //     `${process.env.REACT_APP_BACKEND_URL}/transaction/unpaid-deal-subtraction`,
+      //     {
+      //       method: "POST",
+      //       headers: { "Content-Type": "application/json" },
+      //       body: JSON.stringify({
+      //         date: slipDetails?.createdAt,
+      //         totalUnpaidDealsPrice: finalAmount + commission + khajna,
+      //       }),
+      //     }
+      //   );
 
-        if (!transactionUnpaidResponse.ok)
-          throw new Error("Failed to save daily transaction");
-      }
+      //   if (!transactionUnpaidResponse.ok)
+      //     throw new Error("Failed to save daily transaction");
+      // }
 
       const updateResponse = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/card-details-update-secondary`,
@@ -144,15 +151,9 @@ console.log(slipDetails?.doneStatus)
   };
 
   const handleEditSave = () => {
-    setCommission((prev) => prev + extraCommission);
-    setKhajna((prev) => prev + extraKhajna);
-
     setEditing(false);
-    setFinalAmount(
-      totalAmount - (commission + extraCommission) - (khajna + extraKhajna)
-    );
+    setFinalAmount(totalAmount - commission - khajna);
   };
-
   // Example call to generate a PDF with a custom title
   const downloadPdf = () => {
     handleDownload(slipRef, "Farmer Slip");
@@ -262,48 +263,12 @@ console.log(slipDetails?.doneStatus)
             </div>
 
             {editing && (
-              <>
-                <div className="d-flex justify-content-end">
-                  <button className="btn btn-primary" onClick={handleEditSave}>
-                    সংরক্ষণ করুন
-                  </button>
-                </div>
-                <div className="form-group">
-                  <label htmlFor="extraCommission">অতিরিক্ত কমিশন:</label>
-                  <input
-                    type="number"
-                    className="form-control"
-                    id="extraCommission"
-                    value={extraCommission}
-                    min="0"
-                    onChange={(e) =>
-                      setExtraCommission(Math.max(0, Number(e.target.value)))
-                    }
-                  />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="extraKhajna">অতিরিক্ত খাজনা:</label>
-                  <input
-                    type="number"
-                    className="form-control"
-                    id="extraKhajna"
-                    value={extraKhajna}
-                    min="0"
-                    onChange={(e) =>
-                      setExtraKhajna(Math.max(0, Number(e.target.value)))
-                    }
-                  />
-                </div>
-
-                <button
-                  className="btn btn-success m-2"
-                  onClick={handleEditSave}
-                >
-                  Save
+              <div className="d-flex justify-content-end">
+                <button className="btn btn-primary" onClick={handleEditSave}>
+                  সংরক্ষণ করুন
                 </button>
-              </>
+              </div>
             )}
-
             <div className="btn-group">
               <button className="btn btn-primary m-2" onClick={downloadPdf}>
                 Download PDF

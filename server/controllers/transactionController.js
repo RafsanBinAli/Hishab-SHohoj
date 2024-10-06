@@ -30,16 +30,15 @@ exports.saveDailyTransaction = async (req, res) => {
         dateInput.getDate()
       )
     );
-    
     let transaction = await DailyTransaction.findOne({
       date: normalizedDate,
     });
-
     if (!transaction) {
       return res
         .status(404)
         .json({ message: "Transaction not found for the specified date." });
     }
+    
 
     if (dateOfTransaction.getTime() !== normalizedDate.getTime()) {
       transaction.debit.farmersPaymentLater.push({ name, amount });
