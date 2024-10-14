@@ -4,7 +4,7 @@ const axios = require("axios");
 const baseUrl = "http://localhost:4000";
 
 cron.schedule(
-  "42 15 * * *",
+  "55 02 * * *",
   async () => {
     try {
       const response = await axios.post(`${baseUrl}/transaction/create-daily`);
@@ -15,5 +15,5 @@ cron.schedule(
   },
   {
     timezone: "Asia/Dhaka",
-  }
+  },
 );

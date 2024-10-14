@@ -90,11 +90,7 @@ const DailyTransaction = () => {
                 title: "নিজের ধার",
                 transactionData: transactionDetails?.todayDebt || [],
               },
-              {
-                title: "Unpaid Deals",
-                transactionData:
-                  transactionDetails?.totalUnpaidDealsPrice || [],
-              },
+              
             ]}
           />
         </div>
@@ -119,6 +115,10 @@ const DailyTransaction = () => {
               {
                 title: "নিজের ধার পরিশোধ",
                 transactionData: transactionDetails?.todayDebtRepay || [],
+              },
+              {
+                title: "Unpaid Deals",
+                transactionData: transactionDetails?.debit?.farmersPaymentLater || [],
               },
             ]}
           />

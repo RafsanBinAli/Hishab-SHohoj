@@ -24,7 +24,7 @@ const Login = ({ setIsUserLoggedIn }) => {
     }
 
     setIsLoggingIn(true); // Disable inputs and change button text
-
+console.log(process.env.REACT_APP_BACKEND_URL)
     try {
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/users/login`,

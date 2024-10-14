@@ -41,6 +41,18 @@ const transactionSchema = new Schema({
     },
   },
   debit: {
+   farmersPaymentLater: [
+      {
+        name: {
+          type: String,
+          required: true,
+        },
+        amount: {
+          type: Number,
+          required: true,
+        },
+      },
+    ],
     dhar: [
       {
         name: {
@@ -158,19 +170,29 @@ const transactionSchema = new Schema({
   }
 });
 
-// Pre-save middleware to calculate totals
 transactionSchema.pre("save", function (next) {
+  const dharCost = this.debit.dhar.reduce((sum, item) => sum + item.amount, 0);
+  const farmersPaymentCost = this.debit.farmersPayment.reduce((sum, item) => sum + item.amount, 0);
+  const otherCost = this.debit.otherCost.reduce((sum, item) => sum + item.amount, 0);
+
+  // Ensure farmersPaymentLater and todayDebtRepay are numbers or 0
+  const totalFarmersPaymentLater = Array.isArray(this.debit.farmersPaymentLater) ? 
+    this.debit.farmersPaymentLater.reduce((sum, item) => sum + item.amount, 0) : 0;
+
+  const totalTodayDebtRepay = this.todayDebtRepay || 0;
+
   const totalProfit =
     this.credit.dharReturns.reduce((sum, item) => sum + item.amount, 0) +
     this.credit.dokanPayment.reduce((sum, item) => sum + item.amount, 0) +
     this.dailyCashStack +
-    this.totalUnpaidDealsPrice +
     this.todayDebt;
+
   const totalCost =
-    this.debit.dhar.reduce((sum, item) => sum + item.amount, 0) +
-    this.debit.farmersPayment.reduce((sum, item) => sum + item.amount, 0) +
-    this.debit.otherCost.reduce((sum, item) => sum + item.amount, 0) +
-    this.todayDebtRepay;
+    dharCost +
+    farmersPaymentCost +
+    otherCost +
+    totalFarmersPaymentLater +
+    totalTodayDebtRepay;
 
   const netProfit = totalProfit - totalCost;
 
@@ -186,6 +208,14 @@ transactionSchema.pre("save", function (next) {
     0
   );
 
+  // Logging to check the values
+  console.log("Dhar Cost: ", dharCost);
+  console.log("Farmers Payment Cost: ", farmersPaymentCost);
+  console.log("Other Cost: ", otherCost);
+  console.log("Total Farmers Payment Later: ", totalFarmersPaymentLater);
+  console.log("Total Today Debt Repay: ", totalTodayDebtRepay);
+  console.log("Total Cost: ", totalCost);
+
   this.totalProfit = totalProfit;
   this.totalCost = totalCost;
   this.netProfit = netProfit;
@@ -195,6 +225,7 @@ transactionSchema.pre("save", function (next) {
 
   next();
 });
+
 
 const Transaction = mongoose.model("DailyTransaction", transactionSchema);
 

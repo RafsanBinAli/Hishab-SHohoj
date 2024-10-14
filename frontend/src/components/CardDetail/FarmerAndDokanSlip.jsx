@@ -9,7 +9,7 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
   const [khajna, setKhajna] = useState(0);
   const [finalAmount, setFinalAmount] = useState(0);
   const [isPaid, setIsPaid] = useState(
-    individualCardDetails?.doneStatus || false
+    individualCardDetails?.doneStatus || false,
   );
 
   // State for controlling the modal
@@ -24,7 +24,7 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
     if (individualCardDetails?.purchases) {
       const totalAmount = individualCardDetails.purchases.reduce(
         (total, item) => total + item.total,
-        0
+        0,
       );
 
       const fetchedCommission = individualCardDetails.commission || 0;
@@ -40,7 +40,7 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
     if (individualCardDetails?.purchases) {
       const totalAmount = individualCardDetails.purchases.reduce(
         (total, item) => total + item.total,
-        0
+        0,
       );
       setFinalAmount(totalAmount - commission - khajna);
     }
@@ -63,7 +63,7 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
   const handlePayNow = async () => {
     if (khajna === 0) {
       const isConfirmed = window.confirm(
-        "খাজনা ০। আপনি কি নিশ্চিত যে আপনি এগিয়ে যেতে চান?"
+        "খাজনা ০। আপনি কি নিশ্চিত যে আপনি এগিয়ে যেতে চান?",
       );
       if (!isConfirmed) {
         return;
@@ -86,22 +86,22 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
             name: individualCardDetails.farmerName,
             amount: finalAmount,
           }),
-        }
+        },
       );
-      const transactionUnpaidResponse = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/transaction/unpaid-deal-subtraction`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            totalUnpaidDealsPrice: commission + khajna + finalAmount,
-          }),
-        }
-      );
+      // const transactionUnpaidResponse = await fetch(
+      //   `${process.env.REACT_APP_BACKEND_URL}/transaction/unpaid-deal-subtraction`,
+      //   {
+      //     method: "POST",
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //     },
+      //     body: JSON.stringify({
+      //       totalUnpaidDealsPrice: commission + khajna + finalAmount,
+      //     }),
+      //   }
+      // );
 
-      if (!response.ok || !transactionUnpaidResponse.ok) {
+      if (!response.ok) {
         throw new Error("Daily transaction save failed");
       }
 
@@ -118,7 +118,7 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
             commission,
             totalAmountToBeGiven: finalAmount,
           }),
-        }
+        },
       );
 
       if (!updateResponse.ok) {
@@ -128,7 +128,7 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
       setIsPaid(true);
       setModalTitle("Success");
       setModalMessage(
-        "কমিশন এবং খাজনা সফলভাবে সংরক্ষণ করা হয়েছে এবং আপডেট করা হয়েছে!"
+        "কমিশন এবং খাজনা সফলভাবে সংরক্ষণ করা হয়েছে এবং আপডেট করা হয়েছে!",
       );
 
       setModalShow(true);
@@ -144,13 +144,13 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
   const totalPurchaseAmount =
     individualCardDetails?.purchases.reduce(
       (total, item) => total + item.total,
-      0
+      0,
     ) || 0;
 
   const totalQuantity =
     individualCardDetails?.purchases.reduce(
       (total, item) => total + item.quantity,
-      0
+      0,
     ) || 0;
 
   return (

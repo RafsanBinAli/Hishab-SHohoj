@@ -15,30 +15,32 @@ const FarmerSlipDetailsPaidUnpaid = () => {
   const [loading, setLoading] = useState(true);
   const [commission, setCommission] = useState(0);
   const [khajna, setKhajna] = useState(0);
-  const [extraCommission, setExtraCommission] = useState(0);
-  const [extraKhajna, setExtraKhajna] = useState(0);
   const [editing, setEditing] = useState(false);
   const [modalShow, setModalShow] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [modalMessage, setModalMessage] = useState("");
+  const [fixedCommission, setFixedCommission] = useState(0);
+  const [fixedKhajna, setFixedKhajna] = useState(0);
 
   useEffect(() => {
     const fetchDeal = async () => {
       setLoading(true);
       try {
         const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/get-card-details/${id}`
+          `${process.env.REACT_APP_BACKEND_URL}/get-card-details/${id}`,
         );
         if (!response.ok) throw new Error("Failed to fetch deal");
         const data = await response.json();
         setSlipDetails(data);
         setCommission(data.commission || 0);
         setKhajna(data.khajna || 0);
+        setFixedCommission(data.commission || 0);
+        setFixedKhajna(data.khajna || 0);
       } catch (error) {
         console.error("Error fetching deal:", error);
         setModalTitle("Error");
         setModalMessage(
-          "স্লিপের বিস্তারিত আনতে ব্যর্থ হয়েছে। আবার চেষ্টা করুন।"
+          "স্লিপের বিস্তারিত আনতে ব্যর্থ হয়েছে। আবার চেষ্টা করুন।",
         );
         setModalShow(true);
       } finally {
@@ -48,23 +50,22 @@ const FarmerSlipDetailsPaidUnpaid = () => {
 
     fetchDeal();
   }, [id]);
-  console.log(slipDetails?.doneStatus);
 
   useEffect(() => {
     if (slipDetails) {
       const newTotalAmount = slipDetails.purchases.reduce(
         (acc, { quantity, price }) => acc + quantity * price,
-        0
+        0,
       );
       const newTotalQuantity = slipDetails.purchases.reduce(
         (acc, { quantity }) => acc + quantity,
-        0
+        0,
       );
       setTotalAmount(newTotalAmount);
       setTotalQuantity(newTotalQuantity); // Set total quantity
       setFinalAmount(newTotalAmount - commission - khajna);
     }
-  }, [slipDetails, commission, khajna, extraCommission, extraKhajna]);
+  }, [slipDetails, commission, khajna]);
 
   const handlePayNow = async () => {
     if (khajna < 0 || commission < 0) {
@@ -89,32 +90,36 @@ const FarmerSlipDetailsPaidUnpaid = () => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             date: slipDetails?.createdAt,
-            commission: extraCommission === 0 ? commission : extraCommission,
-            khajna: extraKhajna === 0 ? khajna : extraKhajna,
+            commission: slipDetails?.doneStatus
+              ? Math.abs(commission - fixedCommission)
+              : commission,
+            khajna: slipDetails?.doneStatus
+              ? Math.abs(khajna - fixedKhajna)
+              : khajna,
             name: slipDetails?.farmerName,
             amount: finalAmount,
           }),
-        }
+        },
       );
 
       if (!response.ok) throw new Error("Failed to save daily transaction");
 
-      if (!slipDetails?.doneStatus) {
-        const transactionUnpaidResponse = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/transaction/unpaid-deal-subtraction`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              date: slipDetails?.createdAt,
-              totalUnpaidDealsPrice: finalAmount + commission + khajna,
-            }),
-          }
-        );
+      // if (!slipDetails?.doneStatus) {
+      //   const transactionUnpaidResponse = await fetch(
+      //     `${process.env.REACT_APP_BACKEND_URL}/transaction/unpaid-deal-subtraction`,
+      //     {
+      //       method: "POST",
+      //       headers: { "Content-Type": "application/json" },
+      //       body: JSON.stringify({
+      //         date: slipDetails?.createdAt,
+      //         totalUnpaidDealsPrice: finalAmount + commission + khajna,
+      //       }),
+      //     }
+      //   );
 
-        if (!transactionUnpaidResponse.ok)
-          throw new Error("Failed to save daily transaction");
-      }
+      //   if (!transactionUnpaidResponse.ok)
+      //     throw new Error("Failed to save daily transaction");
+      // }
 
       const updateResponse = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/card-details-update-secondary`,
@@ -127,7 +132,7 @@ const FarmerSlipDetailsPaidUnpaid = () => {
             commission: commission,
             totalAmountToBeGiven: finalAmount,
           }),
-        }
+        },
       );
 
       if (!updateResponse.ok) throw new Error("Error updating card details");
@@ -143,7 +148,7 @@ const FarmerSlipDetailsPaidUnpaid = () => {
       console.error("Error occurred:", error);
       setModalTitle("Error");
       setModalMessage(
-        "লেনদেন সংরক্ষণ অথবা আপডেট করতে ত্রুটি ঘটেছে। আবার চেষ্টা করুন।"
+        "লেনদেন সংরক্ষণ অথবা আপডেট করতে ত্রুটি ঘটেছে। আবার চেষ্টা করুন।",
       );
     } finally {
       setModalShow(true);
@@ -151,15 +156,9 @@ const FarmerSlipDetailsPaidUnpaid = () => {
   };
 
   const handleEditSave = () => {
-    setCommission((prev) => prev + extraCommission);
-    setKhajna((prev) => prev + extraKhajna);
-
     setEditing(false);
-    setFinalAmount(
-      totalAmount - (commission + extraCommission) - (khajna + extraKhajna)
-    );
+    setFinalAmount(totalAmount - commission - khajna);
   };
-
   // Example call to generate a PDF with a custom title
   const downloadPdf = () => {
     handleDownload(slipRef, "Farmer Slip");
@@ -200,7 +199,7 @@ const FarmerSlipDetailsPaidUnpaid = () => {
                         <td>{price}</td>
                         <td>{quantity * price}</td>
                       </tr>
-                    )
+                    ),
                   )}
                   <tr>
                     <td colSpan="4" className="text-right font-weight-bold">
@@ -275,48 +274,12 @@ const FarmerSlipDetailsPaidUnpaid = () => {
             </div>
 
             {editing && (
-              <>
-                <div className="d-flex justify-content-end">
-                  <button className="btn btn-primary" onClick={handleEditSave}>
-                    সংরক্ষণ করুন
-                  </button>
-                </div>
-                <div className="form-group">
-                  <label htmlFor="extraCommission">অতিরিক্ত কমিশন:</label>
-                  <input
-                    type="number"
-                    className="form-control"
-                    id="extraCommission"
-                    value={extraCommission}
-                    min="0"
-                    onChange={(e) =>
-                      setExtraCommission(Math.max(0, Number(e.target.value)))
-                    }
-                  />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="extraKhajna">অতিরিক্ত খাজনা:</label>
-                  <input
-                    type="number"
-                    className="form-control"
-                    id="extraKhajna"
-                    value={extraKhajna}
-                    min="0"
-                    onChange={(e) =>
-                      setExtraKhajna(Math.max(0, Number(e.target.value)))
-                    }
-                  />
-                </div>
-
-                <button
-                  className="btn btn-success m-2"
-                  onClick={handleEditSave}
-                >
-                  Save
+              <div className="d-flex justify-content-end">
+                <button className="btn btn-primary" onClick={handleEditSave}>
+                  সংরক্ষণ করুন
                 </button>
-              </>
+              </div>
             )}
-
             <div className="btn-group">
               <button className="btn btn-primary m-2" onClick={downloadPdf}>
                 Download PDF
