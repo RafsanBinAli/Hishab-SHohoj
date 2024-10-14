@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import MessageModal from "../Modal/MessageModal";
 import BankList from "./BankList";
 import { fetchBanks } from "../../utils/dataService";
+import "./Bank.css";
 
 const Bank = () => {
   const [users, setUsers] = useState([]);
@@ -16,6 +17,9 @@ const Bank = () => {
   const [modalTitle, setModalTitle] = useState("");
   const [modalMessage, setModalMessage] = useState("");
   const [redirectTo, setRedirectTo] = useState(null);
+
+  // State for overlay
+  const [showOverlay, setShowOverlay] = useState(false);
 
   useEffect(() => {
     const loadBanks = async () => {
@@ -32,7 +36,6 @@ const Bank = () => {
   };
 
   const handleAddUser = async () => {
-
     const { bankName, phoneNumber, village, imageUrl } = newUserInfo;
     if (!bankName) {
       setModalTitle("Validation Error");
@@ -59,6 +62,8 @@ const Bank = () => {
       return;
     }
 
+    setShowOverlay(true); // Show overlay during submission
+
     try {
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/bank/create`,
@@ -77,7 +82,7 @@ const Bank = () => {
       }
 
       setModalTitle("Success");
-      setModalMessage("নতুন Bank সংযুক্ত হয়েছে!");
+      setModalMessage("নতুন ব্যাংক সংযুক্ত হয়েছে!");
       setRedirectTo("/banks");
       setModalShow(true);
 
@@ -95,6 +100,8 @@ const Bank = () => {
       setModalTitle("Error");
       setModalMessage(error.message);
       setModalShow(true);
+    } finally {
+      setShowOverlay(false); // Hide overlay when submission completes
     }
   };
 
@@ -141,13 +148,14 @@ const Bank = () => {
 
   return (
     <div className="container mt-4">
+      {showOverlay && <div className="overlay"></div>}
       <div className="d-flex justify-content-center mb-4">
         <div className="card2">
           <div className="card-body2">
-            <h2 className="card-title mb-4">নতুন Bank তথ্য দিন</h2>
+            <h2 className="card-title mb-4">নতুন ব্যাংক তথ্য দিন</h2>
             <form>
               <div className="form-group">
-                <label htmlFor="bankName">Bank নাম</label>
+                <label htmlFor="bankName">ব্যাংক নাম</label>
                 <input
                   type="text"
                   className="form-control"
@@ -169,7 +177,7 @@ const Bank = () => {
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="village">গ্রাম</label>
+                <label htmlFor="village">ঠিকানা</label>
                 <input
                   type="text"
                   className="form-control"
@@ -181,7 +189,7 @@ const Bank = () => {
               </div>
               <div className="mb-3">
                 <label htmlFor="image" className="form-label">
-                  Bank ছবি সংযুক্ত করুন
+                  ব্যাংক ছবি সংযুক্ত করুন
                 </label>
                 <input
                   type="file"

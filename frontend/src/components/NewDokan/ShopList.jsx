@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import Loader from "../Loader/Loader";
 import handleDownload from "../../functions/handleDownload"; // Import the download function
 
@@ -7,6 +8,7 @@ const ShopList = ({ shops, loading }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(30);
   const slipRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleResize = () => {
@@ -51,6 +53,9 @@ const ShopList = ({ shops, loading }) => {
     startIndex + itemsPerPage
   );
 
+  // Calculate total balance for current page
+  const totalDue = currentShops.reduce((acc, shop) => acc + shop.totalDue, 0);
+
   // Function to generate PDF
   const downloadPdf = () => {
     handleDownload(slipRef, "Shop List"); // Pass the heading as the title
@@ -58,6 +63,10 @@ const ShopList = ({ shops, loading }) => {
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
+  };
+
+  const handleDetailsClick = (id) => {
+    navigate(`/shops/${id}`); // Navigate to the FarmerDetails page
   };
 
   return (
@@ -91,6 +100,7 @@ const ShopList = ({ shops, loading }) => {
                   <th>মোবাইল নম্বর</th>
                   <th>বাকি</th>
                   <th>ছবি</th>
+                  <th>Details</th>
                 </tr>
               </thead>
               <tbody>
@@ -111,8 +121,25 @@ const ShopList = ({ shops, loading }) => {
                         />
                       )}
                     </td>
+                    <td>
+                      <button
+                        className="btn btn-info"
+                        onClick={() => handleDetailsClick(shop._id)} // Assuming shop has an 'id'
+                      >
+                        Details
+                      </button>
+                    </td>
                   </tr>
                 ))}
+                {/* Total Balance Row */}
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td className="text-end font-weight-bold">মোট বাকি:</td>
+                  <td className="font-weight-bold">{totalDue}</td>
+                  <td></td>
+                </tr>
               </tbody>
             </table>
           </div>

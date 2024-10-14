@@ -25,6 +25,9 @@ import FarmerSlipDetailsPaidUnpaid from "./components/FarmerSlip/FarmerSlipDetai
 import AllFarmerSlip from "./components/AllFarmerSlip/AllFarmerSlip";
 import OwnDebtTable from "./components/OwnDebtTable/OwnDebtTable";
 import Bank from "./components/Bank/Bank";
+import FarmerDetails from "./components/Farmer/FarmerDetails";
+import BankDetails from "./components/Bank/BankDetails";
+import ShopDetails from "./components/NewDokan/ShopDetails";
 
 require("dotenv").config();
 
@@ -90,7 +93,9 @@ function App() {
             path="/dokans"
             element={<PrivateRoute element={<NewDokan />} />}
           />
-          
+
+          <Route path="/shops/:id" element={<ShopDetails />} />
+
           <Route
             path="/borrow"
             element={<PrivateRoute element={<Borrowed />} />}
@@ -103,11 +108,12 @@ function App() {
             path="/slip/farmer"
             element={<PrivateRoute element={<FarmerSlip />} />}
           />
+          <Route path="/farmers/:id" element={<FarmerDetails />} />
           <Route
             path="/slip/farmer/details/:id"
             element={<PrivateRoute element={<FarmerSlipDetailsPaidUnpaid />} />}
           />
-          
+
           <Route
             path="/slip/farmer/all-deals"
             element={<PrivateRoute element={<AllFarmerSlip />} />}
@@ -128,15 +134,13 @@ function App() {
             path="/dhar-details/:id"
             element={<PrivateRoute element={<DharDetails />} />}
           />
-          
+
           <Route
             path="/nijer-dhar"
             element={<PrivateRoute element={<OwnDebtTable />} />}
           />
-          <Route
-            path="/banks"
-            element={<PrivateRoute element={<Bank />} />}
-          />
+          <Route path="/banks" element={<PrivateRoute element={<Bank />} />} />
+          <Route path="/banks/:id" element={<BankDetails />} />
           <Route
             path="/final-hishab"
             element={<PrivateRoute element={<FinalPage />} />}

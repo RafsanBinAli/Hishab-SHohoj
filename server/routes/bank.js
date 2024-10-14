@@ -9,5 +9,7 @@ router.get("/find-by-name/:bankName", bankController.findBankByName);
 router.put("/update-debt/:bankName", bankController.updateBankDebtByName);
 router.get("/get-own-debt", bankController.getOwnDebt);
 router.patch("/debt/update-status/:id", bankController.updateEntryStatus);
+router.get("/info/:id", bankController.findBankById);
+router.put("/update/:id", bankController.updateBankById);
 
 module.exports = router;

@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import handleDownload from "../../functions/handleDownload";
 import MessageModal from "../Modal/MessageModal";
+import "./CardDetail.css"; // Make sure you create this CSS file
 
 const FarmerAndDokanSlip = ({ individualCardDetails }) => {
   const slipRef = useRef();
@@ -15,6 +16,9 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
   const [modalShow, setModalShow] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [modalMessage, setModalMessage] = useState("");
+
+  // State for overlay
+  const [showOverlay, setShowOverlay] = useState(false);
 
   useEffect(() => {
     if (individualCardDetails?.purchases) {
@@ -52,9 +56,8 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
     setCommission(commissionValue);
   };
 
-  // Example call to generate a PDF with a custom title
   const downloadPdf = () => {
-    handleDownload(slipRef, "Farmer Slip"); // Pass the heading as the title
+    handleDownload(slipRef, "Farmer Slip");
   };
 
   const handlePayNow = async () => {
@@ -66,6 +69,8 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
         return;
       }
     }
+
+    setShowOverlay(true); // Show overlay
 
     try {
       const response = await fetch(
@@ -96,7 +101,7 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
         }
       );
 
-      if (!response.ok || ! transactionUnpaidResponse.ok) {
+      if (!response.ok || !transactionUnpaidResponse.ok) {
         throw new Error("Daily transaction save failed");
       }
 
@@ -131,11 +136,26 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
       setModalTitle("Error");
       setModalMessage("পেমেন্ট প্রক্রিয়াকরণের সময় একটি ত্রুটি ঘটেছে।");
       setModalShow(true);
+    } finally {
+      setShowOverlay(false); // Hide overlay
     }
   };
 
+  const totalPurchaseAmount =
+    individualCardDetails?.purchases.reduce(
+      (total, item) => total + item.total,
+      0
+    ) || 0;
+
+  const totalQuantity =
+    individualCardDetails?.purchases.reduce(
+      (total, item) => total + item.quantity,
+      0
+    ) || 0;
+
   return (
     <>
+      {showOverlay && <div className="overlay"></div>}
       <div className="col-md-7">
         <div className="card-body" id="dokaner-slip" ref={slipRef}>
           <div>
@@ -168,10 +188,15 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
                     মোট (টাকা):
                   </td>
                   <td className="font-weight-bold">
-                    {individualCardDetails?.purchases.reduce(
-                      (total, item) => total + item.total,
-                      0
-                    )}
+                    {totalPurchaseAmount.toFixed(2)}
+                  </td>
+                </tr>
+                <tr>
+                  <td colSpan="4" className="text-right font-weight-bold">
+                    মোট পরিমাণ (কেজি):
+                  </td>
+                  <td className="font-weight-bold">
+                    {totalQuantity.toFixed(2)}
                   </td>
                 </tr>
 

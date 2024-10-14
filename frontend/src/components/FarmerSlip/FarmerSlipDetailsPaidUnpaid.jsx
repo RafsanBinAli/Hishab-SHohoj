@@ -10,6 +10,7 @@ const FarmerSlipDetailsPaidUnpaid = () => {
   const { id } = useParams();
   const [totalAmount, setTotalAmount] = useState(0);
   const [finalAmount, setFinalAmount] = useState(0);
+  const [totalQuantity, setTotalQuantity] = useState(0);
   const [slipDetails, setSlipDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [commission, setCommission] = useState(0);
@@ -47,14 +48,20 @@ const FarmerSlipDetailsPaidUnpaid = () => {
 
     fetchDeal();
   }, [id]);
-console.log(slipDetails?.doneStatus)
+  console.log(slipDetails?.doneStatus);
+
   useEffect(() => {
     if (slipDetails) {
       const newTotalAmount = slipDetails.purchases.reduce(
         (acc, { quantity, price }) => acc + quantity * price,
         0
       );
+      const newTotalQuantity = slipDetails.purchases.reduce(
+        (acc, { quantity }) => acc + quantity,
+        0
+      );
       setTotalAmount(newTotalAmount);
+      setTotalQuantity(newTotalQuantity); // Set total quantity
       setFinalAmount(newTotalAmount - commission - khajna);
     }
   }, [slipDetails, commission, khajna, extraCommission, extraKhajna]);
@@ -200,6 +207,12 @@ console.log(slipDetails?.doneStatus)
                       মোট টাকা
                     </td>
                     <td>{totalAmount} টাকা</td>
+                  </tr>
+                  <tr>
+                    <td colSpan="4" className="text-right font-weight-bold">
+                      মোট পরিমাণ
+                    </td>
+                    <td>{totalQuantity} কেজি</td>
                   </tr>
                   <tr>
                     <td colSpan="4" className="text-right font-weight-bold">
