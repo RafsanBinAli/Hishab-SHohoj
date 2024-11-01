@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Loader from "../Loader/Loader";
 import { Card, Button, Form, Row, Col } from "react-bootstrap";
-import MessageModal from "../Modal/MessageModal"; // Import the MessageModal
-import "./FarmerDetails.css"; // Import the CSS file
+import MessageModal from "../Modal/MessageModal";
+import "./FarmerDetails.css";
 
 const FarmerDetails = () => {
   const { id } = useParams();
@@ -32,13 +32,15 @@ const FarmerDetails = () => {
       setError(null);
       try {
         const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/farmers/${id}`
+          `${process.env.REACT_APP_BACKEND_URL}/farmers/${id}`,
         );
+
         if (!response.ok) {
           throw new Error(
-            `Failed to fetch farmer details: ${response.statusText}`
+            `Failed to fetch farmer details: ${response.statusText}`,
           );
         }
+
         const data = await response.json();
         setFarmer(data);
         setFormData({
@@ -48,6 +50,7 @@ const FarmerDetails = () => {
           imageUrl: data.imageUrl,
         });
       } catch (error) {
+        console.error("Error fetching farmer details:", error); // Log error for debugging
         setError("Farmer details could not be retrieved. Please try again.");
       } finally {
         setLoading(false);
@@ -57,10 +60,17 @@ const FarmerDetails = () => {
     fetchFarmer();
   }, [id]);
 
-  // Handle form updates (new details and image)
+  // Update function to handle updates
   const handleUpdate = async () => {
     setLoading(true);
     setError(null);
+
+    const updatedInfo = {
+      ...formData,
+      imageUrl: newUserInfo.imageUrl || formData.imageUrl, // Use new image URL if available
+    };
+
+    console.log("Updating farmer with data:", updatedInfo);
 
     try {
       const response = await fetch(
@@ -70,27 +80,34 @@ const FarmerDetails = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(newUserInfo),
-        }
+          body: JSON.stringify(updatedInfo),
+        },
       );
 
       if (!response.ok) {
         throw new Error(
-          `Failed to update farmer details: ${response.statusText}`
+          `Failed to update farmer details: ${response.statusText}`,
         );
       }
 
       const updatedFarmer = await response.json();
       setFarmer(updatedFarmer);
+      setFormData({
+        name: updatedFarmer.name,
+        phoneNumber: updatedFarmer.phoneNumber,
+        village: updatedFarmer.village,
+        imageUrl: updatedFarmer.imageUrl,
+      });
       setIsEditable(false); // Exit edit mode
       setModalTitle("Success");
       setModalMessage("Farmer details updated successfully.");
       setModalShow(true);
-      setLoading(false);
     } catch (error) {
+      console.error("Error updating farmer details:", error);
       setModalTitle("Error");
       setModalMessage("Failed to update farmer details. Please try again.");
       setModalShow(true);
+    } finally {
       setLoading(false);
     }
   };
@@ -109,11 +126,9 @@ const FarmerDetails = () => {
     }));
   };
 
-  // Handle image selection
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Validate file type and size
       const maxSize = 5 * 1024 * 1024; // 5MB limit
       if (!file.type.startsWith("image/")) {
         setModalTitle("Invalid File");
@@ -124,16 +139,16 @@ const FarmerDetails = () => {
       if (file.size > maxSize) {
         setModalTitle("File Too Large");
         setModalMessage(
-          "The file size exceeds the 5MB limit. Please upload a smaller file."
+          "The file size exceeds the 5MB limit. Please upload a smaller file.",
         );
         setModalShow(true);
         return;
       }
 
-      // Update newImage state with selected file for preview
-      setNewImage(file);
-      setImagePreview(URL.createObjectURL(file)); // Set preview URL
+      // Set the preview URL
+      setImagePreview(URL.createObjectURL(file));
 
+      // Upload image to a service (like imgbb)
       const formData = new FormData();
       formData.append("image", file);
 
@@ -143,20 +158,19 @@ const FarmerDetails = () => {
           {
             method: "POST",
             body: formData,
-          }
+          },
         );
 
-        if (!response.ok) {
-          throw new Error("Failed to upload image");
-        }
-
+        if (!response.ok) throw new Error("Failed to upload image");
         const data = await response.json();
-        setNewUserInfo({
-          ...newUserInfo,
-          imageUrl: data.data.url,
-        });
+        const newImageUrl = data.data.url;
+
+        // Update formData with the new image URL
+        setFormData((prevData) => ({
+          ...prevData,
+          imageUrl: newImageUrl,
+        }));
       } catch (error) {
-        console.error("Error uploading image:", error);
         setModalTitle("Error");
         setModalMessage("Image upload failed. Please try again.");
         setModalShow(true);
@@ -178,14 +192,14 @@ const FarmerDetails = () => {
   }
 
   return (
-    <div className="container mt-4">
-      <Card className="farmer-card">
+    <div className="container mt-4 farmer-details-container">
+      <Card className="farmer-card shadow-sm">
         <Card.Body>
           <Card.Title className="text-center farmer-title">
             কৃষকের বিবরণ
           </Card.Title>
           <Form>
-            <Row>
+            <Row className="align-items-center">
               <Col md={6}>
                 <Form.Group controlId="formFarmerName" className="mb-3">
                   <Form.Label>নাম:</Form.Label>
@@ -219,32 +233,16 @@ const FarmerDetails = () => {
                     readOnly={!isEditable}
                   />
                 </Form.Group>
-
-                {/*<Form.Group controlId="formFarmerTotalDue" className="mb-3">
-                  <Form.Label>মোট বাকি:</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="totalDue"
-                    value={formData.totalDue}
-                    onChange={handleInputChange}
-                    readOnly={!isEditable}
-                  />
-                </Form.Group> */}
               </Col>
 
               <Col md={6} className="text-center">
                 <div className="farmer-image-container">
                   <img
-                    src={
-                      newImage
-                        ? imagePreview // If new image is selected, show preview
-                        : formData.imageUrl // Otherwise, show saved image
-                    }
+                    src={imagePreview || formData.imageUrl}
                     alt="Farmer"
                     className="farmer-image"
                   />
                 </div>
-
                 {isEditable && (
                   <Form.Group controlId="formFarmerImage" className="mt-3">
                     <Form.Label>নতুন ছবি আপলোড করুন:</Form.Label>
@@ -254,7 +252,7 @@ const FarmerDetails = () => {
               </Col>
             </Row>
 
-            <div className="farmer-button-container mt-4 text-center">
+            <div className="text-center mt-4">
               {isEditable ? (
                 <Button variant="success" onClick={handleUpdate}>
                   আপডেট করুন

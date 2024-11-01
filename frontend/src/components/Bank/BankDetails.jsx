@@ -33,19 +33,19 @@ const BankDetails = () => {
       setError(null);
       try {
         const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/bank/info/${id}`
+          `${process.env.REACT_APP_BACKEND_URL}/bank/info/${id}`,
         );
         if (!response.ok) {
           throw new Error(
-            `Failed to fetch bank details: ${response.statusText}`
+            `Failed to fetch bank details: ${response.statusText}`,
           );
         }
         const data = await response.json();
-        console.log("Fetched bank data:", data); // Add this log
+        console.log("Fetched bank data:", data);
         setBank(data);
         setFormData({
           bankName: data.bankName,
-          address: data.address,
+          address: data.village,
           phoneNumber: data.phoneNumber,
           imageUrl: data.imageUrl,
         });
@@ -72,12 +72,12 @@ const BankDetails = () => {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(formData),
-        }
+        },
       );
 
       if (!response.ok) {
         throw new Error(
-          `Failed to update bank details: ${response.statusText}`
+          `Failed to update bank details: ${response.statusText}`,
         );
       }
 
@@ -99,7 +99,6 @@ const BankDetails = () => {
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Validate file type and size (as you have already done)
       const maxSize = 5 * 1024 * 1024; // 5MB limit
       if (!file.type.startsWith("image/")) {
         setModalTitle("Invalid File");
@@ -110,16 +109,14 @@ const BankDetails = () => {
       if (file.size > maxSize) {
         setModalTitle("File Too Large");
         setModalMessage(
-          "The file size exceeds the 5MB limit. Please upload a smaller file."
+          "The file size exceeds the 5MB limit. Please upload a smaller file.",
         );
         setModalShow(true);
         return;
       }
 
-      // Set the preview URL and file for upload
-      setNewImage(file);
-      setImagePreview(URL.createObjectURL(file)); // Set the preview URL
-
+      // Set the preview URL and upload the file
+      setImagePreview(URL.createObjectURL(file));
       const formData = new FormData();
       formData.append("image", file);
 
@@ -129,7 +126,7 @@ const BankDetails = () => {
           {
             method: "POST",
             body: formData,
-          }
+          },
         );
 
         if (!response.ok) {
@@ -137,10 +134,13 @@ const BankDetails = () => {
         }
 
         const data = await response.json();
-        setNewUserInfo({
-          ...newUserInfo,
-          imageUrl: data.data.url,
-        });
+        const newImageUrl = data.data.url;
+
+        // Update formData with the new image URL
+        setFormData((prevData) => ({
+          ...prevData,
+          imageUrl: newImageUrl,
+        }));
       } catch (error) {
         console.error("Error uploading image:", error);
         setModalTitle("Error");
@@ -212,7 +212,7 @@ const BankDetails = () => {
                   />
                 </Form.Group>
 
-                <Form.Group controlId="formBankPaymentDue" className="mb-3">
+                {/* <Form.Group controlId="formBankPaymentDue" className="mb-3">
                   <Form.Label>মোট বাকি:</Form.Label>
                   <Form.Control
                     type="text"
@@ -221,18 +221,18 @@ const BankDetails = () => {
                     onChange={handleInputChange}
                     readOnly={!isEditable}
                   />
-                </Form.Group>
+                </Form.Group> */}
               </Col>
 
               <Col md={6} className="text-center">
                 <div className="bank-image-container">
                   <img
-                    src={imagePreview || formData.imageUrl} // Use imagePreview if available, else use original URL
+                    src={imagePreview || formData.imageUrl}
                     alt="Bank"
                     className="bank-image"
                   />
                 </div>
-                {isEditable && ( // Conditionally render the file input
+                {isEditable && (
                   <Form.Group controlId="formBankImage" className="mt-3">
                     <Form.Label>নতুন ছবি আপলোড করুন:</Form.Label>
                     <Form.Control type="file" onChange={handleImageChange} />

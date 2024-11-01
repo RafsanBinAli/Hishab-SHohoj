@@ -30,7 +30,7 @@ const ShopDetails = () => {
       setError(null);
       try {
         const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/shops/${id}`
+          `${process.env.REACT_APP_BACKEND_URL}/shops/${id}`,
         );
         if (!response.ok) {
           throw new Error("Failed to fetch shop details");
@@ -68,7 +68,7 @@ const ShopDetails = () => {
       if (file.size > maxSize) {
         setModalTitle("File Too Large");
         setModalMessage(
-          "The file size exceeds the 5MB limit. Please upload a smaller file."
+          "The file size exceeds the 5MB limit. Please upload a smaller file.",
         );
         setModalShow(true);
         return;
@@ -87,7 +87,7 @@ const ShopDetails = () => {
           {
             method: "POST",
             body: formData,
-          }
+          },
         );
 
         if (!response.ok) {
@@ -95,10 +95,10 @@ const ShopDetails = () => {
         }
 
         const data = await response.json();
-        setNewUserInfo({
-          ...newUserInfo,
+        setNewUserInfo((prev) => ({
+          ...prev,
           imageUrl: data.data.url,
-        });
+        }));
       } catch (error) {
         console.error("Error uploading image:", error);
         setModalTitle("Error");
@@ -112,6 +112,11 @@ const ShopDetails = () => {
     setLoading(true);
     setError(null);
     try {
+      const updatedData = {
+        ...formData,
+        imageUrl: newUserInfo.imageUrl || formData.imageUrl,
+      };
+
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/shops/${id}`,
         {
@@ -119,8 +124,8 @@ const ShopDetails = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(formData),
-        }
+          body: JSON.stringify(updatedData),
+        },
       );
 
       if (!response.ok) {
@@ -214,22 +219,17 @@ const ShopDetails = () => {
               <Col md={6} className="text-center">
                 <div className="shop-image-container">
                   <img
-                    src={
-                      newImage
-                        ? imagePreview // If new image is selected, show preview
-                        : formData.imageUrl // Otherwise, show saved image
-                    }
-                    alt="Shop"
-                    className="Shop-image"
+                    src={imagePreview || formData.imageUrl}
+                    alt="shop"
+                    className="shop-image"
                   />
-
-                  {isEditable && (
-                    <Form.Group controlId="formShopImage" className="mt-3">
-                      <Form.Label>নতুন ছবি আপলোড করুন:</Form.Label>
-                      <Form.Control type="file" onChange={handleImageChange} />
-                    </Form.Group>
-                  )}
                 </div>
+                {isEditable && (
+                  <Form.Group controlId="formShopImage" className="mt-3">
+                    <Form.Label>নতুন ছবি আপলোড করুন:</Form.Label>
+                    <Form.Control type="file" onChange={handleImageChange} />
+                  </Form.Group>
+                )}
               </Col>
             </Row>
 
@@ -253,6 +253,7 @@ const ShopDetails = () => {
         onHide={() => setModalShow(false)}
         title={modalTitle}
         message={modalMessage}
+        onConfirm={() => setModalShow(false)}
       />
     </div>
   );
