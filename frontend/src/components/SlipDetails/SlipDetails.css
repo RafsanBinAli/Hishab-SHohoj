@@ -5,18 +5,43 @@
   font-family: Arial, sans-serif;
 }
 
-.slip-details-heading {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
 .date-picker-container {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 10px;
   margin-bottom: 20px;
-  position: relative;
-  margin-left: 80px;
+}
+
+.arrow-button {
+  font-size: 24px;
+  padding: 8px;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.arrow-button:hover {
+  color: #007bff; /* Optional: Add hover effect */
+}
+
+label {
+  margin-bottom: 0;
+}
+
+.date-picker {
+  padding: 8px;
+  font-size: 16px;
+  text-align: center;
+  width: auto;
+}
+
+.slip-details-heading {
+  text-align: center;
+  margin-bottom: 20px;
 }
 
 .date-title {
@@ -92,7 +117,7 @@
 
 .total-details p {
   margin: 0;
-  font-family: 'NikoshGrameen', sans-serif; /* Ensure the Bangla font is applied */
+  font-family: "NikoshGrameen", sans-serif; /* Ensure the Bangla font is applied */
   font-weight: bold;
 }
 

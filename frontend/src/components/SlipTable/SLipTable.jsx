@@ -25,7 +25,7 @@ const SlipTable = () => {
       if (shops.length === 0) {
         setModalTitle("ত্রুটি");
         setModalMessage(
-          "দোকানের বিস্তারিত তথ্য আনতে ব্যর্থ হয়েছে। আবার চেষ্টা করুন।"
+          "দোকানের বিস্তারিত তথ্য আনতে ব্যর্থ হয়েছে। আবার চেষ্টা করুন।",
         );
         setModalShow(true);
       } else {
@@ -41,7 +41,7 @@ const SlipTable = () => {
       setLoading(true);
       try {
         const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/slip/${selectedDate}`
+          `${process.env.REACT_APP_BACKEND_URL}/slip/${selectedDate}`,
         );
         if (response.status === 404) {
           setNoInfo(true);
@@ -78,6 +78,12 @@ const SlipTable = () => {
     }));
   };
 
+  const handleDateChange = (direction) => {
+    const newDate = new Date(selectedDate);
+    newDate.setDate(newDate.getDate() + (direction === "next" ? 1 : -1));
+    setSelectedDate(newDate.toISOString().slice(0, 10));
+  };
+
   const handleSave = async (slip) => {
     if (slip.paidAmount === slip.totalAmount) {
       setModalTitle("Message");
@@ -103,7 +109,7 @@ const SlipTable = () => {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ shopName: slip.shopName, paidAmount }),
-        }
+        },
       );
       if (!updateShopResponse.ok)
         throw new Error("দোকানের মোট বাকি আপডেট করতে ব্যর্থ হয়েছে");
@@ -114,7 +120,7 @@ const SlipTable = () => {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ slipId: slip._id, paidAmount, edit: true }),
-        }
+        },
       );
       if (!updatePurchaseResponse.ok)
         throw new Error("স্লিপের বাকি আপডেট করতে ব্যর্থ হয়েছে");
@@ -125,7 +131,7 @@ const SlipTable = () => {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ shopName: slip.shopName, amount: paidAmount }),
-        }
+        },
       );
       if (!transactionResponse.ok)
         throw new Error("দোকানের পেমেন্ট সেট করতে ত্রুটি হয়েছে");
@@ -160,7 +166,13 @@ const SlipTable = () => {
       <h2 className="table-title text-center my-4 py-2 font-weight-bold">
         দোকানের আজকের হিসাব
       </h2>
-      <div className="text-center mb-4">
+      <div className="date-picker-container">
+        <button
+          className="arrow-button"
+          onClick={() => handleDateChange("previous")}
+        >
+          &#9664;
+        </button>
         <label htmlFor="datePicker" className="font-weight-bold">
           তারিখ:
         </label>
@@ -169,8 +181,14 @@ const SlipTable = () => {
           id="datePicker"
           value={selectedDate}
           onChange={(e) => setSelectedDate(e.target.value)}
-          className="ml-2"
+          className="date-picker"
         />
+        <button
+          className="arrow-button"
+          onClick={() => handleDateChange("next")}
+        >
+          &#9654;
+        </button>
       </div>
       {loading ? (
         <Loader />
@@ -202,7 +220,7 @@ const SlipTable = () => {
                       <td>
                         {Math.max(
                           0,
-                          getTotalDue(slip.shopName) - slip.totalAmount
+                          getTotalDue(slip.shopName) - slip.totalAmount,
                         )}
                       </td>
                       <td>{getTotalDue(slip.shopName)}</td>
