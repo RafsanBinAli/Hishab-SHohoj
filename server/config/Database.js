@@ -7,7 +7,6 @@ let isConnected = false;
 
 const connectDB = async () => {
   if (isConnected) {
-    // logger.info('MongoDB is already connected');
     console.log("Mongo Atlas connected!");
     return;
   }
@@ -18,7 +17,6 @@ const connectDB = async () => {
       dbName: process.env.DB_NAME,
     });
     isConnected = true;
-    // logger.info('MongoDB connected successfully');
     console.log("Mongo Atlas connected!");
 
     // Dynamically require all models
@@ -28,10 +26,8 @@ const connectDB = async () => {
         require(path.join(modelsPath, file));
       }
     });
-    // logger.info('Mongoose models initialized');
     console.log("Mongoose models initialized");
   } catch (err) {
-    // logger.error('MongoDB connection error:', err);
     console.log("MongoDB connection error:", err);
     process.exit(1);
   }
@@ -39,13 +35,11 @@ const connectDB = async () => {
 
 mongoose.connection.on("disconnected", () => {
   isConnected = false;
-  //   logger.warn('MongoDB disconnected');
   console.log("Mongodb disconnected");
 });
 
 mongoose.connection.on("reconnected", () => {
   isConnected = true;
-  //   logger.info('MongoDB reconnected');
   console.log("Mongodb reconnected");
 });
 

@@ -1,5 +1,6 @@
 const Bank = require("../models/Bank");
 const Debt = require("../models/DebtHistory");
+
 // Create a new bank
 exports.createBank = async (req, res) => {
   const { bankName, village, imageUrl, phoneNumber } = req.body;
@@ -18,7 +19,7 @@ exports.createBank = async (req, res) => {
       imageUrl,
       phoneNumber,
       status: true,
-    }); // Default status to true
+    }); 
 
     await newBank.save();
 
@@ -46,7 +47,7 @@ exports.findBankByName = async (req, res) => {
 // Fetch all banks
 exports.showAllBanks = async (req, res) => {
   try {
-    const banks = await Bank.find(); // Fetch all banks regardless of status
+    const banks = await Bank.find(); 
     res.status(200).json(banks);
   } catch (err) {
     console.error(err);
@@ -139,47 +140,30 @@ exports.getOwnDebt = async (req, res) => {
   }
 };
 
-// Find a bank by its ID
 exports.findBankById = async (req, res) => {
-  const { id } = req.params;
-  console.log(`Attempting to find bank with id: ${id}`); // Add this log
   try {
-    const bank = await Bank.findById(id);
-    if (!bank) {
-      console.log(`No bank found with id: ${id}`); // Add this log
-      return res.status(404).json({ message: "Bank not found" });
-    }
-    console.log(`Found bank: ${JSON.stringify(bank)}`); // Add this log
-    res.status(200).json(bank);
+    const bank = await Bank.findById(req.params.id);
+    
+    if (!bank) return res.status(404).json({ message: "Bank not found" });
+    
+    return res.status(200).json(bank);
   } catch (err) {
-    console.error(`Error finding bank: ${err}`);
-    res.status(500).json({ message: "Server Error" });
+    return res.status(500).json({ message: "Server Error" });
   }
 };
 
-// Update a bank by its ID
 exports.updateBankById = async (req, res) => {
-  const { id } = req.params; // Get bank ID from route parameters
-  const { bankName, village, imageUrl, phoneNumber } = req.body;
-
   try {
-    const bank = await Bank.findById(id);
-    if (!bank) {
-      return res.status(404).json({ message: "Bank not found" });
-    }
+    const bank = await Bank.findByIdAndUpdate(
+      req.params.id,
+      { $set: req.body },
+      { new: true }
+    );
 
-    // Update the bank details
-    bank.bankName = bankName !== undefined ? bankName : bank.bankName;
-    bank.village = village !== undefined ? village : bank.village;
-    bank.imageUrl = imageUrl !== undefined ? imageUrl : bank.imageUrl;
-    bank.phoneNumber =
-      phoneNumber !== undefined ? phoneNumber : bank.phoneNumber;
-
-    await bank.save();
-
-    res.status(200).json(bank);
+    if (!bank) return res.status(404).json({ message: "Bank not found" });
+    
+    return res.status(200).json(bank);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Server Error" });
+    return res.status(500).json({ message: "Server Error" });
   }
 };
