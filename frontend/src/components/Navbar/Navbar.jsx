@@ -83,7 +83,7 @@ const Navbar = ({ setIsUserLoggedIn }) => {
                 to="/banks"
                 onClick={() => setIsOpen(false)}
               >
-                Bank
+                ব্যাংক
               </Link>
             </li>
             <li className="nav-item">

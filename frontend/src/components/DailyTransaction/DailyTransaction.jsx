@@ -12,7 +12,7 @@ const DailyTransaction = () => {
 
   const dateNow = new Date();
   const normalizedDate = new Date(
-    Date.UTC(dateNow.getFullYear(), dateNow.getMonth(), dateNow.getDate())
+    Date.UTC(dateNow.getFullYear(), dateNow.getMonth(), dateNow.getDate()),
   );
   const formatDate = (date) => {
     const year = date.getFullYear();
@@ -27,7 +27,7 @@ const DailyTransaction = () => {
     const fetchTransactionDetails = async () => {
       try {
         const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/transaction/get-daily/${selectedDate}`
+          `${process.env.REACT_APP_BACKEND_URL}/transaction/get-daily/${selectedDate}`,
         );
         if (!response.ok) {
           throw new Error("Unable to fetch data");
@@ -45,10 +45,22 @@ const DailyTransaction = () => {
 
   const isToday = selectedDate === formatDate(normalizedDate);
 
+  const handleDateChange = (direction) => {
+    const newDate = new Date(selectedDate);
+    newDate.setDate(newDate.getDate() + (direction === "next" ? 1 : -1));
+    setSelectedDate(newDate.toISOString().slice(0, 10));
+  };
+
   return (
     <div className="container-dailyTransaction mt-4">
       <h2 className="text-center my-4 py-2 font-weight-bold">আজকের হিসাব</h2>
-      <div className="text-center mb-4">
+      <div className="date-picker-container">
+        <button
+          className="arrow-button"
+          onClick={() => handleDateChange("previous")}
+        >
+          &#9664;
+        </button>
         <label htmlFor="datePicker" className="font-weight-bold">
           তারিখ:
         </label>
@@ -57,8 +69,14 @@ const DailyTransaction = () => {
           id="datePicker"
           value={selectedDate}
           onChange={(e) => setSelectedDate(e.target.value)}
-          className="ml-2"
+          className="date-picker"
         />
+        <button
+          className="arrow-button"
+          onClick={() => handleDateChange("next")}
+        >
+          &#9654;
+        </button>
       </div>
 
       {/* Conditionally render TransactionButton only for today's date */}
@@ -90,7 +108,6 @@ const DailyTransaction = () => {
                 title: "নিজের ধার",
                 transactionData: transactionDetails?.todayDebt || [],
               },
-              
             ]}
           />
         </div>
@@ -118,7 +135,8 @@ const DailyTransaction = () => {
               },
               {
                 title: "Unpaid Deals",
-                transactionData: transactionDetails?.debit?.farmersPaymentLater || [],
+                transactionData:
+                  transactionDetails?.debit?.farmersPaymentLater || [],
               },
             ]}
           />

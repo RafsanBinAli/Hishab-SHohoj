@@ -23,6 +23,8 @@ const CardDetail = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [modalMessage, setModalMessage] = useState("");
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [rowToDelete, setRowToDelete] = useState(null);
 
   useEffect(() => {
     const initializeData = async () => {
@@ -39,6 +41,9 @@ const CardDetail = () => {
   }, []);
 
   const handleInputChange = (index, event) => {
+    if (formRows.length > 1 && index !== formRows.length - 1) {
+      return; // Skip input changes for non-editable rows
+    }
     const { name, value } = event.target;
     const newFormRows = [...formRows];
     newFormRows[index][name] = value;
@@ -60,7 +65,26 @@ const CardDetail = () => {
   };
 
   const handleRemoveRow = (index) => {
-    setFormRows((prevRows) => prevRows.filter((_, i) => i !== index));
+    if (formRows.length > 1) {
+      setRowToDelete(index);
+      setShowDeleteConfirmation(true);
+    }
+  };
+
+  const confirmDeleteRow = () => {
+    if (rowToDelete !== null) {
+      setFormRows((prevRows) => {
+        const newRows = prevRows.filter((_, i) => i !== rowToDelete);
+        if (newRows.length === 1) {
+          // Set the farmer name of the last remaining row to the previous selection
+          const remainingRow = newRows[0];
+          remainingRow.farmerName = formRows[rowToDelete].farmerName;
+          return [remainingRow];
+        }
+        return newRows;
+      });
+      setShowDeleteConfirmation(false);
+    }
   };
 
   const handleSave = async () => {
@@ -75,7 +99,8 @@ const CardDetail = () => {
       )
     ) {
       setModalTitle("Incomplete Fields");
-      setModalMessage("Please fill out all fields before saving.");
+      setModalMessage("সেভ করার আগে সব ফিল্ড পূরণ করুন।");
+
       setModalVisible(true);
       return;
     }
@@ -95,7 +120,7 @@ const CardDetail = () => {
         (acc, purchase) => acc + purchase.total,
         0
       );
-      console.log(totalUnpaidDealsPrice)
+      console.log(totalUnpaidDealsPrice);
 
       let id = individualCardDetails?._id;
       if (id === undefined) {
@@ -235,7 +260,7 @@ const CardDetail = () => {
     } catch (error) {
       console.error("Error in handleSave:", error);
       setModalTitle("Error");
-      setModalMessage("An error occurred during save operation.");
+      setModalMessage("সেভ করার সময় একটি ত্রুটি ঘটেছে।");
       setModalVisible(true);
     } finally {
       setIsSaving(false);
@@ -260,6 +285,11 @@ const CardDetail = () => {
       (card) => card.farmerName === value
     );
     setIndividualCardDetails(selectedCard);
+
+    // Ensure the selected farmer's data is shown in all remaining rows
+    if (formRows.length === 1) {
+      setFormRows([{ ...newFormRows[0], farmerName: value }]);
+    }
   };
 
   return (
@@ -275,7 +305,7 @@ const CardDetail = () => {
               <th>দোকানের নাম</th>
               <th>দ্রব্যের নাম</th>
               <th>পরিমাণ (কেজি)</th>
-              <th>দাম ( টাকা/কেজি )</th>
+              <th>দাম (টাকা/কেজি )</th>
               <th></th>
             </tr>
           </thead>
@@ -289,8 +319,9 @@ const CardDetail = () => {
                     name="farmerName"
                     value={row.farmerName || ""}
                     onChange={(e) => handleFarmerChange(index, e)}
+                    disabled={formRows.length > 1}
                   >
-                    <option value="">সিলেক্ট Farmer</option>
+                    <option value="">সিলেক্ট কৃষক</option>
 
                     {farmers.map((farmer, idx) => (
                       <option key={idx} value={farmer.name}>
@@ -354,10 +385,11 @@ const CardDetail = () => {
                       নতুন সারি
                     </button>
                   )}
-                  {index > 0 && (
+                  {formRows.length > 1 && (
                     <button
                       className="btn btn-danger"
                       onClick={() => handleRemoveRow(index)}
+                      disabled={formRows.length === 1 && index === 0}
                     >
                       Remove
                     </button>
@@ -374,6 +406,7 @@ const CardDetail = () => {
         >
           {isSaving ? "Saving..." : "সেভ করুন"}
         </button>
+        {isSaving && <div className="overlay"></div>}
       </div>
 
       <FarmerSlipDetails
@@ -388,6 +421,14 @@ const CardDetail = () => {
         title={modalTitle}
         message={modalMessage}
         onConfirm={() => setModalVisible(false)}
+      />
+
+      <MessageModal
+        show={showDeleteConfirmation}
+        onHide={() => setShowDeleteConfirmation(false)}
+        title="Delete"
+        message="আপনি কি নিশ্চিত যে আপনি এই সারিটি মুছে ফেলতে চান?"
+        onConfirm={confirmDeleteRow}
       />
     </div>
   );

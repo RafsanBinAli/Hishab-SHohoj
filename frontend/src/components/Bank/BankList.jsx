@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Loader from "../Loader/Loader";
+import handleDownload from "../../functions/handleDownload"; // Import the download function
+import { useNavigate } from "react-router-dom";
 
 const BankList = ({ banks, showDebtHistory = false }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -7,6 +9,7 @@ const BankList = ({ banks, showDebtHistory = false }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(30);
   const slipRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (Array.isArray(banks) && banks.length > 0) {
@@ -85,18 +88,40 @@ const BankList = ({ banks, showDebtHistory = false }) => {
     startIndex + itemsPerPage
   );
 
+  // Calculate total payment due for current page
+  const totalPaymentDue = currentBanks.reduce(
+    (acc, bank) => acc + bank.paymentDue,
+    0
+  );
+
+  // Function to handle PDF download
+  const downloadPdf = () => {
+    handleDownload(slipRef, "Bank List"); // Pass the heading as the title
+  };
+
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
+  };
+
+  const handleDetailsClick = (id) => {
+    navigate(`/banks/${id}`); // Navigate to the FarmerDetails page
   };
 
   return (
     <div className="card">
       <div className="card-body">
-        <h2 className="card-title mb-4">Bank লিস্ট</h2>
+        <div className="d-flex justify-content-between align-items-center mb-4">
+          <div className="flex-grow-1 d-flex justify-content-center">
+            <h2 className="card-title">ব্যাংক লিস্ট</h2>
+          </div>
+          <button onClick={downloadPdf} className="btn btn-primary">
+            Download PDF
+          </button>
+        </div>
         <input
           type="text"
           className="form-control mb-3"
-          placeholder="Bank নাম দিয়ে সার্চ করুন"
+          placeholder="ব্যাংক নাম দিয়ে সার্চ করুন"
           value={searchTerm}
           onChange={handleSearch}
         />
@@ -109,11 +134,12 @@ const BankList = ({ banks, showDebtHistory = false }) => {
                 <thead>
                   <tr>
                     <th>#</th>
-                    <th>Bank নাম</th>
+                    <th>ব্যাংক নাম</th>
                     <th>ঠিকানা</th>
                     <th>মোবাইল নম্বর</th>
-                    <th>Payment Due</th>
+                    <th>বাকি</th>
                     <th>ছবি</th>
+                    <th>Details</th> {/* Add Details column */}
                     {showDebtHistory && <th>অ্যাকশন</th>}
                   </tr>
                 </thead>
@@ -135,6 +161,14 @@ const BankList = ({ banks, showDebtHistory = false }) => {
                           />
                         )}
                       </td>
+                      <td>
+                        <button
+                          className="btn btn-info"
+                          onClick={() => handleDetailsClick(bank._id)} // Handle details click
+                        >
+                          Details
+                        </button>
+                      </td>
                       {showDebtHistory && (
                         <td>
                           <button
@@ -147,6 +181,21 @@ const BankList = ({ banks, showDebtHistory = false }) => {
                       )}
                     </tr>
                   ))}
+                  {/* Total Balance Row */}
+                  <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td
+                      colSpan={showDebtHistory ? 7 : 0}
+                      className="text-end font-weight-bold"
+                    >
+                      মোট বাকি:
+                    </td>
+                    <td></td>
+                    <td className="font-weight-bold">{totalPaymentDue}</td>
+                    <td></td>
+                  </tr>
                 </tbody>
               </table>
             </>

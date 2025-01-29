@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate from react-router-dom
 import Loader from "../Loader/Loader";
 import handleDownload from "../../functions/handleDownload"; // Import the download function
 
@@ -8,6 +9,7 @@ const FarmerList = ({ farmers }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(30);
   const slipRef = useRef(null);
+  const navigate = useNavigate(); // Initialize useNavigate hook
 
   useEffect(() => {
     if (farmers.length > 0) {
@@ -49,6 +51,12 @@ const FarmerList = ({ farmers }) => {
     startIndex + itemsPerPage
   );
 
+  // Calculate total balance for current page
+  const totalDue = currentFarmers.reduce(
+    (acc, farmer) => acc + farmer.totalDue,
+    0
+  );
+
   // Example call to generate a PDF with a custom title
   const downloadPdf = () => {
     handleDownload(slipRef, "Farmer List"); // Pass the heading as the title
@@ -56,6 +64,10 @@ const FarmerList = ({ farmers }) => {
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
+  };
+
+  const handleDetailsClick = (id) => {
+    navigate(`/farmers/${id}`); // Navigate to the FarmerDetails page
   };
 
   return (
@@ -88,14 +100,15 @@ const FarmerList = ({ farmers }) => {
                       <th>#</th>
                       <th className="text-center">কৃষকের নাম</th>
                       <th>ঠিকানা</th>
-                      <th>মোবাইল নম্বর</th>
+                      <th>মোবাইল নাম্বার</th>
                       <th>বাকি</th>
                       <th>ছবি</th>
+                      <th>Details</th> {/* New column for Details */}
                     </tr>
                   </thead>
                   <tbody>
                     {currentFarmers.map((farmer, index) => (
-                      <tr key={index}>
+                      <tr key={farmer._id}>
                         <td>{startIndex + index + 1}</td>
                         <td className="text-center">{farmer.name}</td>
                         <td>{farmer.village}</td>
@@ -111,8 +124,26 @@ const FarmerList = ({ farmers }) => {
                             />
                           )}
                         </td>
+                        <td>
+                          <button
+                            className="btn btn-info"
+                            onClick={() => handleDetailsClick(farmer._id)}
+                          >
+                            Details
+                          </button>
+                        </td>
                       </tr>
                     ))}
+                    {/* Total Balance Row */}
+                    <tr>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td className="text-end font-weight-bold">মোট বাকি:</td>
+                      <td className="font-weight-bold">{totalDue}</td>
+                      <td></td>
+                      <td></td>
+                    </tr>
                   </tbody>
                 </table>
               </>

@@ -49,6 +49,10 @@
   overflow-x: auto; /* Allow horizontal scrolling if content overflows */
 }
 
+select.form-control:not([size]):not([multiple]) {
+  height: calc(2.25rem + 8px);
+}
+
 .container-card-details .flex {
   display: flex;
   flex-direction: column;
@@ -72,6 +76,17 @@
   height: 100%;
   margin-left: 20px; /* Space between divider and content */
 }
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7); /* Dark overlay */
+  z-index: 999; /* Ensure it appears above everything else */
+}
+
 
 /* FarmerDetails specific styling */
 .farmer-details {

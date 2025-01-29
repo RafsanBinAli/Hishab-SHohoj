@@ -17,6 +17,9 @@ const Farmer = () => {
   const [modalMessage, setModalMessage] = useState("");
   const [redirectTo, setRedirectTo] = useState(null);
 
+  // State for overlay
+  const [showOverlay, setShowOverlay] = useState(false);
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -72,6 +75,8 @@ const Farmer = () => {
   const handleAddUser = async () => {
     if (!validateInputs()) return;
 
+    setShowOverlay(true); // Show overlay during registration
+
     try {
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/create-farmer`,
@@ -97,6 +102,8 @@ const Farmer = () => {
       setModalTitle("Error");
       setModalMessage(error.message);
       setModalShow(true);
+    } finally {
+      setShowOverlay(false); // Hide overlay when registration completes
     }
   };
 
@@ -113,7 +120,9 @@ const Farmer = () => {
       }
       if (file.size > maxSize) {
         setModalTitle("File Too Large");
-        setModalMessage("The file size exceeds the 5MB limit. Please upload a smaller file.");
+        setModalMessage(
+          "The file size exceeds the 5MB limit. Please upload a smaller file."
+        );
         setModalShow(true);
         return;
       }
@@ -159,6 +168,7 @@ const Farmer = () => {
 
   return (
     <div className="container mt-4">
+      {showOverlay && <div className="overlay"></div>}
       <div className="d-flex justify-content-center mb-4">
         <div className="card2">
           <div className="card-body2">
@@ -187,7 +197,7 @@ const Farmer = () => {
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="village">গ্রাম</label>
+                <label htmlFor="village">ঠিকানা</label>
                 <input
                   type="text"
                   className="form-control"

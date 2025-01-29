@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
-import { format } from "date-fns";
+import { format, addDays, subDays } from "date-fns";
 import Loader from "../Loader/Loader";
 import { getCurrentDate } from "../../functions/getCurrentDate";
 import handleDownload from "../../functions/handleDownload";
@@ -18,9 +18,9 @@ const SlipDetails = () => {
     const fetchSlipDetails = async () => {
       setLoading(true);
       try {
-        const formattedDate = format(new Date(selectedDate), "yyyy-MM-dd"); // Format date as yyyy-MM-dd
+        const formattedDate = format(new Date(selectedDate), "yyyy-MM-dd");
         const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/slip-details/${formattedDate}?shopName=${shopName}`
+          `${process.env.REACT_APP_BACKEND_URL}/slip-details/${formattedDate}?shopName=${shopName}`,
         );
         if (!response.ok) {
           throw new Error("Failed to fetch slip details");
@@ -41,13 +41,12 @@ const SlipDetails = () => {
     const getShopDetails = async () => {
       try {
         const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/get-shop-details/${shopName}`
+          `${process.env.REACT_APP_BACKEND_URL}/get-shop-details/${shopName}`,
         );
         if (!response.ok) {
           throw new Error("Failed to fetch shop details");
         }
         const data = await response.json();
-        console.log(data);
         setShopDetails(data);
       } catch (error) {
         console.error("Error fetching shop details:", error);
@@ -60,7 +59,18 @@ const SlipDetails = () => {
     setSelectedDate(event.target.value);
   };
 
-  // Example call to generate a PDF with a custom title
+  const handleNextDate = () => {
+    setSelectedDate((prevDate) =>
+      format(addDays(new Date(prevDate), 1), "yyyy-MM-dd"),
+    );
+  };
+
+  const handlePreviousDate = () => {
+    setSelectedDate((prevDate) =>
+      format(subDays(new Date(prevDate), 1), "yyyy-MM-dd"),
+    );
+  };
+
   const downloadPdf = () => {
     handleDownload(slipRef, "Shop Slip");
   };
@@ -68,7 +78,10 @@ const SlipDetails = () => {
   return (
     <div className="slip-details-container">
       <h2 className="slip-details-heading font-weight-bold">হিসাবের বিবরণ</h2>
-      <div className="text-center mb-4">
+      <div className="text-center date-picker-container">
+        <button onClick={handlePreviousDate} className="arrow-button">
+          &#9664;
+        </button>
         <label htmlFor="datePicker" className="font-weight-bold">
           তারিখ:
         </label>
@@ -78,6 +91,9 @@ const SlipDetails = () => {
           onChange={handleDateChange}
           className="date-picker"
         />
+        <button onClick={handleNextDate} className="arrow-button">
+          &#9654;
+        </button>
       </div>
       {loading ? (
         <Loader />
@@ -129,7 +145,7 @@ const SlipDetails = () => {
                     <td>চূড়ান্ত মোট </td>
                     <td>
                       {Math.abs(
-                        shopDetails?.totalDue - slipDetails?.totalAmount
+                        shopDetails?.totalDue - slipDetails?.totalAmount,
                       ) + slipDetails?.totalAmount}{" "}
                       টাকা
                     </td>

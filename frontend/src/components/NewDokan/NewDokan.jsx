@@ -19,6 +19,9 @@ const NewDokan = () => {
   const [redirectTo, setRedirectTo] = useState(null);
   const [errors, setErrors] = useState({});
 
+  // State for overlay
+  const [showOverlay, setShowOverlay] = useState(false);
+
   const handleInputChange = (e) => {
     setFormData({
       ...formData,
@@ -77,6 +80,7 @@ const NewDokan = () => {
       }
     }
   };
+
   useEffect(() => {
     const loadShops = async () => {
       const data = await fetchShops();
@@ -92,6 +96,8 @@ const NewDokan = () => {
     if (!validateForm()) {
       return;
     }
+
+    setShowOverlay(true); // Show overlay during submission
 
     try {
       const response = await fetch(
@@ -128,6 +134,8 @@ const NewDokan = () => {
       setModalTitle("Error");
       setModalMessage(error.message);
       setModalShow(true);
+    } finally {
+      setShowOverlay(false); // Hide overlay when submission completes
     }
   };
 
@@ -138,9 +146,9 @@ const NewDokan = () => {
     }
   };
 
-
   return (
     <div className="container mt-4 p-2">
+      {showOverlay && <div className="overlay"></div>}
       <div className="d-flex justify-content-center mb-4">
         <div className="card2">
           <div className="card-body2">
@@ -186,7 +194,7 @@ const NewDokan = () => {
               </div>
               <div className="mb-3">
                 <label htmlFor="phoneNumber" className="form-label">
-                  মোবাইল নম্বর
+                  মোবাইল নাম্বার
                 </label>
                 <input
                   type="text"

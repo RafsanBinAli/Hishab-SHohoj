@@ -10,6 +10,7 @@ const FarmerSlipDetailsPaidUnpaid = () => {
   const { id } = useParams();
   const [totalAmount, setTotalAmount] = useState(0);
   const [finalAmount, setFinalAmount] = useState(0);
+  const [totalQuantity, setTotalQuantity] = useState(0);
   const [slipDetails, setSlipDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [commission, setCommission] = useState(0);
@@ -21,13 +22,12 @@ const FarmerSlipDetailsPaidUnpaid = () => {
   const [fixedCommission, setFixedCommission] = useState(0);
   const [fixedKhajna, setFixedKhajna] = useState(0);
 
-  
   useEffect(() => {
     const fetchDeal = async () => {
       setLoading(true);
       try {
         const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/get-card-details/${id}`
+          `${process.env.REACT_APP_BACKEND_URL}/get-card-details/${id}`,
         );
         if (!response.ok) throw new Error("Failed to fetch deal");
         const data = await response.json();
@@ -40,7 +40,7 @@ const FarmerSlipDetailsPaidUnpaid = () => {
         console.error("Error fetching deal:", error);
         setModalTitle("Error");
         setModalMessage(
-          "স্লিপের বিস্তারিত আনতে ব্যর্থ হয়েছে। আবার চেষ্টা করুন।"
+          "স্লিপের বিস্তারিত আনতে ব্যর্থ হয়েছে। আবার চেষ্টা করুন।",
         );
         setModalShow(true);
       } finally {
@@ -55,9 +55,14 @@ const FarmerSlipDetailsPaidUnpaid = () => {
     if (slipDetails) {
       const newTotalAmount = slipDetails.purchases.reduce(
         (acc, { quantity, price }) => acc + quantity * price,
-        0
+        0,
+      );
+      const newTotalQuantity = slipDetails.purchases.reduce(
+        (acc, { quantity }) => acc + quantity,
+        0,
       );
       setTotalAmount(newTotalAmount);
+      setTotalQuantity(newTotalQuantity); // Set total quantity
       setFinalAmount(newTotalAmount - commission - khajna);
     }
   }, [slipDetails, commission, khajna]);
@@ -94,7 +99,7 @@ const FarmerSlipDetailsPaidUnpaid = () => {
             name: slipDetails?.farmerName,
             amount: finalAmount,
           }),
-        }
+        },
       );
 
       if (!response.ok) throw new Error("Failed to save daily transaction");
@@ -127,7 +132,7 @@ const FarmerSlipDetailsPaidUnpaid = () => {
             commission: commission,
             totalAmountToBeGiven: finalAmount,
           }),
-        }
+        },
       );
 
       if (!updateResponse.ok) throw new Error("Error updating card details");
@@ -143,7 +148,7 @@ const FarmerSlipDetailsPaidUnpaid = () => {
       console.error("Error occurred:", error);
       setModalTitle("Error");
       setModalMessage(
-        "লেনদেন সংরক্ষণ অথবা আপডেট করতে ত্রুটি ঘটেছে। আবার চেষ্টা করুন।"
+        "লেনদেন সংরক্ষণ অথবা আপডেট করতে ত্রুটি ঘটেছে। আবার চেষ্টা করুন।",
       );
     } finally {
       setModalShow(true);
@@ -194,13 +199,19 @@ const FarmerSlipDetailsPaidUnpaid = () => {
                         <td>{price}</td>
                         <td>{quantity * price}</td>
                       </tr>
-                    )
+                    ),
                   )}
                   <tr>
                     <td colSpan="4" className="text-right font-weight-bold">
                       মোট টাকা
                     </td>
                     <td>{totalAmount} টাকা</td>
+                  </tr>
+                  <tr>
+                    <td colSpan="4" className="text-right font-weight-bold">
+                      মোট পরিমাণ
+                    </td>
+                    <td>{totalQuantity} কেজি</td>
                   </tr>
                   <tr>
                     <td colSpan="4" className="text-right font-weight-bold">
