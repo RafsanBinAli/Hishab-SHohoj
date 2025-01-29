@@ -20,7 +20,7 @@ exports.createFarmer = async (req, res) => {
 };
 
 exports.findFarmerByName = async (req, res) => {
-  const { name } = req.params; 
+  const { name } = req.params;
   try {
     const farmer = await Farmer.findOne({ name });
     if (!farmer) {
@@ -73,6 +73,7 @@ exports.updateFarmer = async (req, res) => {
       farmer.lastEditedBy.push(action);
     } else if (newDhar) {
       farmer.totalDue += parseFloat(newDhar || 0);
+      console.log(farmer.totalDue)
       due = farmer.totalDue - farmer.totalPaid;
 
       const action = {
@@ -84,9 +85,9 @@ exports.updateFarmer = async (req, res) => {
       };
       farmer.lastEditedBy.push(action);
     }
-
+    console.log("Updated farmer data before save:", farmer); 
     await farmer.save();
-    res.json(farmer); // Return the updated farmer object
+    res.status(200).json(farmer); // Return the updated farmer object
   } catch (error) {
     console.error("Error updating farmer:", error);
     res.status(500).json({ error: "Failed to update farmer" });
