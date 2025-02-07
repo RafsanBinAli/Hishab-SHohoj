@@ -252,11 +252,11 @@ const FarmerDetails = () => {
             <div className="text-center mt-4">
               {isEditable ? (
                 <Button variant="success" onClick={handleUpdate}>
-                  আপডেট করুন
+                  Update
                 </Button>
               ) : (
                 <Button variant="primary" onClick={handleEdit}>
-                  সম্পাদনা করুন
+                  Edit
                 </Button>
               )}
             </div>
