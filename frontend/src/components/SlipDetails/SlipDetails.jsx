@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import  { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { format, addDays, subDays } from "date-fns";
 import Loader from "../Loader/Loader";

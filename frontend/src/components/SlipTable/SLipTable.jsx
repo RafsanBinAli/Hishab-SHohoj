@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import "./SlipTable.css";
 import Loader from "../Loader/Loader";
 import { getCurrentDate } from "../../functions/getCurrentDate";

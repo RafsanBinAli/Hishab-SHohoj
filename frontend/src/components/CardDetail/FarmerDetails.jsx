@@ -1,4 +1,3 @@
-import React from "react";
 import "./CardDetail.css";
 
 const FarmerDetails = ({ individualFarmerData }) => {

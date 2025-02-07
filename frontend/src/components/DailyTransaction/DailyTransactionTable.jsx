@@ -1,5 +1,4 @@
 import React from "react";
-
 const DailyTransactionTable = ({ title, data }) => {
   return (
     <div className="card">

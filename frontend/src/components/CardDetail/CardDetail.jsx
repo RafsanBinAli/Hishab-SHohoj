@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import "./CardDetail.css";
 import FarmerSlipDetails from "./FarmerSlipDetails";
 import MessageModal from "../Modal/MessageModal";
@@ -155,9 +155,6 @@ const CardDetail = () => {
         if (!transactionUnpaidResponse.ok) {
           throw new Error("Failed to create new Card!");
         }
-        const responseData = await transactionUnpaidResponse.json();
-
-        console.log("response", responseData);
       }
 
       const updateCardResponse = await fetch(
@@ -176,7 +173,7 @@ const CardDetail = () => {
       console.log("Card details updated successfully");
 
       const slipsMap = new Map();
-      const findOrCreateSlipResponses = await Promise.all(
+       await Promise.all(
         newPurchases.map(async (purchase) => {
           try {
             const response = await fetch(
@@ -207,7 +204,7 @@ const CardDetail = () => {
         })
       );
 
-      const updateSlipResponses = await Promise.all(
+       await Promise.all(
         Array.from(slipsMap.keys()).map(async (_id) => {
           try {
             const shopName = slipsMap.get(_id);

@@ -36,11 +36,11 @@ function App() {
     localStorage.getItem("isUserLoggedIn") === "true"
   );
 
-  const handleLogout = () => {
-    setIsUserLoggedIn(false);
-    localStorage.removeItem("isUserLoggedIn");
-    localStorage.removeItem("userAuthToken");
-  };
+  // const handleLogout = () => {
+  //   setIsUserLoggedIn(false);
+  //   localStorage.removeItem("isUserLoggedIn");
+  //   localStorage.removeItem("userAuthToken");
+  // };
 
   useEffect(() => {
     const handleStorageChange = () => {

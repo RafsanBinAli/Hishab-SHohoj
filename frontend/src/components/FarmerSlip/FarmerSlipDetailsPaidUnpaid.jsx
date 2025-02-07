@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import "./FarmerSlipDetailsPaidUnpaid.css";
 import { useParams } from "react-router-dom";
 import Loader from "../Loader/Loader";

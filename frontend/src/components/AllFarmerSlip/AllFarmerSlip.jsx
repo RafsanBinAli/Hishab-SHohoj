@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import AllFarmerSlipHeader from "./AllFarmerSlipHeader";
 import AllFarmerSlipList from "./AllFarmerSlipList";
 import { getCurrentDate } from "../../functions/getCurrentDate";

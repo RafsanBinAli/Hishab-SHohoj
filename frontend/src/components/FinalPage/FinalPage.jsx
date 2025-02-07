@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import LeftTable from "./LeftTable";
 import RightTable from "./RightTable";

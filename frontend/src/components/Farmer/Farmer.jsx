@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import "./Farmer.css";
 import FarmerList from "./FarmerList";
 import MessageModal from "../Modal/MessageModal";

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import "./AllFarmerSlip.css";
 import { getCurrentDate } from "../../functions/getCurrentDate"; // Import getCurrentDate function
 

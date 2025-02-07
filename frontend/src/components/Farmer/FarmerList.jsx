@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import  { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate from react-router-dom
 import Loader from "../Loader/Loader";
 import handleDownload from "../../functions/handleDownload"; // Import the download function

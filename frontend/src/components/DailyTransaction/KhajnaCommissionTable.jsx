@@ -1,4 +1,3 @@
-import React from "react";
 import "./DailyTransaction.css"; 
 
 const KhajnaCommissionTable = ({ khajna, commission }) => {

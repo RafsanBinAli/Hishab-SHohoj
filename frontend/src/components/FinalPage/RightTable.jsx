@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Table, Form } from "react-bootstrap";
-import DatePicker from "react-datepicker";
+import { useState, useEffect } from "react";
+import { Table } from "react-bootstrap";
 import "react-datepicker/dist/react-datepicker.css";
 import "./FinalPage.css";
 

@@ -81,9 +81,6 @@ const BankButton = ({ setTransactionDetails }) => {
         throw new Error(`Bank API call failed: ${errorText}`);
       }
 
-      
-
-      const bankData = await bankResponse.json();
 
       setTransactionDetails(debtData.transaction);
       setModalTitle("Success");

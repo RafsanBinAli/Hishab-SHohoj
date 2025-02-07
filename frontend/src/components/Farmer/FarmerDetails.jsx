@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import Loader from "../Loader/Loader";
 import { Card, Button, Form, Row, Col } from "react-bootstrap";
 import MessageModal from "../Modal/MessageModal";
@@ -12,12 +12,10 @@ const FarmerDetails = () => {
   const [error, setError] = useState(null);
   const [isEditable, setIsEditable] = useState(false);
   const [formData, setFormData] = useState({});
-  const [newImage, setNewImage] = useState(null);
   const [modalShow, setModalShow] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [modalMessage, setModalMessage] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
-  const navigate = useNavigate();
   const [newUserInfo, setNewUserInfo] = useState({
     name: "",
     phoneNumber: "",
@@ -70,7 +68,6 @@ const FarmerDetails = () => {
       imageUrl: newUserInfo.imageUrl || formData.imageUrl, // Use new image URL if available
     };
 
-    console.log("Updating farmer with data:", updatedInfo);
 
     try {
       const response = await fetch(

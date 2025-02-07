@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import ShopList from "./ShopList";
 import MessageModal from "../Modal/MessageModal";
 import "./NewDokan.css";
