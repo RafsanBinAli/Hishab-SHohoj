@@ -1,10 +1,9 @@
 const cron = require("node-cron");
 const axios = require("axios");
-
-const baseUrl = "http://localhost:4000";
+const baseUrl = process.env.BACKEND_URL;
 
 cron.schedule(
-  "22 12 * * *",
+  "5 1 * * *",  // This means: At 4:05 AM every day
   async () => {
     try {
       const response = await axios.post(`${baseUrl}/transaction/create-daily`);
@@ -15,5 +14,5 @@ cron.schedule(
   },
   {
     timezone: "Asia/Dhaka",
-  },
+  }
 );

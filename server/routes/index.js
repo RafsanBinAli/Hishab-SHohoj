@@ -6,11 +6,14 @@ const shopController = require("../controllers/shopController");
 const slipController = require("../controllers/slipController");
 const { isAuthenticated } = require("../middlewares/authentication");
 
+//Framer
 router.post("/create-farmer", farmerController.createFarmer);
 router.get("/get-farmer/:name", farmerController.findFarmerByName);
 router.get("/get-all-farmers", farmerController.showAllFarmers);
 router.put("/farmers/:id", farmerController.updateFarmerById);
 router.get("/farmers/:id", farmerController.findFarmerById);
+router.put("/update-farmers/:name",isAuthenticated, farmerController.updateFarmer);
+
 
 // Route to create a new deal (assuming it references framer)
 router.post("/create-deal", newDealController.createDeal);

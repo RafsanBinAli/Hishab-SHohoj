@@ -65,43 +65,37 @@ exports.updateFarmer = async (req, res) => {
     const farmer = await Farmer.findOne({
       name: new RegExp(`^${name.trim()}$`, "i"),
     });
+
     if (!farmer) {
       return res
         .status(404)
         .json({ error: `Farmer with name ${name} not found.` });
     }
 
-    let due = farmer.totalDue - farmer.totalPaid;
+    const amount = parseFloat(payGet || newDhar || 0);
+    const isPayment = Boolean(payGet);
 
-    if (payGet) {
-      farmer.totalPaid += parseFloat(payGet || 0);
-      due = farmer.totalDue - farmer.totalPaid;
-
-      const action = {
-        editedBy: req.user.username,
-        date: new Date(),
-        debtAmount: parseFloat(payGet || 0),
-        due: due,
-        action: "repayDebt",
-      };
-      farmer.lastEditedBy.push(action);
-    } else if (newDhar) {
-      farmer.totalDue += parseFloat(newDhar || 0);
-      console.log(farmer.totalDue)
-      due = farmer.totalDue - farmer.totalPaid;
-
-      const action = {
-        editedBy: req.user.username,
-        date: new Date(),
-        debtAmount: parseFloat(newDhar || 0),
-        due: due,
-        action: "newDebt",
-      };
-      farmer.lastEditedBy.push(action);
+    // Update totals
+    if (isPayment) {
+      farmer.totalPaid += amount;
+    } else {
+      farmer.totalDue += amount;
     }
-    console.log("Updated farmer data before save:", farmer); 
+
+    // Calculate new due amount
+    const due = farmer.totalDue - farmer.totalPaid;
+
+    // Create action record
+    farmer.lastEditedBy.push({
+      editedBy: req.user.username,
+      date: new Date(),
+      debtAmount: amount,
+      due,
+      action: isPayment ? "repayDebt" : "newDebt",
+    });
+
     await farmer.save();
-    res.status(200).json(farmer); // Return the updated farmer object
+    res.status(200).json(farmer);
   } catch (error) {
     console.error("Error updating farmer:", error);
     res.status(500).json({ error: "Failed to update farmer" });
@@ -109,25 +103,18 @@ exports.updateFarmer = async (req, res) => {
 };
 
 exports.updateFarmerById = async (req, res) => {
-  const { id } = req.params;
-  const { name, village, imageUrl, phoneNumber } = req.body;
-
   try {
-    const farmer = await Farmer.findById(id);
+    const farmer = await Farmer.findByIdAndUpdate(
+      req.params.id,
+      { $set: req.body },
+      { new: true, runValidators: true }
+    );
 
     if (!farmer) {
-      return res.status(404).json({ error: `Farmer with ID ${id} not found.` });
+      return res.status(404).json({ error: `Farmer with ID ${req.params.id} not found.` });
     }
 
-    // Update the farmer fields with the new data from the request body
-    if (name) farmer.name = name;
-    if (village) farmer.village = village;
-    if (imageUrl) farmer.imageUrl = imageUrl;
-    if (phoneNumber) farmer.phoneNumber = phoneNumber;
-
-    await farmer.save(); // Save the updated farmer details
-
-    res.status(200).json(farmer); // Respond with the updated farmer object
+    res.status(200).json(farmer);
   } catch (error) {
     console.error("Error updating farmer by ID:", error);
     res.status(500).json({ error: "Failed to update farmer by ID" });
