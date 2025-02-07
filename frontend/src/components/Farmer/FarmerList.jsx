@@ -53,7 +53,7 @@ const FarmerList = ({ farmers }) => {
 
   // Calculate total balance for current page
   const totalDue = currentFarmers.reduce(
-    (acc, farmer) => acc + farmer.totalDue,
+    (acc, farmer) => acc + (farmer.totalDue-farmer.totalPaid),
     0
   );
 
@@ -69,6 +69,7 @@ const FarmerList = ({ farmers }) => {
   const handleDetailsClick = (id) => {
     navigate(`/farmers/${id}`); // Navigate to the FarmerDetails page
   };
+
 
   return (
     <>
@@ -103,7 +104,7 @@ const FarmerList = ({ farmers }) => {
                       <th>মোবাইল নাম্বার</th>
                       <th>বাকি</th>
                       <th>ছবি</th>
-                      <th>Details</th> {/* New column for Details */}
+                      <th>Details</th> 
                     </tr>
                   </thead>
                   <tbody>
@@ -113,7 +114,7 @@ const FarmerList = ({ farmers }) => {
                         <td className="text-center">{farmer.name}</td>
                         <td>{farmer.village}</td>
                         <td>{farmer.phoneNumber}</td>
-                        <td>{farmer.totalDue}</td>
+                        <td>{farmer.totalDue- farmer.totalPaid}</td>
                         <td>
                           {farmer.imageUrl && (
                             <img
