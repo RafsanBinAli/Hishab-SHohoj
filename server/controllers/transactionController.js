@@ -3,7 +3,6 @@ const NewDeal = require("../models/NewDeal");
 const Shop = require("../models/shop");
 const Farmer = require("../models/Farmer");
 const DebtHistory = require("../models/DebtHistory");
-const moment = require("moment");
 const date = new Date();
 const normalizedDate = new Date(
   Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
