@@ -16,7 +16,7 @@ const ShopDetails = () => {
   const [modalTitle, setModalTitle] = useState("");
   const [modalMessage, setModalMessage] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
-  const [newImage, setNewImage] = useState(null);
+  const [, setNewImage] = useState(null);
   const [newUserInfo, setNewUserInfo] = useState({
     shopName: "",
     address: "",

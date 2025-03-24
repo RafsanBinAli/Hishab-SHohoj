@@ -115,7 +115,7 @@ const NewDokan = () => {
         throw new Error("Failed to register shop");
       }
 
-      const newShop = await response.json();
+      await response.json();
 
       setModalTitle("Success");
       setModalMessage("নতুন দোকান রেজিট্রেশন সম্পূর্ন হয়েছে !");

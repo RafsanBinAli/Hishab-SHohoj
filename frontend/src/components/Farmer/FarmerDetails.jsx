@@ -16,7 +16,7 @@ const FarmerDetails = () => {
   const [modalTitle, setModalTitle] = useState("");
   const [modalMessage, setModalMessage] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
-  const [newUserInfo, setNewUserInfo] = useState({
+  const [newUserInfo] = useState({
     name: "",
     phoneNumber: "",
     village: "",

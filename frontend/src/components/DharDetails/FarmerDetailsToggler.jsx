@@ -9,7 +9,7 @@ const FarmerDetailsToggler = ({ farmer, onUpdate }) => {
   const [modalShow, setModalShow] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [modalMessage, setModalMessage] = useState("");
-  const [redirectTo, setRedirectTo] = useState(null);
+  const [redirectTo] = useState(null);
 
   const [newFarmerData, setNewFarmerData] = useState({
     farmerName: farmer.name,

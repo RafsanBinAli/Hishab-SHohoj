@@ -10,7 +10,7 @@ import {
 
 const CardDetail = () => {
   const [isSaving, setIsSaving] = useState(false);
-  const [loadedData, setLoadedData] = useState(null);
+  const [loadedData] = useState(null);
   const [shops, setShops] = useState([]);
   const [farmers, setFarmers] = useState([]);
   const [allCardDetails, setAllCardDetails] = useState([]);
