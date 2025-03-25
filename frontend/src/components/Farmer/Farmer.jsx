@@ -24,7 +24,7 @@ const Farmer = () => {
     const fetchUsers = async () => {
       try {
         const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/get-all-farmers`
+          `${import.meta.env.VITE_APP_BACKEND_URL}/get-all-farmers`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch users");
@@ -79,7 +79,7 @@ const Farmer = () => {
 
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/create-farmer`,
+        `${import.meta.env.VITE_APP_BACKEND_URL}/create-farmer`,
         {
           method: "POST",
           headers: {

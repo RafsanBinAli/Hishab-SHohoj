@@ -14,7 +14,7 @@ const FarmerSlip = () => {
       setLoading(true);
       try {
         const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/get-unpaid-deals`
+          `${import.meta.env.VITE_APP_BACKEND_URL}/get-unpaid-deals`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch deals");

@@ -20,7 +20,7 @@ const SlipDetails = () => {
       try {
         const formattedDate = format(new Date(selectedDate), "yyyy-MM-dd");
         const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/slip-details/${formattedDate}?shopName=${shopName}`,
+          `${import.meta.env.VITE_APP_BACKEND_URL}/slip-details/${formattedDate}?shopName=${shopName}`,
         );
         if (!response.ok) {
           throw new Error("Failed to fetch slip details");
@@ -41,7 +41,7 @@ const SlipDetails = () => {
     const getShopDetails = async () => {
       try {
         const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/get-shop-details/${shopName}`,
+          `${import.meta.env.VITE_APP_BACKEND_URL}/get-shop-details/${shopName}`,
         );
         if (!response.ok) {
           throw new Error("Failed to fetch shop details");

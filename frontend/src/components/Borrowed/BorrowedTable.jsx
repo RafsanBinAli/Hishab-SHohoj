@@ -37,7 +37,7 @@ const BorrowedTable = () => {
   const handleEditClick = async (farmerName, updatedData) => {
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/update-farmers/${farmerName}`,
+        `${import.meta.env.VITE_APP_BACKEND_URL}/update-farmers/${farmerName}`,
         {
           method: "PUT",
           headers: {

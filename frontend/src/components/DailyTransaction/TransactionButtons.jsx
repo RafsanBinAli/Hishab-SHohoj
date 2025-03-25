@@ -17,7 +17,7 @@ const TransactionButton = ({ setTransactionDetails }) => {
     e.preventDefault();
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/transaction/update-other-cost`,
+        `${import.meta.env.VITE_APP_BACKEND_URL}/transaction/update-other-cost`,
         {
           method: "POST",
           headers: {
@@ -53,7 +53,7 @@ const TransactionButton = ({ setTransactionDetails }) => {
     event.preventDefault();
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/transaction/update-daily-cash-stack`,
+        `${import.meta.env.VITE_APP_BACKEND_URL}/transaction/update-daily-cash-stack`,
         {
           method: "POST",
           headers: {

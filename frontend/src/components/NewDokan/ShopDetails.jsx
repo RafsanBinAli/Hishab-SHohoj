@@ -30,7 +30,7 @@ const ShopDetails = () => {
       setError(null);
       try {
         const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/shops/${id}`,
+          `${import.meta.env.VITE_APP_BACKEND_URL}/shops/${id}`,
         );
         if (!response.ok) {
           throw new Error("Failed to fetch shop details");
@@ -118,7 +118,7 @@ const ShopDetails = () => {
       };
 
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/shops/${id}`,
+        `${import.meta.env.VITE_APP_BACKEND_URL}/shops/${id}`,
         {
           method: "PUT",
           headers: {

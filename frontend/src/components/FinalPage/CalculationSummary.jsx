@@ -19,7 +19,7 @@ const CalculationSummary = ({ startDate1, startDate2 }) => {
       const formattedDate2 = formatDate(startDate2);
 
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/transaction/calculate?date1=${formattedDate1}&date2=${formattedDate2}`
+        `${import.meta.env.VITE_APP_BACKEND_URL}/transaction/calculate?date1=${formattedDate1}&date2=${formattedDate2}`
       );
       if (!response.ok) {
         throw new Error("Unable to fetch data");

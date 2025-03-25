@@ -9,28 +9,18 @@
     "@fortawesome/react-fontawesome": "^0.2.2",
     "bootstrap": "^5.3.3",
     "date-fns": "^3.6.0",
-    "fs": "^0.0.1-security",
     "html2canvas": "^1.4.1",
     "jspdf": "^2.5.1",
-    "path": "^0.12.7",
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.4",
     "react-datepicker": "^7.2.0",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^6.24.0",
-    "react-scripts": "^5.0.1"
+    "react-router-dom": "^6.24.0"
   },
   "scripts": {
-    "start": "react-app-rewired start",
-    "build": "react-app-rewired build",
-    "test": "react-app-rewired test",
-    "eject": "react-app-rewired eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "browserslist": {
     "production": [
@@ -45,7 +35,8 @@
     ]
   },
   "devDependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
-    "react-app-rewired": "^2.2.1"
+    "@vitejs/plugin-react": "^4.3.4",
+    "@vitejs/plugin-react-swc": "^3.8.1",
+    "vite": "^6.2.3"
   }
 }

@@ -27,7 +27,7 @@ const FarmerSlipDetailsPaidUnpaid = () => {
       setLoading(true);
       try {
         const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/get-card-details/${id}`,
+          `${import.meta.env.VITE_APP_BACKEND_URL}/get-card-details/${id}`,
         );
         if (!response.ok) throw new Error("Failed to fetch deal");
         const data = await response.json();
@@ -84,7 +84,7 @@ const FarmerSlipDetailsPaidUnpaid = () => {
 
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/transaction/save-daily`,
+        `${import.meta.env.VITE_APP_BACKEND_URL}/transaction/save-daily`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -106,7 +106,7 @@ const FarmerSlipDetailsPaidUnpaid = () => {
 
       // if (!slipDetails?.doneStatus) {
       //   const transactionUnpaidResponse = await fetch(
-      //     `${process.env.REACT_APP_BACKEND_URL}/transaction/unpaid-deal-subtraction`,
+      //     `${import.meta.env.VITE_APP_BACKEND_URL}/transaction/unpaid-deal-subtraction`,
       //     {
       //       method: "POST",
       //       headers: { "Content-Type": "application/json" },
@@ -122,7 +122,7 @@ const FarmerSlipDetailsPaidUnpaid = () => {
       // }
 
       const updateResponse = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/card-details-update-secondary`,
+        `${import.meta.env.VITE_APP_BACKEND_URL}/card-details-update-secondary`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

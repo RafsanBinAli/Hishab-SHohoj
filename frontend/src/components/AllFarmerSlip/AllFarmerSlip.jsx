@@ -17,7 +17,7 @@ const AllFarmerSlip = () => {
       try {
         const formattedDate = selectedDate;
         const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/get-deals-particular-day?date=${formattedDate}`
+          `${import.meta.env.VITE_APP_BACKEND_URL}/get-deals-particular-day?date=${formattedDate}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch deals");

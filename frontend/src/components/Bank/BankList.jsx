@@ -51,7 +51,7 @@ const BankList = ({ banks, showDebtHistory = false }) => {
   const handleHide = async (bankId) => {
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/bank/${bankId}/hide`,
+        `${import.meta.env.VITE_APP_BACKEND_URL}/bank/${bankId}/hide`,
         {
           method: "PATCH",
           headers: {

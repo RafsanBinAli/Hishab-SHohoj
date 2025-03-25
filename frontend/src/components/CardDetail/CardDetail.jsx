@@ -125,7 +125,7 @@ const CardDetail = () => {
       let id = individualCardDetails?._id;
       if (id === undefined) {
         const createCardDetailsResponse = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/create-deal`,
+          `${import.meta.env.VITE_APP_BACKEND_URL}/create-deal`,
           {
             method: "POST",
             headers: {
@@ -143,7 +143,7 @@ const CardDetail = () => {
         id = data._id;
 
         const transactionUnpaidResponse = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/transaction/unpaid-deal-addition`,
+          `${import.meta.env.VITE_APP_BACKEND_URL}/transaction/unpaid-deal-addition`,
           {
             method: "POST",
             headers: {
@@ -158,7 +158,7 @@ const CardDetail = () => {
       }
 
       const updateCardResponse = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/update-card-details/${id}`,
+        `${import.meta.env.VITE_APP_BACKEND_URL}/update-card-details/${id}`,
         {
           method: "PUT",
           headers: {
@@ -177,7 +177,7 @@ const CardDetail = () => {
         newPurchases.map(async (purchase) => {
           try {
             const response = await fetch(
-              `${process.env.REACT_APP_BACKEND_URL}/slip/findOrCreate`,
+              `${import.meta.env.VITE_APP_BACKEND_URL}/slip/findOrCreate`,
               {
                 method: "POST",
                 headers: {
@@ -217,7 +217,7 @@ const CardDetail = () => {
             );
 
             const updateSlipResponse = await fetch(
-              `${process.env.REACT_APP_BACKEND_URL}/slip/update/${_id}`,
+              `${import.meta.env.VITE_APP_BACKEND_URL}/slip/update/${_id}`,
               {
                 method: "PUT",
                 headers: {

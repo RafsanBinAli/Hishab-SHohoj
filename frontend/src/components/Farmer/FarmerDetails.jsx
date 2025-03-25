@@ -30,7 +30,7 @@ const FarmerDetails = () => {
       setError(null);
       try {
         const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/farmers/${id}`,
+          `${import.meta.env.VITE_APP_BACKEND_URL}/farmers/${id}`,
         );
 
         if (!response.ok) {
@@ -71,7 +71,7 @@ const FarmerDetails = () => {
 
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/farmers/${id}`,
+        `${import.meta.env.VITE_APP_BACKEND_URL}/farmers/${id}`,
         {
           method: "PUT",
           headers: {

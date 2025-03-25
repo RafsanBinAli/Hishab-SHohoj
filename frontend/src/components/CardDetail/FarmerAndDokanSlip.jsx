@@ -74,7 +74,7 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
 
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/transaction/save-daily`,
+        `${import.meta.env.VITE_APP_BACKEND_URL}/transaction/save-daily`,
         {
           method: "POST",
           headers: {
@@ -94,7 +94,7 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
       }
 
       const updateResponse = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/card-details-update-secondary`,
+        `${import.meta.env.VITE_APP_BACKEND_URL}/card-details-update-secondary`,
         {
           method: "POST",
           headers: {

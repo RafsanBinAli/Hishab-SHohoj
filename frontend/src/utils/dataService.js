@@ -1,7 +1,7 @@
 export const fetchShops = async () => {
   try {
     const response = await fetch(
-      `${process.env.REACT_APP_BACKEND_URL}/get-all-shops`
+      `${import.meta.env.VITE_APP_BACKEND_URL}/get-all-shops`
     );
     if (!response.ok) throw new Error("Failed to fetch shops");
     const data = await response.json();
@@ -16,7 +16,7 @@ export const fetchShops = async () => {
 export const fetchFarmers = async () => {
   try {
     const response = await fetch(
-      `${process.env.REACT_APP_BACKEND_URL}/get-all-farmers`
+      `${import.meta.env.VITE_APP_BACKEND_URL}/get-all-farmers`
     );
     if (!response.ok) throw new Error("Failed to fetch users");
     const data = await response.json();
@@ -31,7 +31,7 @@ export const fetchFarmers = async () => {
 export const fetchCardDetails = async () => {
   try {
     const response = await fetch(
-      `${process.env.REACT_APP_BACKEND_URL}/get-all-market-details-ofToday`
+      `${import.meta.env.VITE_APP_BACKEND_URL}/get-all-market-details-ofToday`
     );
     if (!response.ok) throw new Error("Failed to fetch all the card details");
     const data = await response.json();
@@ -45,7 +45,7 @@ export const fetchCardDetails = async () => {
 export const fetchBanks = async () => {
   try {
     const response = await fetch(
-      `${process.env.REACT_APP_BACKEND_URL}/bank/get-all`
+      `${import.meta.env.VITE_APP_BACKEND_URL}/bank/get-all`
     );
     if (!response.ok) throw new Error("Failed to fetch all the banks");
     const data = await response.json();

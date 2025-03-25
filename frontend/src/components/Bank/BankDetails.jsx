@@ -24,7 +24,7 @@ const BankDetails = () => {
       setError(null);
       try {
         const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/bank/info/${id}`,
+          `${import.meta.env.VITE_APP_BACKEND_URL}/bank/info/${id}`,
         );
         if (!response.ok) {
           throw new Error(
@@ -58,7 +58,7 @@ const BankDetails = () => {
 
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/bank/update/${id}`,
+        `${import.meta.env.VITE_APP_BACKEND_URL}/bank/update/${id}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },

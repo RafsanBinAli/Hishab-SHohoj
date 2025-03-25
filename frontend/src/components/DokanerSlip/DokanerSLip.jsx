@@ -13,7 +13,7 @@ const DokanerSlip = () => {
       setLoading(true);
       try {
         const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/get-all-shops`
+          `${import.meta.env.VITE_APP_BACKEND_URL}/get-all-shops`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch shops");

@@ -20,7 +20,7 @@ const DharDetails = () => {
       if (!userAuthToken) throw new Error("User is not authenticated.");
 
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/get-farmer/${farmerData.name}`,
+        `${import.meta.env.VITE_APP_BACKEND_URL}/get-farmer/${farmerData.name}`,
         {
           headers: {
             "Content-Type": "application/json",

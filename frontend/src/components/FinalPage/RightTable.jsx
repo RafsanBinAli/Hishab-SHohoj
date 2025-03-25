@@ -18,7 +18,7 @@ const RightTable = ({ startDate2 }) => {
       try {
         const response = await fetch(
           `${
-            process.env.REACT_APP_BACKEND_URL
+            import.meta.env.VITE_APP_BACKEND_URL
           }/transaction/get-daily/${formatDate(startDate2)}`
         );
         if (!response.ok) {

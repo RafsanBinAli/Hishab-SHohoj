@@ -27,7 +27,7 @@ const DailyTransaction = () => {
     const fetchTransactionDetails = async () => {
       try {
         const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/transaction/get-daily/${selectedDate}`,
+          `${import.meta.env.VITE_APP_BACKEND_URL}/transaction/get-daily/${selectedDate}`,
         );
         if (!response.ok) {
           throw new Error("Unable to fetch data");

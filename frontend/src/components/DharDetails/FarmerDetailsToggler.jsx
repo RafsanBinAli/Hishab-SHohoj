@@ -50,7 +50,7 @@ const FarmerDetailsToggler = ({ farmer, onUpdate }) => {
       if (!userAuthToken) throw new Error("User is not authenticated.");
 
       const updateResponse = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/update-farmers/${newFarmerData.farmerName}`,
+        `${import.meta.env.VITE_APP_BACKEND_URL}/update-farmers/${newFarmerData.farmerName}`,
         {
           method: "PUT",
           headers: {
@@ -66,7 +66,7 @@ const FarmerDetailsToggler = ({ farmer, onUpdate }) => {
       await updateResponse.json();
 
       const transactionResponse = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/transaction/dhar-entry`,
+        `${import.meta.env.VITE_APP_BACKEND_URL}/transaction/dhar-entry`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -101,7 +101,7 @@ const FarmerDetailsToggler = ({ farmer, onUpdate }) => {
       if (!userAuthToken) throw new Error("User is not authenticated.");
 
       const updateResponse = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/update-farmers/${newFarmerData.farmerName}`,
+        `${import.meta.env.VITE_APP_BACKEND_URL}/update-farmers/${newFarmerData.farmerName}`,
         {
           method: "PUT",
           headers: {
@@ -117,7 +117,7 @@ const FarmerDetailsToggler = ({ farmer, onUpdate }) => {
       await updateResponse.json();
 
       const transactionResponse = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/transaction/dhar-repay`,
+        `${import.meta.env.VITE_APP_BACKEND_URL}/transaction/dhar-repay`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

@@ -17,7 +17,7 @@ const LeftTable = ({ startDate1 }) => {
       try {
         const response = await fetch(
           `${
-            process.env.REACT_APP_BACKEND_URL
+            import.meta.env.VITE_APP_BACKEND_URL
           }/transaction/get-daily/${formatDate(startDate1)}`
         );
         if (!response.ok) {

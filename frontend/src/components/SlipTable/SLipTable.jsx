@@ -41,7 +41,7 @@ const SlipTable = () => {
       setLoading(true);
       try {
         const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/slip/${selectedDate}`,
+          `${import.meta.env.VITE_APP_BACKEND_URL}/slip/${selectedDate}`,
         );
         if (response.status === 404) {
           setNoInfo(true);
@@ -104,7 +104,7 @@ const SlipTable = () => {
 
     try {
       const updateShopResponse = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/shop/update-totalDue`,
+        `${import.meta.env.VITE_APP_BACKEND_URL}/shop/update-totalDue`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -115,7 +115,7 @@ const SlipTable = () => {
         throw new Error("দোকানের মোট বাকি আপডেট করতে ব্যর্থ হয়েছে");
 
       const updatePurchaseResponse = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/slip/update-editStatus-paid`,
+        `${import.meta.env.VITE_APP_BACKEND_URL}/slip/update-editStatus-paid`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -126,7 +126,7 @@ const SlipTable = () => {
         throw new Error("স্লিপের বাকি আপডেট করতে ব্যর্থ হয়েছে");
 
       const transactionResponse = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/transaction/dokan-payment`,
+        `${import.meta.env.VITE_APP_BACKEND_URL}/transaction/dokan-payment`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

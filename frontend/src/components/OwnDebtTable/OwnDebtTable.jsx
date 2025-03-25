@@ -10,7 +10,7 @@ const OwnDebtTable = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/debt/get-own-debt`
+        `${import.meta.env.VITE_APP_BACKEND_URL}/debt/get-own-debt`
       );
 
       if (!response.ok) {
@@ -33,7 +33,7 @@ const OwnDebtTable = () => {
   const handleHideEntry = async (id, name) => {
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/bank/debt/update-status/${id}`,
+        `${import.meta.env.VITE_APP_BACKEND_URL}/bank/debt/update-status/${id}`,
         {
           method: "PATCH",
           headers: {

@@ -40,7 +40,7 @@ const BankButton = ({ setTransactionDetails }) => {
 
     try {
       const debtResponse = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/transaction/handle-my-own-debt`,
+        `${import.meta.env.VITE_APP_BACKEND_URL}/transaction/handle-my-own-debt`,
         {
           method: "POST",
           headers: {
@@ -62,7 +62,7 @@ const BankButton = ({ setTransactionDetails }) => {
       const debtData = await debtResponse.json();
 
       const bankResponse = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/bank/update-debt/${selectedBank}`,
+        `${import.meta.env.VITE_APP_BACKEND_URL}/bank/update-debt/${selectedBank}`,
         {
           method: "PUT",
           headers: {

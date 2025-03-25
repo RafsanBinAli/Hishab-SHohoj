@@ -101,7 +101,7 @@ const NewDokan = () => {
 
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/create-shop`,
+        `${import.meta.env.VITE_APP_BACKEND_URL}/create-shop`,
         {
           method: "POST",
           headers: {
