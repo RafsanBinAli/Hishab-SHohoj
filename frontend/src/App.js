@@ -29,7 +29,6 @@ import FarmerDetails from "./components/Farmer/FarmerDetails";
 import BankDetails from "./components/Bank/BankDetails";
 import ShopDetails from "./components/NewDokan/ShopDetails";
 
-require("dotenv").config();
 
 function App() {
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(
