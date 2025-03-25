@@ -1,16 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import AllFarmerSlipHeader from "./AllFarmerSlipHeader";
 import AllFarmerSlipList from "./AllFarmerSlipList";
 import { getCurrentDate } from "../../functions/getCurrentDate";
 
 const AllFarmerSlip = () => {
   const [deals, setDeals] = useState([]);
-  const [filteredDeals, setFilteredDeals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState(getCurrentDate());
   const [searchTerm, setSearchTerm] = useState("");
-
+  
+  // Fetch deals only when date changes
   useEffect(() => {
+    let isMounted = true;
     const fetchDeals = async () => {
       setLoading(true);
       try {
@@ -22,30 +23,50 @@ const AllFarmerSlip = () => {
           throw new Error("Failed to fetch deals");
         }
         const data = await response.json();
-        setDeals(data);
-        setFilteredDeals(data);
+        
+        // Only update state if component is still mounted
+        if (isMounted) {
+          setDeals(data);
+          setLoading(false);
+        }
       } catch (error) {
         console.error("Error fetching deals:", error);
-      } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
-
+    
     fetchDeals();
+    
+    // Cleanup function to prevent memory leaks
+    return () => {
+      isMounted = false;
+    };
   }, [selectedDate]);
-
-  useEffect(() => {
-    const filtered = deals.filter((deal) =>
-      deal.farmerName.toLowerCase().includes(searchTerm)
+  
+  // Use useMemo to filter deals instead of creating another state
+  const filteredDeals = useMemo(() => {
+    if (!searchTerm) return deals;
+    return deals.filter((deal) =>
+      deal.farmerName.toLowerCase().includes(searchTerm.toLowerCase())
     );
-    setFilteredDeals(filtered);
   }, [searchTerm, deals]);
-
+  
+  // Memoize handlers to prevent unnecessary re-renders
+  const handleDateChange = useCallback((date) => {
+    setSelectedDate(date);
+  }, []);
+  
+  const handleSearch = useCallback((term) => {
+    setSearchTerm(term);
+  }, []);
+  
   return (
     <div className="all-deals">
       <AllFarmerSlipHeader
-        setSelectedDate={setSelectedDate}
-        setSearchTerm={setSearchTerm}
+        setSelectedDate={handleDateChange}
+        setSearchTerm={handleSearch}
       />
       <AllFarmerSlipList filteredDeals={filteredDeals} loading={loading} />
     </div>
