@@ -110,7 +110,7 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
       );
 
       if (!updateResponse.ok) {
-        throw new Error("কার্ডের বিবরণ আপডেট করতে ত্রুটি ঘটেছে।");
+        throw new Error("Something went wrong!");
       }
 
       setIsPaid(true);

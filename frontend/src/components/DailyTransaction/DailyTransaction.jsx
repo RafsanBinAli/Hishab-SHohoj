@@ -10,14 +10,27 @@ const DailyTransaction = () => {
   const [khajna, setKhajna] = useState(0);
   const [commission, setCommission] = useState(0);
 
-  const dateNow = new Date();
+  // Get current date in Bangladesh timezone
+  const getBangladeshDate = () => {
+    const now = new Date();
+    const options = { timeZone: 'Asia/Dhaka' };
+    // Format the date in Bangladesh timezone
+    return new Date(now.toLocaleString('en-US', options));
+  };
+
+  const dateNow = getBangladeshDate();
   const normalizedDate = new Date(
     Date.UTC(dateNow.getFullYear(), dateNow.getMonth(), dateNow.getDate())
   );
+
   const formatDate = (date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
+    // Ensure we're working with the Bangladesh date
+    const options = { timeZone: 'Asia/Dhaka' };
+    const bdDate = new Date(date.toLocaleString('en-US', options));
+    
+    const year = bdDate.getFullYear();
+    const month = String(bdDate.getMonth() + 1).padStart(2, "0");
+    const day = String(bdDate.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
 
