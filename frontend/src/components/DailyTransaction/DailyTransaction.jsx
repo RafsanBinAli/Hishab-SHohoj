@@ -12,7 +12,7 @@ const DailyTransaction = () => {
 
   const dateNow = new Date();
   const normalizedDate = new Date(
-    Date.UTC(dateNow.getFullYear(), dateNow.getMonth(), dateNow.getDate()),
+    Date.UTC(dateNow.getFullYear(), dateNow.getMonth(), dateNow.getDate())
   );
   const formatDate = (date) => {
     const year = date.getFullYear();
@@ -27,7 +27,9 @@ const DailyTransaction = () => {
     const fetchTransactionDetails = async () => {
       try {
         const response = await fetch(
-          `${import.meta.env.VITE_APP_BACKEND_URL}/transaction/get-daily/${selectedDate}`,
+          `${
+            import.meta.env.VITE_APP_BACKEND_URL
+          }/transaction/get-daily/${selectedDate}`
         );
         if (!response.ok) {
           throw new Error("Unable to fetch data");
@@ -136,7 +138,7 @@ const DailyTransaction = () => {
               {
                 title: "Unpaid Deals",
                 transactionData:
-                  transactionDetails?.debit?.farmersPaymentLater || [],
+                  transactionDetails?.totalUnpaidDealsPrice || [],
               },
             ]}
           />
