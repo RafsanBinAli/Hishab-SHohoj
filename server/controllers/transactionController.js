@@ -454,7 +454,7 @@ exports.addUnpaidDeal = async (req, res) => {
         .status(400)
         .json({ message: "Total unpaid deals price must be a valid number." });
     }
-
+console.log(normalizedDate)
     let transaction = await DailyTransaction.findOne({
       date: normalizedDate,
     });

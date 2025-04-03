@@ -14,16 +14,14 @@ const logger = createLogger({
   ],
 });
 
-// Add console transport only if not in production
-if (process.env.NODE_ENV !== "production") {
-  logger.add(
+// Always add console transport regardless of environment
+logger.add(
     new transports.Console({
       format: combine(
-        timestamp(), 
-        prettyPrint() 
+        timestamp(),
+        prettyPrint()
       ),
     })
   );
-}
 
 module.exports = logger;
