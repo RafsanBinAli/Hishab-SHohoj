@@ -1,4 +1,4 @@
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "./Farmer.css";
 import FarmerList from "./FarmerList";
 import MessageModal from "../Modal/MessageModal";
@@ -19,6 +19,8 @@ const Farmer = () => {
 
   // State for overlay
   const [showOverlay, setShowOverlay] = useState(false);
+  // New state for image upload loading
+  const [isImageUploading, setIsImageUploading] = useState(false);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -95,7 +97,7 @@ const Farmer = () => {
       }
 
       setModalTitle("Success");
-      setModalMessage("নতুন কৃষক সংযুক্ত হয়েছে!");
+      setModalMessage("নতুন কৃষক সংযুক্ত হয়েছে!");
       setRedirectTo("/farmers");
       setModalShow(true);
     } catch (error) {
@@ -127,12 +129,15 @@ const Farmer = () => {
         return;
       }
 
+      // Set loading state to true when upload starts
+      setIsImageUploading(true);
+
       const formData = new FormData();
       formData.append("image", file);
 
       try {
         const response = await fetch(
-          `https://api.imgbb.com/1/upload?key=${process.env.REACT_APP_IMGBB_KEY}`,
+          `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_APP_IMGBB_KEY}`,
           {
             method: "POST",
             body: formData,
@@ -155,15 +160,15 @@ const Farmer = () => {
         setModalTitle("Error");
         setModalMessage("Image upload failed. Please try again.");
         setModalShow(true);
+      } finally {
+        // Set loading state to false when upload completes (success or error)
+        setIsImageUploading(false);
       }
     }
   };
 
   const handleModalConfirm = () => {
     setModalShow(false);
-    if (redirectTo) {
-      window.location.href = redirectTo;
-    }
   };
 
   return (
@@ -211,13 +216,24 @@ const Farmer = () => {
                 <label htmlFor="image" className="form-label">
                   দোকানের ছবি সংযুক্ত করুন
                 </label>
-                <input
-                  type="file"
-                  className="form-control"
-                  id="image"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                />
+                <div className="position-relative">
+                  <input
+                    type="file"
+                    className="form-control"
+                    id="image"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    disabled={isImageUploading}
+                  />
+                  {isImageUploading && (
+                    <div className="image-upload-loading">
+                      <div className="spinner-border text-primary" role="status">
+                        <span className="visually-hidden">Loading...</span>
+                      </div>
+                      <span className="ms-2">ছবি আপলোড হচ্ছে...</span>
+                    </div>
+                  )}
+                </div>
               </div>
               {imagePreview && (
                 <div className="mb-3">
@@ -234,6 +250,7 @@ const Farmer = () => {
                 type="button"
                 className="btn btn-primary"
                 onClick={handleAddUser}
+                disabled={isImageUploading} // Disable save button while image is uploading
               >
                 সেভ করুন
               </button>

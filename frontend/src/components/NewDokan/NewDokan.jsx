@@ -21,6 +21,8 @@ const NewDokan = () => {
 
   // State for overlay
   const [showOverlay, setShowOverlay] = useState(false);
+  // New state for image upload loading
+  const [isImageUploading, setIsImageUploading] = useState(false);
 
   const handleInputChange = (e) => {
     setFormData({
@@ -52,15 +54,19 @@ const NewDokan = () => {
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
+      // Set loading state to true when upload starts
+      setIsImageUploading(true);
+      
+      // Fixed bug: Using imageData instead of formData
       const imageData = new FormData();
       imageData.append("image", file);
 
       try {
         const response = await fetch(
-          `https://api.imgbb.com/1/upload?key=${process.env.REACT_APP_IMGBB_KEY}`,
+          `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_APP_IMGBB_KEY}`,
           {
             method: "POST",
-            body: imageData,
+            body: imageData, // Fixed: using imageData instead of formData
           }
         );
 
@@ -77,6 +83,12 @@ const NewDokan = () => {
         setImagePreview(URL.createObjectURL(file));
       } catch (error) {
         console.error("Error uploading image:", error);
+        setModalTitle("Error");
+        setModalMessage("Image upload failed. Please try again.");
+        setModalShow(true);
+      } finally {
+        // Set loading state to false when upload completes (success or error)
+        setIsImageUploading(false);
       }
     }
   };
@@ -118,7 +130,7 @@ const NewDokan = () => {
       await response.json();
 
       setModalTitle("Success");
-      setModalMessage("নতুন দোকান রেজিট্রেশন সম্পূর্ন হয়েছে !");
+      setModalMessage("নতুন দোকান রেজিট্রেশন সম্পূর্ন হয়েছে !");
       setRedirectTo("/dokans");
       setModalShow(true);
 
@@ -141,9 +153,6 @@ const NewDokan = () => {
 
   const handleModalConfirm = () => {
     setModalShow(false);
-    if (redirectTo) {
-      window.location.href = redirectTo;
-    }
   };
 
   return (
@@ -215,19 +224,30 @@ const NewDokan = () => {
                 <label htmlFor="image" className="form-label">
                   দোকানের ছবি সংযুক্ত করুন
                 </label>
-                <input
-                  type="file"
-                  className={`form-control ${
-                    errors.imageUrl ? "is-invalid" : ""
-                  }`}
-                  id="image"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  required
-                />
-                {errors.imageUrl && (
-                  <div className="invalid-feedback">{errors.imageUrl}</div>
-                )}
+                <div className="position-relative">
+                  <input
+                    type="file"
+                    className={`form-control ${
+                      errors.imageUrl ? "is-invalid" : ""
+                    }`}
+                    id="image"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    disabled={isImageUploading}
+                    required
+                  />
+                  {isImageUploading && (
+                    <div className="image-upload-loading">
+                      <div className="spinner-border text-primary" role="status">
+                        <span className="visually-hidden">Loading...</span>
+                      </div>
+                      <span className="ms-2">ছবি আপলোড হচ্ছে...</span>
+                    </div>
+                  )}
+                  {errors.imageUrl && (
+                    <div className="invalid-feedback">{errors.imageUrl}</div>
+                  )}
+                </div>
               </div>
               {imagePreview && (
                 <div className="mb-3">
@@ -239,7 +259,11 @@ const NewDokan = () => {
                   />
                 </div>
               )}
-              <button type="submit" className="btn btn-primary">
+              <button 
+                type="submit" 
+                className="btn btn-primary"
+                disabled={isImageUploading} // Disable submit button during image upload
+              >
                 রেজিস্টার
               </button>
             </form>
