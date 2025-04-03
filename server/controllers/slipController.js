@@ -6,10 +6,12 @@ exports.findOrCreateSlip = async (req, res) => {
 
   const currentDate = new Date();
   const year = currentDate.getFullYear();
-  const month = String(currentDate.getMonth() + 1).padStart(2, "0");
+  const month = String(currentDate.getMonth() + 1).padStart(2, "0"); // For display/formatting only
   const day = String(currentDate.getDate()).padStart(2, "0");
-  const startOfDay = new Date(Date.UTC(year, month - 1, day, 0, 0, 0));
-  const endOfDay = new Date(Date.UTC(year, month - 1, day, 23, 59, 59, 999));
+  
+  // Fix: Don't subtract 1 from month when using Date.UTC
+  const startOfDay = new Date(Date.UTC(year, currentDate.getMonth(), day, 0, 0, 0));
+  const endOfDay = new Date(Date.UTC(year, currentDate.getMonth(), day, 23, 59, 59, 999));
 
   try {
     let slip = await Slip.findOneAndUpdate(
@@ -155,5 +157,3 @@ exports.updateSlipPaidAmount = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-
-
