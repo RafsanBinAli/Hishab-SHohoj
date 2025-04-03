@@ -1,19 +1,22 @@
 const Slip = require("../models/slip");
 const Shop = require("../models/shop");
 const mongoose = require("mongoose");
+const logger = require("../utils/logger"); // Added logger import
+
 exports.findOrCreateSlip = async (req, res) => {
-  const { shopName } = req.body;
-
-  const currentDate = new Date();
-  const year = currentDate.getFullYear();
-  const month = String(currentDate.getMonth() + 1).padStart(2, "0"); // For display/formatting only
-  const day = String(currentDate.getDate()).padStart(2, "0");
-  
-  // Fix: Don't subtract 1 from month when using Date.UTC
-  const startOfDay = new Date(Date.UTC(year, currentDate.getMonth(), day, 0, 0, 0));
-  const endOfDay = new Date(Date.UTC(year, currentDate.getMonth(), day, 23, 59, 59, 999));
-
   try {
+    
+    const { shopName } = req.body;
+
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, "0"); // For display only
+    const day = String(currentDate.getDate()).padStart(2, "0");
+    
+    // Fixed: Using currentDate.getMonth() directly without subtraction
+    const startOfDay = new Date(Date.UTC(year, currentDate.getMonth(), day, 0, 0, 0));
+    const endOfDay = new Date(Date.UTC(year, currentDate.getMonth(), day, 23, 59, 59, 999));
+
     let slip = await Slip.findOneAndUpdate(
       {
         shopName,
@@ -39,62 +42,73 @@ exports.findOrCreateSlip = async (req, res) => {
       }
     );
 
+    logger.info(`POST /findOrCreateSlip - Success - Slip ID: ${slip._id}`);
     res.status(200).json(slip);
   } catch (error) {
+    logger.error(`POST /findOrCreateSlip - Error: ${error.message}`, { stack: error.stack });
     console.error("Error finding or creating slip:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
 
 exports.updateSlip = async (req, res) => {
-  const slipId = req.params.id;
-  const { purchases, shopName, totalAmount } = req.body;
-
-  // Start a transaction to ensure both updates are successful or neither
-  const session = await mongoose.startSession();
-  session.startTransaction();
-
   try {
-    // Find and update the shop's total due
-    let shop = await Shop.findOne({ shopName: shopName }).session(session);
-    if (!shop) {
-      await session.abortTransaction(); // Abort transaction if shop not found
-      session.endSession();
-      return res.status(404).json({ message: "Shop not found to update" });
-    }
-    shop.totalDue += totalAmount;
-    await shop.save({ session });
+    
+    const slipId = req.params.id;
+    const { purchases, shopName, totalAmount } = req.body;
 
-    // Find and update the slip with new purchases
-    let slip = await Slip.findById(slipId).session(session);
-    if (!slip) {
-      await session.abortTransaction(); // Abort transaction if slip not found
-      session.endSession();
-      return res.status(404).json({ message: "Slip not found" });
-    }
+    // Start a transaction to ensure both updates are successful or neither
+    const session = await mongoose.startSession();
+    session.startTransaction();
 
-    purchases.forEach((purchase) => {
-      slip.purchases.push({
-        farmerName: purchase.farmerName,
-        stockName: purchase.stockName,
-        quantity: purchase.quantity,
-        price: purchase.price,
-        totalPrice: purchase.quantity * purchase.price,
+    try {
+      // Find and update the shop's total due
+      let shop = await Shop.findOne({ shopName: shopName }).session(session);
+      if (!shop) {
+        await session.abortTransaction(); // Abort transaction if shop not found
+        session.endSession();
+        logger.warn(`PUT /updateSlip/${slipId} - Shop not found: ${shopName}`);
+        return res.status(204).json({ message: "Shop not found to update" });
+      }
+      shop.totalDue += totalAmount;
+      await shop.save({ session });
+
+      // Find and update the slip with new purchases
+      let slip = await Slip.findById(slipId).session(session);
+      if (!slip) {
+        await session.abortTransaction(); // Abort transaction if slip not found
+        session.endSession();
+        logger.warn(`PUT /updateSlip/${slipId} - Slip not found with ID: ${slipId}`);
+        return res.status(204).json({ message: "Slip not found" });
+      }
+
+      purchases.forEach((purchase) => {
+        slip.purchases.push({
+          farmerName: purchase.farmerName,
+          stockName: purchase.stockName,
+          quantity: purchase.quantity,
+          price: purchase.price,
+          totalPrice: purchase.quantity * purchase.price,
+        });
+        slip.totalAmount += purchase.quantity * purchase.price;
       });
-      slip.totalAmount += purchase.quantity * purchase.price;
-    });
 
-    await slip.save({ session });
-    await session.commitTransaction();
-    session.endSession();
+      await slip.save({ session });
+      await session.commitTransaction();
+      session.endSession();
 
-    res
-      .status(200)
-      .json({ message: "Slip and shop updated successfully", slip });
+      logger.info(`PUT /updateSlip/${slipId} - Success - Slip ID: ${slip._id}, Shop ID: ${shop._id}`);
+      res
+        .status(200)
+        .json({ message: "Slip and shop updated successfully", slip });
+    } catch (error) {
+      // If any error occurs, abort the transaction
+      await session.abortTransaction();
+      session.endSession();
+      throw error; // Re-throw to be caught by the outer catch block
+    }
   } catch (error) {
-    // If any error occurs, abort the transaction
-    await session.abortTransaction();
-    session.endSession();
+    logger.error(`PUT /updateSlip/${req.params.id} - Error: ${error.message}`, { stack: error.stack });
     console.error("Error updating slip:", error);
     res.status(500).json({ message: "Server error", error });
   }
@@ -111,7 +125,7 @@ exports.getSlipDetails = async (req, res) => {
     });
 
     if (!slipDetail) {
-      return res.status(404).json({ error: "Slip details not found" });
+      return res.status(204).json({ error: "Slip details not found" });
     }
 
     res.json(slipDetail);
@@ -142,17 +156,22 @@ exports.findSlipByDate = async (req, res) => {
 };
 
 exports.updateSlipPaidAmount = async (req, res) => {
-  const { slipId, paidAmount } = req.body;
   try {
+    
+    const { slipId, paidAmount } = req.body;
     let slip = await Slip.findById(slipId);
     if (!slip) {
-      return res.status(404).json({ message: "Slip not found" });
+      logger.warn(`PUT /updateSlipPaidAmount - Slip not found with ID: ${slipId}`);
+      return res.status(204).json({ message: "Slip not found" });
     }
 
     slip.paidAmount += paidAmount;
     await slip.save();
+    
+    logger.info(`PUT /updateSlipPaidAmount - Success - Slip ID: ${slip._id}`);
     res.status(200).json({ message: "Slip updated successfully", slip });
   } catch (error) {
+    logger.error(`PUT /updateSlipPaidAmount - Error: ${error.message}`, { stack: error.stack });
     console.error("Error updating slip's paidAmount:", error);
     res.status(500).json({ message: "Server error" });
   }

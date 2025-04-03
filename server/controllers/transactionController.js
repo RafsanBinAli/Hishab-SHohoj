@@ -3,6 +3,7 @@ const NewDeal = require("../models/NewDeal");
 const Shop = require("../models/shop");
 const Farmer = require("../models/Farmer");
 const DebtHistory = require("../models/DebtHistory");
+const logger = require("../utils/logger"); // Added logger import
 const date = new Date();
 const normalizedDate = new Date(
   Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
@@ -10,6 +11,7 @@ const normalizedDate = new Date(
 
 exports.saveDailyTransaction = async (req, res) => {
   try {
+    
     const {
       name,
       amount: amountStr,
@@ -33,12 +35,12 @@ exports.saveDailyTransaction = async (req, res) => {
       date: normalizedDate,
     });
     if (!transaction) {
+      logger.warn(`POST /saveDailyTransaction - Transaction not found for date: ${normalizedDate}`);
       return res
-        .status(404)
+        .status(204)
         .json({ message: "Transaction not found for the specified date." });
     }
     
-
     if (dateOfTransaction.getTime() !== normalizedDate.getTime()) {
       transaction.debit.farmersPaymentLater.push({ name, amount });
       transaction.credit.commissions += commission;
@@ -61,12 +63,14 @@ exports.saveDailyTransaction = async (req, res) => {
     }
 
     await transaction.save();
-
+    
+    logger.info(`POST /saveDailyTransaction - Success - Transaction ID: ${transaction._id}`);
     res.status(200).json({
       message: "Daily transaction saved successfully.",
       transaction,
     });
   } catch (error) {
+    logger.error(`POST /saveDailyTransaction - Error: ${error.message}`, { stack: error.stack });
     console.error("Error while saving daily transaction:", error.message);
     res.status(500).json({
       message: "An error occurred while saving the daily transaction.",
@@ -81,8 +85,9 @@ exports.getDailyTransaction = async (req, res) => {
     let transaction = await DailyTransaction.findOne({ date });
 
     if (!transaction) {
+      logger.warn(`POST /dharEntry - Transaction not found for date: ${normalizedDate}`);
       return res
-        .status(404)
+        .status(204)
         .json({ message: "Transaction not found for the day!" });
     }
     res.status(200).json(transaction);
@@ -93,8 +98,10 @@ exports.getDailyTransaction = async (req, res) => {
 
 exports.dharEntry = async (req, res) => {
   try {
+    
     const { farmerName, amount } = req.body;
     if (!farmerName || !amount) {
+      logger.warn(`POST /dharEntry - Missing required fields: ${!farmerName ? 'farmerName' : 'amount'}`);
       return res
         .status(400)
         .json({ message: "Farmer name and amount are required" });
@@ -110,17 +117,20 @@ exports.dharEntry = async (req, res) => {
     transaction.debit.dhar.push({ name: farmerName, amount: amount });
 
     await transaction.save();
-
+    
+    logger.info(`Success - Transaction ID: ${transaction._id}`);
     res
       .status(200)
       .json({ message: "Dhar entry saved successfully", transaction });
   } catch (error) {
+    logger.error(`POST /dharEntry - Error: ${error.message}`, { stack: error.stack });
     res.status(500).json({ message: "Failed to save dhar details", error });
   }
 };
 
 exports.dharRepay = async (req, res) => {
   try {
+    
     const { farmerName, amount } = req.body;
     if (!farmerName || !amount) {
       return res
@@ -137,16 +147,20 @@ exports.dharRepay = async (req, res) => {
 
     transaction.credit.dharReturns.push({ name: farmerName, amount: amount });
     await transaction.save();
+    
+    logger.info(` Success - Transaction ID: ${transaction._id}`);
     res
       .status(200)
       .json({ message: "Dhar entry saved successfully", transaction });
   } catch (error) {
+    logger.error(`POST /dharRepay - Error: ${error.message}`, { stack: error.stack });
     res.status(500).json({ message: "Failed to save dhar details", error });
   }
 };
 
 exports.dokanPayment = async (req, res) => {
   try {
+    
     const { shopName, amount } = req.body;
     if (!shopName || !amount) {
       return res
@@ -169,10 +183,13 @@ exports.dokanPayment = async (req, res) => {
       transaction.credit.dokanPayment.push({ name: shopName, amount });
     }
     await transaction.save();
+    
+    logger.info(` Success - Transaction ID: ${transaction._id}`);
     res
       .status(200)
       .json({ message: "Dokan Payment entry saved successfully", transaction });
   } catch (error) {
+    logger.error(`POST /dokanPayment - Error: ${error.message}`, { stack: error.stack });
     res
       .status(500)
       .json({ message: "Failed to save dokan payment details", error });
@@ -181,6 +198,7 @@ exports.dokanPayment = async (req, res) => {
 
 exports.updateDailyCashStack = async (req, res) => {
   try {
+    
     const { dailyCashStack } = req.body;
     let transactionToday = await DailyTransaction.findOne({
       date: normalizedDate,
@@ -193,11 +211,14 @@ exports.updateDailyCashStack = async (req, res) => {
     }
     transactionToday.dailyCashStack += dailyCashStack;
     await transactionToday.save();
+    
+    logger.info(`PUT /updateDailyCashStack - Success - Transaction ID: ${transactionToday._id}`);
     res.status(200).json({
       message: "Cash stack updated successfully!",
       transaction: transactionToday,
     });
   } catch (error) {
+    logger.error(`PUT /updateDailyCashStack - Error: ${error.message}`, { stack: error.stack });
     res.status(500).json({
       message: "Failed to update daily cash stack!",
       error: error.message,
@@ -207,6 +228,7 @@ exports.updateDailyCashStack = async (req, res) => {
 
 exports.updateOtherCost = async (req, res) => {
   try {
+    
     const { otherCost } = req.body;
     const transactionToday = await DailyTransaction.findOne({
       date: normalizedDate,
@@ -223,7 +245,8 @@ exports.updateOtherCost = async (req, res) => {
     ) {
       transactionToday.debit.otherCost.push(...otherCost);
       await transactionToday.save();
-
+      
+      logger.info(` Success - Transaction ID: ${transactionToday._id}`);
       return res.status(200).json({
         message: "Other cost(s) added successfully!",
         transaction: transactionToday,
@@ -235,6 +258,7 @@ exports.updateOtherCost = async (req, res) => {
       });
     }
   } catch (error) {
+    logger.error(`PUT /updateOtherCost - Error: ${error.message}`, { stack: error.stack });
     res.status(500).json({
       message: "Failed to add other costs!",
       error: error.message,
@@ -243,10 +267,11 @@ exports.updateOtherCost = async (req, res) => {
 };
 
 exports.createDaily = async (req, res) => {
-  const previousDayDate = new Date(normalizedDate);
-  previousDayDate.setDate(previousDayDate.getDate() - 1);
-
   try {
+    
+    const previousDayDate = new Date(normalizedDate);
+    previousDayDate.setDate(previousDayDate.getDate() - 1);
+
     let transactionToday = await DailyTransaction.findOne({
       date: normalizedDate,
     });
@@ -302,10 +327,13 @@ exports.createDaily = async (req, res) => {
     });
 
     await transaction.save();
+    
+    logger.info(`POST /createDaily - Success - Transaction ID: ${transaction._id}`);
     res
       .status(200)
       .json({ message: "DailyTransaction created successfully", transaction });
   } catch (error) {
+    logger.error(`POST /createDaily - Error: ${error.message}`, { stack: error.stack });
     res
       .status(500)
       .json({ message: "Failed to create DailyTransaction", error });
@@ -315,6 +343,7 @@ exports.createDaily = async (req, res) => {
 exports.updateMyOwnDebt = async (req, res) => {
   let type;
   try {
+    
     const { amount, bank } = req.body;
     type = req.body.type;
 
@@ -358,12 +387,14 @@ exports.updateMyOwnDebt = async (req, res) => {
 
     await transactionToday.save();
     await newDebtHistory.save();
-
+    
+    logger.info(`PUT /updateMyOwnDebt - Success - Transaction ID: ${transactionToday._id}, DebtHistory ID: ${newDebtHistory._id}`);
     res.status(200).json({
       message: `My own ${type} updated successfully!`,
       transaction: transactionToday,
     });
   } catch (error) {
+    logger.error(`PUT /updateMyOwnDebt - Error: ${error.message}`, { stack: error.stack });
     res.status(500).json({
       message: `Failed to update my own ${type}!`,
       error: error.message,
@@ -415,6 +446,7 @@ exports.calculateCommissionAndKhajna = async (req, res) => {
 
 exports.addUnpaidDeal = async (req, res) => {
   try {
+    
     const totalUnpaidDealsPrice = Number(req.body.totalUnpaidDealsPrice);
 
     if (isNaN(totalUnpaidDealsPrice)) {
@@ -435,12 +467,14 @@ exports.addUnpaidDeal = async (req, res) => {
     transaction.totalUnpaidDealsPrice += totalUnpaidDealsPrice;
 
     await transaction.save();
-
+    
+    logger.info(`POST /addUnpaidDeal - Success - Transaction ID: ${transaction._id}`);
     res.status(200).json({
       message: "Unpaid deals total updated successfully",
       transaction,
     });
   } catch (error) {
+    logger.error(`POST /addUnpaidDeal - Error: ${error.message}`, { stack: error.stack });
     console.error("Error updating unpaid deals total:", error);
     res.status(500).json({ message: "Internal server error" });
   }
@@ -448,6 +482,7 @@ exports.addUnpaidDeal = async (req, res) => {
 
 exports.subUnpaidDeal = async (req, res) => {
   try {
+    
     let date;
     if (!!req.body.date) {
       const providedDate = new Date(req.body.date);
@@ -483,12 +518,14 @@ exports.subUnpaidDeal = async (req, res) => {
     transaction.totalUnpaidDealsPrice -= totalUnpaidDealsPrice;
 
     await transaction.save();
-
+    
+    logger.info(`POST /subUnpaidDeal - Success - Transaction ID: ${transaction._id}`);
     res.status(200).json({
       message: "Unpaid deals total updated successfully",
       transaction,
     });
   } catch (error) {
+    logger.error(`POST /subUnpaidDeal - Error: ${error.message}`, { stack: error.stack });
     console.error("Error updating unpaid deals total:", error);
     res.status(500).json({ message: "Internal server error" });
   }

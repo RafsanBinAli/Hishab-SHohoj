@@ -1,14 +1,17 @@
-const Farmer = require("../models/Farmer"); // Import your User model
+const Farmer = require("../models/Farmer");
 const NewDeal = require("../models/NewDeal");
 const { startOfDay, endOfDay } = require("date-fns");
+const logger = require("../utils/logger"); // Added logger import
 
 exports.createDeal = async (req, res) => {
   try {
+    
     const userName = req.body.name;
     const farmer = await Farmer.findOne({ name: userName });
 
     if (!farmer) {
-      return res.status(404).json({ message: "Farmer not found" });
+      logger.warn(`POST /createDeal - Farmer not found: ${userName}`);
+      return res.status(204).json({ message: "Farmer not found" });
     }
 
     const newDeal = new NewDeal({
@@ -17,8 +20,11 @@ exports.createDeal = async (req, res) => {
     });
 
     await newDeal.save();
+    
+    logger.info(`POST /createDeal - Success - Deal ID: ${newDeal._id}`);
     res.status(201).json(newDeal);
   } catch (err) {
+    logger.error(`POST /createDeal - Error: ${err.message}`, { stack: err.stack });
     console.error(err);
     res.status(500).json({ message: "Server Error" });
   }
@@ -68,7 +74,7 @@ exports.getCardDetailsById = async (req, res) => {
     const card = await NewDeal.findById(id);
 
     if (!card) {
-      return res.status(404).json({ message: "Card not found" });
+      return res.status(204).json({ message: "Card not found" });
     }
 
     res.status(200).json(card);
@@ -79,14 +85,16 @@ exports.getCardDetailsById = async (req, res) => {
 };
 
 exports.updateDealPurchases = async (req, res) => {
-  const { id } = req.params;
-  const { purchases } = req.body;
-
-  if (!Array.isArray(purchases)) {
-    return res.status(400).json({ message: "Invalid request data" });
-  }
-
   try {
+    
+    const { id } = req.params;
+    const { purchases } = req.body;
+
+    if (!Array.isArray(purchases)) {
+      logger.warn(`PUT /updateDealPurchases/${id} - Invalid request data: purchases is not an array`);
+      return res.status(400).json({ message: "Invalid request data" });
+    }
+
     const updatedDeal = await NewDeal.findByIdAndUpdate(
       id,
       { $push: { purchases: { $each: purchases } } },
@@ -94,11 +102,14 @@ exports.updateDealPurchases = async (req, res) => {
     );
 
     if (!updatedDeal) {
-      return res.status(404).json({ message: "NewDeal not found" });
+      logger.warn(`PUT /updateDealPurchases/${id} - NewDeal not found`);
+      return res.status(204).json({ message: "NewDeal not found" });
     }
-
+    
+    logger.info(`PUT /updateDealPurchases/${id} - Success - Deal ID: ${updatedDeal._id}`);
     res.status(200).json(updatedDeal);
   } catch (error) {
+    logger.error(`PUT /updateDealPurchases/${req.params.id} - Error: ${error.message}`, { stack: error.stack });
     console.error("Error updating NewDeal:", error);
     res.status(500).json({ message: "Failed to update NewDeal" });
   }
@@ -106,28 +117,29 @@ exports.updateDealPurchases = async (req, res) => {
 
 // Example of ensuring the full document is returned
 exports.updateCardDetails = async (req, res) => {
-  const { khajna, commission, totalAmountToBeGiven, id } = req.body;
   try {
+    
+    const { khajna, commission, totalAmountToBeGiven, id } = req.body;
     const cardDetails = await NewDeal.findById(id);
 
     if (!cardDetails) {
-      return res.status(404).json({ message: "Card details not found!" });
+      logger.warn(`PUT /updateCardDetails - Card details not found with ID: ${id}`);
+      return res.status(204).json({ message: "Card details not found!" });
     }
 
     cardDetails.khajna = khajna;
-
     cardDetails.commission = commission;
-
     cardDetails.totalAmountToBeGiven = totalAmountToBeGiven;
     cardDetails.doneStatus = true;
     await cardDetails.save();
 
-   
+    logger.info(`PUT /updateCardDetails - Success - Card ID: ${cardDetails._id}`);
     res.json({
       message: "Card details updated successfully!",
       cardDetails: cardDetails,
     });
   } catch (error) {
+    logger.error(`PUT /updateCardDetails - Error: ${error.message}`, { stack: error.stack });
     console.error("Error updating card details:", error);
     res.status(500).json({ message: "Error updating card details", error });
   }
