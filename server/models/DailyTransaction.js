@@ -208,13 +208,6 @@ transactionSchema.pre("save", function (next) {
     0
   );
 
-  // Logging to check the values
-  console.log("Dhar Cost: ", dharCost);
-  console.log("Farmers Payment Cost: ", farmersPaymentCost);
-  console.log("Other Cost: ", otherCost);
-  console.log("Total Farmers Payment Later: ", totalFarmersPaymentLater);
-  console.log("Total Today Debt Repay: ", totalTodayDebtRepay);
-  console.log("Total Cost: ", totalCost);
 
   this.totalProfit = totalProfit;
   this.totalCost = totalCost;
