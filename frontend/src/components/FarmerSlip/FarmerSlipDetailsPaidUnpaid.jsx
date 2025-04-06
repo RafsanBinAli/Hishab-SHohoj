@@ -164,6 +164,9 @@ const FarmerSlipDetailsPaidUnpaid = () => {
     handleDownload(slipRef, "Farmer Slip");
   };
 
+  const handleModalConfirm = () => {
+    setModalShow(false);
+  };
   if (loading) return <Loader />;
 
   return (
@@ -171,7 +174,7 @@ const FarmerSlipDetailsPaidUnpaid = () => {
       <h2 className="dokaner-slip-title font-weight-bold">
         {slipDetails?.farmerName} স্লিপ
         <p>
-          তারিখ: {new Date(slipDetails?.createdAt).toISOString().split("T")[0]}{" "}
+          তারিখ: {new Date(slipDetails?.createdAt).toLocaleDateString()}
         </p>
       </h2>
       <div className="slip-card">
@@ -307,6 +310,7 @@ const FarmerSlipDetailsPaidUnpaid = () => {
         title={modalTitle}
         message={modalMessage}
         onHide={() => setModalShow(false)}
+        onConfirm={handleModalConfirm}
       />
     </div>
   );

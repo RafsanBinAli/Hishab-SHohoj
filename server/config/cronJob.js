@@ -3,7 +3,7 @@ const axios = require("axios");
 const baseUrl = process.env.BACKEND_URL;
 
 cron.schedule(
-  "01 1 * * *", 
+  "05 0 * * *", 
   async () => {
     try {
       const response = await axios.post(`${baseUrl}/transaction/create-daily`);
