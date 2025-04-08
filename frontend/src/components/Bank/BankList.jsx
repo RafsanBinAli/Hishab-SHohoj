@@ -1,4 +1,4 @@
-import  { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import Loader from "../Loader/Loader";
 import handleDownload from "../../functions/handleDownload"; // Import the download function
 import { useNavigate } from "react-router-dom";
@@ -12,7 +12,7 @@ const BankList = ({ banks, showDebtHistory = false }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (Array.isArray(banks) && banks.length > 0) {
+    if (Array.isArray(banks)) {
       setLoading(false);
     }
   }, [banks]);
@@ -107,6 +107,9 @@ const BankList = ({ banks, showDebtHistory = false }) => {
     navigate(`/banks/${id}`); // Navigate to the FarmerDetails page
   };
 
+  // Check if there are no banks after filtering
+  const noBanks = !loading && filteredDebtHistory.length === 0;
+
   return (
     <div className="card">
       <div className="card-body">
@@ -114,106 +117,114 @@ const BankList = ({ banks, showDebtHistory = false }) => {
           <div className="flex-grow-1 d-flex justify-content-center">
             <h2 className="card-title">ব্যাংক লিস্ট</h2>
           </div>
-          <button onClick={downloadPdf} className="btn btn-primary">
+          <button 
+            onClick={downloadPdf} 
+            className="btn btn-primary"
+            disabled={loading || noBanks}
+          >
             Download PDF
           </button>
         </div>
         <input
           type="text"
           className="form-control mb-3"
-          placeholder="ব্যাংক নাম দিয়ে সার্চ করুন"
+          placeholder="ব্যাংক নাম দিয়ে সার্চ করুন"
           value={searchTerm}
           onChange={handleSearch}
+          disabled={loading || filteredBanks.length === 0}
         />
-        <div className="table-responsive" ref={slipRef}>
-          {loading ? (
-            <Loader />
-          ) : (
-            <>
-              <table className="table table-bordered table-striped">
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>ব্যাংক নাম</th>
-                    <th>ঠিকানা</th>
-                    <th>মোবাইল নম্বর</th>
-                    <th>বাকি</th>
-                    <th>ছবি</th>
-                    <th>Details</th> {/* Add Details column */}
-                    {showDebtHistory && <th>অ্যাকশন</th>}
-                  </tr>
-                </thead>
-                <tbody>
-                  {currentBanks.map((bank, index) => (
-                    <tr key={index}>
-                      <td>{startIndex + index + 1}</td>
-                      <td>{bank.bankName}</td>
-                      <td>{bank.village}</td>
-                      <td>{bank.phoneNumber}</td>
-                      <td>{bank.paymentDue}</td>
-                      <td>
-                        {bank.imageUrl && (
-                          <img
-                            src={bank.imageUrl}
-                            alt="bank"
-                            className="img-thumbnail"
-                            style={{ maxHeight: "50px", maxWidth: "50px" }}
-                          />
-                        )}
-                      </td>
+        
+        {loading ? (
+          <Loader />
+        ) : noBanks ? (
+          <div className="alert alert-info text-center my-4">
+            <h5>কোন ব্যাংক পাওয়া যায়নি</h5>
+            {searchTerm && (
+              <p className="mt-2">
+                "{searchTerm}" নামের সাথে মিলে এমন কোন ব্যাংক নেই। অনুগ্রহ করে অন্য নাম দিয়ে সার্চ করুন।
+              </p>
+            )}
+          </div>
+        ) : (
+          <div className="table-responsive" ref={slipRef}>
+            <table className="table table-bordered table-striped">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>ব্যাংক নাম</th>
+                  <th>ঠিকানা</th>
+                  <th>মোবাইল নম্বর</th>
+                  <th>বাকি</th>
+                  <th>ছবি</th>
+                  <th>Details</th>
+                  {showDebtHistory && <th>অ্যাকশন</th>}
+                </tr>
+              </thead>
+              <tbody>
+                {currentBanks.map((bank, index) => (
+                  <tr key={bank._id || index}>
+                    <td>{startIndex + index + 1}</td>
+                    <td>{bank.bankName}</td>
+                    <td>{bank.village}</td>
+                    <td>{bank.phoneNumber}</td>
+                    <td>{bank.paymentDue}</td>
+                    <td>
+                      {bank.imageUrl && (
+                        <img
+                          src={bank.imageUrl}
+                          alt="bank"
+                          className="img-thumbnail"
+                          style={{ maxHeight: "50px", maxWidth: "50px" }}
+                        />
+                      )}
+                    </td>
+                    <td>
+                      <button
+                        className="btn btn-info"
+                        onClick={() => handleDetailsClick(bank._id)}
+                      >
+                        Details
+                      </button>
+                    </td>
+                    {showDebtHistory && (
                       <td>
                         <button
-                          className="btn btn-info"
-                          onClick={() => handleDetailsClick(bank._id)} // Handle details click
+                          className="btn btn-danger"
+                          onClick={() => handleHide(bank._id)}
                         >
-                          Details
+                          Hide
                         </button>
                       </td>
-                      {showDebtHistory && (
-                        <td>
-                          <button
-                            className="btn btn-danger"
-                            onClick={() => handleHide(bank._id)}
-                          >
-                            Hide
-                          </button>
-                        </td>
-                      )}
-                    </tr>
-                  ))}
-                  {/* Total Balance Row */}
-                  <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td
-                      colSpan={showDebtHistory ? 7 : 0}
-                      className="text-end font-weight-bold"
-                    >
-                      মোট বাকি:
-                    </td>
-                    <td></td>
-                    <td className="font-weight-bold">{totalPaymentDue}</td>
-                    <td></td>
+                    )}
                   </tr>
-                </tbody>
-              </table>
-            </>
-          )}
-        </div>
-        <div className="pagination">
-          {Array.from({ length: totalPages }, (_, index) => (
-            <button
-              key={index}
-              className={`page-button ${
-                currentPage === index + 1 ? "active" : ""
-              }`}
-              onClick={() => handlePageChange(index + 1)}
-            >
-              {index + 1}
-            </button>
-          ))}
-        </div>
+                ))}
+                {/* Total Balance Row */}
+                <tr>
+                  <td colSpan={showDebtHistory ? 4 : 4}></td>
+                  <td className="text-end font-weight-bold">মোট বাকি:</td>
+                  <td className="font-weight-bold">{totalPaymentDue}</td>
+                  <td colSpan={showDebtHistory ? 2 : 1}></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        )}
+        
+        {!loading && !noBanks && totalPages > 1 && (
+          <div className="pagination">
+            {Array.from({ length: totalPages }, (_, index) => (
+              <button
+                key={index}
+                className={`page-button ${
+                  currentPage === index + 1 ? "active" : ""
+                }`}
+                onClick={() => handlePageChange(index + 1)}
+              >
+                {index + 1}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -18,6 +18,7 @@ const NewDokan = () => {
   const [modalMessage, setModalMessage] = useState("");
   const [redirectTo, setRedirectTo] = useState(null);
   const [errors, setErrors] = useState({});
+  const [isShopsLoading, setIsShopsLoading] = useState(true);
 
   // State for overlay
   const [showOverlay, setShowOverlay] = useState(false);
@@ -41,8 +42,6 @@ const NewDokan = () => {
     }
     if (!formData.phoneNumber.trim()) {
       errors.phoneNumber = "Phone number is required.";
-    } else if (!/^\d{11}$/.test(formData.phoneNumber)) {
-      errors.phoneNumber = "Phone number must be 10 digits.";
     }
     if (!formData.imageUrl) {
       errors.imageUrl = "Image is required.";
@@ -93,12 +92,19 @@ const NewDokan = () => {
     }
   };
 
-  useEffect(() => {
-    const loadShops = async () => {
+  const loadShops = async () => {
+    setIsShopsLoading(true);
+    try {
       const data = await fetchShops();
       setShops(data);
-    };
+    } catch (error) {
+      console.error("Error loading shops:", error);
+    } finally {
+      setIsShopsLoading(false);
+    }
+  };
 
+  useEffect(() => {
     loadShops();
   }, []);
 
@@ -127,7 +133,16 @@ const NewDokan = () => {
         throw new Error("Failed to register shop");
       }
 
-      await response.json();
+      const newShop = await response.json();
+
+      // Add the new shop to the shops list with default totalDue of 0
+      setShops(prevShops => [
+        {
+          ...newShop,
+          totalDue: 0 // Default value for a new shop
+        },
+        ...prevShops
+      ]);
 
       setModalTitle("Success");
       setModalMessage("নতুন দোকান রেজিট্রেশন সম্পূর্ন হয়েছে !");
@@ -271,7 +286,7 @@ const NewDokan = () => {
         </div>
       </div>
       <div className="shop-list-container">
-        <ShopList shops={shops} />
+        <ShopList shops={shops} loading={isShopsLoading} />
       </div>
       <MessageModal
         show={modalShow}

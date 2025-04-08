@@ -28,13 +28,10 @@ const ShopList = ({ shops, loading }) => {
     };
   }, []);
 
+  // Reset to first page when shops list changes
   useEffect(() => {
-    if (window.innerWidth <= 768) {
-      setItemsPerPage(10);
-    } else {
-      setItemsPerPage(30);
-    }
-  }, []);
+    setCurrentPage(1);
+  }, [shops]);
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
@@ -54,7 +51,7 @@ const ShopList = ({ shops, loading }) => {
   );
 
   // Calculate total balance for current page
-  const totalDue = currentShops.reduce((acc, shop) => acc + shop.totalDue, 0);
+  const totalDue = currentShops.reduce((acc, shop) => acc + (shop.totalDue || 0), 0);
 
   // Function to generate PDF
   const downloadPdf = () => {
@@ -76,19 +73,27 @@ const ShopList = ({ shops, loading }) => {
           <div className="flex-grow-1 d-flex justify-content-center">
             <h2 className="card-title">দোকানের লিস্ট</h2>
           </div>
-          <button onClick={downloadPdf} className="btn btn-primary">
+          <button 
+            onClick={downloadPdf} 
+            className="btn btn-primary"
+            disabled={loading || filteredShops.length === 0}
+          >
             Download PDF
           </button>
         </div>
         <input
           type="text"
           className="form-control mb-3"
-          placeholder="দোকানের নাম দিয়ে সার্চ করুন"
+          placeholder="দোকানের নাম দিয়ে সার্চ করুন"
           value={searchTerm}
           onChange={handleSearch}
         />
         {loading ? (
           <Loader />
+        ) : filteredShops.length === 0 ? (
+          <div className="alert alert-info text-center">
+            <p>কোন দোকান পাওয়া যায়নি</p>
+          </div>
         ) : (
           <div className="table-responsive" ref={slipRef}>
             <table className="table table-bordered table-striped">
@@ -105,12 +110,12 @@ const ShopList = ({ shops, loading }) => {
               </thead>
               <tbody>
                 {currentShops.map((shop, index) => (
-                  <tr key={index}>
+                  <tr key={shop._id || index}>
                     <td>{startIndex + index + 1}</td>
                     <td className="text-center">{shop.shopName}</td>
                     <td>{shop.address}</td>
                     <td>{shop.phoneNumber}</td>
-                    <td>{shop.totalDue}</td>
+                    <td>{shop.totalDue || 0}</td>
                     <td>
                       {shop.imageUrl && (
                         <img
@@ -124,7 +129,8 @@ const ShopList = ({ shops, loading }) => {
                     <td>
                       <button
                         className="btn btn-info"
-                        onClick={() => handleDetailsClick(shop._id)} // Assuming shop has an 'id'
+                        onClick={() => handleDetailsClick(shop._id)}
+                        disabled={!shop._id}
                       >
                         Details
                       </button>
@@ -133,31 +139,31 @@ const ShopList = ({ shops, loading }) => {
                 ))}
                 {/* Total Balance Row */}
                 <tr>
-                  <td></td>
-                  <td></td>
-                  <td></td>
+                  <td colSpan="3"></td>
                   <td className="text-end font-weight-bold">মোট বাকি:</td>
                   <td className="font-weight-bold">{totalDue}</td>
-                  <td></td>
+                  <td colSpan="2"></td>
                 </tr>
               </tbody>
             </table>
           </div>
         )}
       </div>
-      <div className="pagination">
-        {Array.from({ length: totalPages }, (_, index) => (
-          <button
-            key={index}
-            className={`page-button ${
-              currentPage === index + 1 ? "active" : ""
-            }`}
-            onClick={() => handlePageChange(index + 1)}
-          >
-            {index + 1}
-          </button>
-        ))}
-      </div>
+      {totalPages > 1 && (
+        <div className="pagination">
+          {Array.from({ length: totalPages }, (_, index) => (
+            <button
+              key={index}
+              className={`page-button ${
+                currentPage === index + 1 ? "active" : ""
+              }`}
+              onClick={() => handlePageChange(index + 1)}
+            >
+              {index + 1}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

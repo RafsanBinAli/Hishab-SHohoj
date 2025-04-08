@@ -9,6 +9,8 @@ const DailyTransaction = () => {
   const [transactionDetails, setTransactionDetails] = useState(null);
   const [khajna, setKhajna] = useState(0);
   const [commission, setCommission] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [noDataFound, setNoDataFound] = useState(false);
 
   // Get current date in Bangladesh timezone
   const getBangladeshDate = () => {
@@ -38,6 +40,8 @@ const DailyTransaction = () => {
 
   useEffect(() => {
     const fetchTransactionDetails = async () => {
+      setIsLoading(true);
+      setNoDataFound(false);
       try {
         const response = await fetch(
           `${
@@ -48,11 +52,31 @@ const DailyTransaction = () => {
           throw new Error("Unable to fetch data");
         }
         const data = await response.json();
-        setTransactionDetails(data);
-        setKhajna(data.credit?.khajnas || 0);
-        setCommission(data.credit?.commissions || 0);
+        
+        // Check if there's no meaningful transaction data
+        const hasData = data && 
+          (data.credit || 
+           data.debit || 
+           (data.dailyCashStack && data.dailyCashStack.length > 0) ||
+           (data.todayDebt && data.todayDebt.length > 0) ||
+           (data.todayDebtRepay && data.todayDebtRepay.length > 0) ||
+           (data.unpaidDeals && data.unpaidDeals.length > 0));
+        
+        if (!hasData) {
+          setNoDataFound(true);
+          setTransactionDetails(null);
+        } else {
+          setTransactionDetails(data);
+          setKhajna(data.credit?.khajnas || 0);
+          setCommission(data.credit?.commissions || 0);
+          setNoDataFound(false);
+        }
       } catch (error) {
         console.log("Error occurred", error);
+        setNoDataFound(true);
+        setTransactionDetails(null);
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchTransactionDetails();
@@ -73,6 +97,7 @@ const DailyTransaction = () => {
         <button
           className="arrow-button"
           onClick={() => handleDateChange("previous")}
+          disabled={isLoading}
         >
           &#9664;
         </button>
@@ -85,87 +110,111 @@ const DailyTransaction = () => {
           value={selectedDate}
           onChange={(e) => setSelectedDate(e.target.value)}
           className="date-picker"
+          disabled={isLoading}
         />
         <button
           className="arrow-button"
           onClick={() => handleDateChange("next")}
+          disabled={isLoading}
         >
           &#9654;
         </button>
       </div>
 
       {/* Conditionally render TransactionButton only for today's date */}
-      {isToday && (
+      {isToday && !isLoading && !noDataFound && (
         <TransactionButton
           transactionDetails={transactionDetails}
           setTransactionDetails={setTransactionDetails}
         />
       )}
 
-      <div className="row mb-4">
-        <div className="col-md-6">
-          <DailyTransactionTable
-            title="আয়"
-            data={[
-              {
-                title: "দৈনিক নগদ জমা",
-                transactionData: transactionDetails?.dailyCashStack || [],
-              },
-              {
-                title: "দোকানের জমা",
-                transactionData: transactionDetails?.credit?.dokanPayment || [],
-              },
-              {
-                title: "ধার (porishod)",
-                transactionData: transactionDetails?.credit?.dharReturns || [],
-              },
-              {
-                title: "নিজের ধার",
-                transactionData: transactionDetails?.todayDebt || [],
-              },
-            ]}
-          />
+      {isLoading && (
+        <div className="text-center my-5">
+          <div className="spinner-border" role="status">
+            <span className="sr-only">লোড হচ্ছে...</span>
+          </div>
+          <p className="mt-3">হিসাব লোড হচ্ছে...</p>
         </div>
+      )}
 
-        <div className="col-md-6">
-          <DailyTransactionTable
-            title="ব্যয়"
-            data={[
-              {
-                title: "কৃষকের টাকা(খরচ)",
-                transactionData:
-                  transactionDetails?.debit?.farmersPayment || [],
-              },
-              {
-                title: "ধার (খরচ)",
-                transactionData: transactionDetails?.debit?.dhar || [],
-              },
-              {
-                title: "অন্যান্য (খরচ)",
-                transactionData: transactionDetails?.debit?.otherCost || [],
-              },
-              {
-                title: "নিজের ধার পরিশোধ",
-                transactionData: transactionDetails?.todayDebtRepay || [],
-              },
-              {
-                title: "Unpaid Deals",
-                transactionData:
-                  transactionDetails?.unpaidDeals || [],
-              },
-            ]}
-          />
+      {noDataFound && !isLoading && (
+        <div className="alert alert-info text-center my-5">
+          <h4>এই তারিখে কোন হিসাব তৈরি করা হয়নি</h4>
+          {isToday && (
+            <p className="mt-3">আজকের হিসাব তৈরি করতে নতুন লেনদেন যোগ করুন</p>
+          )}
         </div>
-      </div>
+      )}
 
-      <div className="row mb-4">
-        <div className="col-md-6">
-          <KhajnaCommissionTable khajna={khajna} commission={commission} />
-        </div>
-        <div className="col-md-6">
-          <LastCalculation transactionDetails={transactionDetails} />
-        </div>
-      </div>
+      {!isLoading && !noDataFound && (
+        <>
+          <div className="row mb-4">
+            <div className="col-md-6">
+              <DailyTransactionTable
+                title="আয়"
+                data={[
+                  {
+                    title: "দৈনিক নগদ জমা",
+                    transactionData: transactionDetails?.dailyCashStack || [],
+                  },
+                  {
+                    title: "দোকানের জমা",
+                    transactionData: transactionDetails?.credit?.dokanPayment || [],
+                  },
+                  {
+                    title: "ধার (porishod)",
+                    transactionData: transactionDetails?.credit?.dharReturns || [],
+                  },
+                  {
+                    title: "নিজের ধার",
+                    transactionData: transactionDetails?.todayDebt || [],
+                  },
+                ]}
+              />
+            </div>
+
+            <div className="col-md-6">
+              <DailyTransactionTable
+                title="ব্যয়"
+                data={[
+                  {
+                    title: "কৃষকের টাকা(খরচ)",
+                    transactionData:
+                      transactionDetails?.debit?.farmersPayment || [],
+                  },
+                  {
+                    title: "ধার (খরচ)",
+                    transactionData: transactionDetails?.debit?.dhar || [],
+                  },
+                  {
+                    title: "অন্যান্য (খরচ)",
+                    transactionData: transactionDetails?.debit?.otherCost || [],
+                  },
+                  {
+                    title: "নিজের ধার পরিশোধ",
+                    transactionData: transactionDetails?.todayDebtRepay || [],
+                  },
+                  {
+                    title: "Unpaid Deals",
+                    transactionData:
+                      transactionDetails?.unpaidDeals || [],
+                  },
+                ]}
+              />
+            </div>
+          </div>
+
+          <div className="row mb-4">
+            <div className="col-md-6">
+              <KhajnaCommissionTable khajna={khajna} commission={commission} />
+            </div>
+            <div className="col-md-6">
+              <LastCalculation transactionDetails={transactionDetails} />
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };

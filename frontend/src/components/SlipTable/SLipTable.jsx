@@ -170,6 +170,7 @@ const SlipTable = () => {
         <button
           className="arrow-button"
           onClick={() => handleDateChange("previous")}
+          disabled={loading}
         >
           &#9664;
         </button>
@@ -182,10 +183,12 @@ const SlipTable = () => {
           value={selectedDate}
           onChange={(e) => setSelectedDate(e.target.value)}
           className="date-picker"
+          disabled={loading}
         />
         <button
           className="arrow-button"
           onClick={() => handleDateChange("next")}
+          disabled={loading}
         >
           &#9654;
         </button>
@@ -195,8 +198,8 @@ const SlipTable = () => {
       ) : (
         <>
           {noInfo ? (
-            <div className="no-info">
-              এই তারিখের জন্য কোনো তথ্য পাওয়া যায়নি।
+            <div className="alert alert-info text-center my-5">
+              <h4>এই তারিখের জন্য কোনো তথ্য পাওয়া যায়নি</h4>
             </div>
           ) : (
             <div className="table-responsive">
@@ -214,7 +217,7 @@ const SlipTable = () => {
                 </thead>
                 <tbody>
                   {slips.map((slip, index) => (
-                    <tr key={index}>
+                    <tr key={slip._id || index}>
                       <td>{slip.shopName}</td>
                       <td>{slip.totalAmount}</td>
                       <td>
