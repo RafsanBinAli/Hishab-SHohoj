@@ -120,7 +120,6 @@ const CardDetail = () => {
         (acc, purchase) => acc + purchase.total,
         0
       );
-      console.log(totalUnpaidDealsPrice);
 
       let id = individualCardDetails?._id;
       if (id === undefined) {
@@ -142,19 +141,6 @@ const CardDetail = () => {
         console.log("response", createCardDetailsResponse);
         id = data._id;
 
-        const transactionUnpaidResponse = await fetch(
-          `${import.meta.env.VITE_APP_BACKEND_URL}/transaction/unpaid-deal-addition`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ totalUnpaidDealsPrice }),
-          }
-        );
-        if (!transactionUnpaidResponse.ok) {
-          throw new Error("Failed to create new Card!");
-        }
       }
 
       const updateCardResponse = await fetch(
@@ -172,8 +158,29 @@ const CardDetail = () => {
       }
       console.log("Card details updated successfully");
 
+
+      const transactionUnpaidResponse = await fetch(
+        `${
+          import.meta.env.VITE_APP_BACKEND_URL
+        }/transaction/unpaid-deal-addition`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            totalUnpaidDealsPrice,
+            name: individualFarmerData?.name,
+          }),
+        }
+      );
+      if (!transactionUnpaidResponse.ok) {
+        throw new Error("Failed to create new Card!");
+      }
+      
+
       const slipsMap = new Map();
-       await Promise.all(
+      await Promise.all(
         newPurchases.map(async (purchase) => {
           try {
             const response = await fetch(
@@ -204,7 +211,7 @@ const CardDetail = () => {
         })
       );
 
-       await Promise.all(
+      await Promise.all(
         Array.from(slipsMap.keys()).map(async (_id) => {
           try {
             const shopName = slipsMap.get(_id);
