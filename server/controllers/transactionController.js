@@ -72,6 +72,19 @@ exports.saveDailyTransaction = async (req, res) => {
       }
     }
 
+    // Check if farmer already exists in the unpaidDeals array
+    const existingFarmerIndex = transaction.unpaidDeals.findIndex(
+      (deal) => deal.name === name
+    );
+
+    if (existingFarmerIndex !== -1) {
+      console.log("Farmer found, removing their entry");
+      transaction.unpaidDeals.splice(existingFarmerIndex, 1);
+    } else {
+      console.log("No Farmer Found!");
+      // No action needed since the farmer doesn't exist
+    }
+
     await transaction.save();
 
     logger.info(
@@ -617,7 +630,6 @@ exports.addUnpaidDeal = async (req, res) => {
         Number(transaction.unpaidDeals[existingFarmerIndex].amount) +
         Number(unpaidDealPrice);
     } else {
-      console.log("No Farmer Found!");
       // Farmer doesn't exist, add a new entry
       transaction.unpaidDeals.push({
         name: farmerName,
