@@ -173,24 +173,24 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
 
                 <tr>
                   <td colSpan="4" className="text-right font-weight-bold">
-                    মোট (টাকা):
+                    মোট 
                   </td>
                   <td className="font-weight-bold">
-                    {totalPurchaseAmount.toFixed(2)}
+                    {totalPurchaseAmount.toFixed(2)} টাকা
                   </td>
                 </tr>
                 <tr>
                   <td colSpan="4" className="text-right font-weight-bold">
-                    মোট পরিমাণ (কেজি):
+                    মোট পরিমাণ 
                   </td>
                   <td className="font-weight-bold">
-                    {totalQuantity.toFixed(2)}
+                    {totalQuantity.toFixed(2)} কেজি
                   </td>
                 </tr>
 
                 <tr>
                   <td colSpan="4" className="text-right font-weight-bold">
-                    কমিশন (টাকা):
+                    কমিশন (টাকা)
                   </td>
                   <td className="commission font-weight-bold">
                     {isPaid ? (
@@ -206,7 +206,7 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
                 </tr>
                 <tr>
                   <td colSpan="4" className="text-right font-weight-bold">
-                    খাজনা (টাকা):
+                    খাজনা (টাকা)
                   </td>
                   <td className="commission font-weight-bold">
                     {isPaid ? (
@@ -222,9 +222,9 @@ const FarmerAndDokanSlip = ({ individualCardDetails }) => {
                 </tr>
                 <tr>
                   <td colSpan="4" className="text-right font-weight-bold">
-                    চূড়ান্ত মোট (টাকা):
+                    চূড়ান্ত মোট 
                   </td>
-                  <td className="font-weight-bold">{finalAmount.toFixed(2)}</td>
+                  <td className="font-weight-bold">{finalAmount.toFixed(2)} টাকা</td>
                 </tr>
               </tbody>
             </table>
