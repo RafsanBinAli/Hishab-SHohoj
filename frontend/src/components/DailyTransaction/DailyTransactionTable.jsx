@@ -33,13 +33,15 @@ const DailyTransactionTable = ({ title, data }) => {
                             {section.transactionData.map((item, index) => (
                               <tr key={index}>
                                 <td>{item.name}</td>
-                                <td>{item.amount || item.cost}</td>
+                                <td>
+                                  {parseInt(item.amount || item.cost || 0, 10)}
+                                </td>
                               </tr>
                             ))}
                           </tbody>
                         </table>
                       ) : (
-                        <p>{section.transactionData || "N/A"}</p>
+                        <p>{parseInt(section.transactionData || 0, 10)}</p>
                       )}
                     </div>
                   </td>
@@ -47,30 +49,30 @@ const DailyTransactionTable = ({ title, data }) => {
                     {Array.isArray(section.transactionData)
                       ? section.transactionData.reduce(
                           (total, item) =>
-                            total + (item.amount || item.cost),
+                            total + parseInt(item.amount || item.cost || 0, 10),
                           0
                         )
-                      : section.transactionData || 0}
+                      : parseInt(section.transactionData || 0, 10)}
                   </td>
                 </tr>
               </React.Fragment>
             ))}
+
             <tr className="font-weight-bold">
               <td>মোট</td>
               <td colSpan="2"></td>
               <td>
-                {data.reduce(
-                  (grandTotal, section) =>
-                    grandTotal +
-                    (Array.isArray(section.transactionData)
-                      ? section.transactionData.reduce(
-                          (total, item) =>
-                            total + (item.amount || item.cost),
-                          0
-                        )
-                      : section.transactionData || 0),
-                  0
-                )}
+                {data.reduce((grandTotal, section) => {
+                  const sectionTotal = Array.isArray(section.transactionData)
+                    ? section.transactionData.reduce(
+                        (total, item) =>
+                          total + parseInt(item.amount || item.cost || 0, 10), // Ensure int
+                        0
+                      )
+                    : parseInt(section.transactionData || 0, 10); // Ensure int if not array
+
+                  return grandTotal + sectionTotal;
+                }, 0)}
               </td>
             </tr>
           </tbody>
