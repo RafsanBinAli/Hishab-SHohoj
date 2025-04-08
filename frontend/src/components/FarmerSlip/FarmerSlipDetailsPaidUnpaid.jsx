@@ -84,7 +84,7 @@ const FarmerSlipDetailsPaidUnpaid = () => {
 
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_APP_BACKEND_URL}/transaction/save-daily`,
+        `${import.meta.env.VITE_APP_BACKEND_URL}/transaction/save`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

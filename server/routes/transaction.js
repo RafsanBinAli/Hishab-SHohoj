@@ -3,7 +3,7 @@ const router = express.Router();
 
 const transactionController = require("../controllers/transactionController");
 
-router.post("/save-daily", transactionController.saveDailyTransaction);
+router.post("/save", transactionController.saveDailyTransaction);
 router.get("/get-daily/:date", transactionController.getDailyTransaction);
 router.post("/dhar-entry", transactionController.dharEntry);
 router.post("/dhar-repay", transactionController.dharRepay);
