@@ -500,10 +500,11 @@ exports.addUnpaidDeal = async (req, res) => {
     const normalizedDate = getCurrentNormalizedDate(); // Get current date
     logger.info(`Current normalized date: ${normalizedDate}`);
     
-    const totalUnpaidDealsPrice = Number(req.body.totalUnpaidDealsPrice);
+    const unpaidDealPrice = Number(req.body.totalUnpaidDealsPrice);
+    const farmerName = req.body.name;
 
-    if (isNaN(totalUnpaidDealsPrice)) {
-      logger.warn(`POST /addUnpaidDeal - Invalid price format: ${req.body.totalUnpaidDealsPrice}`);
+    if (isNaN(unpaidDealPrice)) {
+      logger.warn(`POST /addUnpaidDeal - Invalid price format: ${req.body.unpaidDealPrice}`);
       return res
         .status(400)
         .json({ message: "Total unpaid deals price must be a valid number." });
@@ -512,6 +513,7 @@ exports.addUnpaidDeal = async (req, res) => {
     let transaction = await DailyTransaction.findOne({
       date: normalizedDate,
     });
+
     if (!transaction) {
       logger.warn(`POST /addUnpaidDeal - Transaction not found for date: ${normalizedDate}`);
       return res
@@ -519,7 +521,22 @@ exports.addUnpaidDeal = async (req, res) => {
         .json({ message: "Transaction Details not found!" });
     }
 
-    transaction.totalUnpaidDealsPrice += totalUnpaidDealsPrice;
+    transaction.totalUnpaidDealsPrice += unpaidDealPrice;
+
+    // Check if farmer already exists in the unpaidDeals array
+    const existingFarmerIndex = transaction.unpaidDeals.findIndex(
+      deal => deal.farmerName === farmerName
+    );
+    
+    if (existingFarmerIndex !== -1) {
+      transaction.unpaidDeals[existingFarmerIndex].amount += unpaidDealPrice;
+    } else {
+      // Farmer doesn't exist, add a new entry
+      transaction.unpaidDeals.push({ farmerName, unpaidDealPrice });
+    }
+    
+    // Update total regardless of whether it's a new or existing farmer
+    transaction.totalUnpaidDealsPrice += unpaidDealPrice;
 
     await transaction.save();
     

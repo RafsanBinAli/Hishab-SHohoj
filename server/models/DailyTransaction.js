@@ -41,7 +41,7 @@ const transactionSchema = new Schema({
     },
   },
   debit: {
-   farmersPaymentLater: [
+    farmersPaymentLater: [
       {
         name: {
           type: String,
@@ -164,20 +164,37 @@ const transactionSchema = new Schema({
     type: Number,
     default: 0,
   },
-  totalDebtToShownInFinal:{
-    type:Number,
-    default:0
-  }
+  totalDebtToShownInFinal: {
+    type: Number,
+    default: 0,
+  },
+  unpaidDeals: [
+    {
+      name: {
+        type: String,
+      },
+      amount: {
+        type: String,
+      },
+    },
+  ],
 });
 
 transactionSchema.pre("save", function (next) {
   const dharCost = this.debit.dhar.reduce((sum, item) => sum + item.amount, 0);
-  const farmersPaymentCost = this.debit.farmersPayment.reduce((sum, item) => sum + item.amount, 0);
-  const otherCost = this.debit.otherCost.reduce((sum, item) => sum + item.amount, 0);
+  const farmersPaymentCost = this.debit.farmersPayment.reduce(
+    (sum, item) => sum + item.amount,
+    0
+  );
+  const otherCost = this.debit.otherCost.reduce(
+    (sum, item) => sum + item.amount,
+    0
+  );
 
   // Ensure farmersPaymentLater and todayDebtRepay are numbers or 0
-  const totalFarmersPaymentLater = Array.isArray(this.debit.farmersPaymentLater) ? 
-    this.debit.farmersPaymentLater.reduce((sum, item) => sum + item.amount, 0) : 0;
+  const totalFarmersPaymentLater = Array.isArray(this.debit.farmersPaymentLater)
+    ? this.debit.farmersPaymentLater.reduce((sum, item) => sum + item.amount, 0)
+    : 0;
 
   const totalTodayDebtRepay = this.todayDebtRepay || 0;
 
@@ -208,7 +225,6 @@ transactionSchema.pre("save", function (next) {
     0
   );
 
-
   this.totalProfit = totalProfit;
   this.totalCost = totalCost;
   this.netProfit = netProfit;
@@ -218,7 +234,6 @@ transactionSchema.pre("save", function (next) {
 
   next();
 });
-
 
 const Transaction = mongoose.model("DailyTransaction", transactionSchema);
 
