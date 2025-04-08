@@ -46,7 +46,6 @@ const FarmerSlip = () => {
     navigate("/slip/farmer/all-deals");
   };
 
-
   return (
     <div className="farmer-slip">
       <div className="farmer-slip-header">
@@ -80,12 +79,14 @@ const FarmerSlip = () => {
                   <h2 className="farmer-slip-farmer-name">{deal.farmerName}</h2>
                 </div>
                 <div className="farmer-slip-card-body">
-
                   <p className="farmer-slip-deal-created-at">
-                    তারিখ:
+                    তারিখ: 
                     <span className="created-at">
                       {new Date(deal.createdAt).toLocaleDateString()}
                     </span>
+                  </p>
+                  <p className="farmer-slip-deal-created-at">
+                    Amount: <strong>{deal.totalPurchasesAmount} tk</strong>
                   </p>
                 </div>
                 <div className="farmer-slip-card-footer">

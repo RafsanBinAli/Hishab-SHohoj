@@ -151,7 +151,7 @@ const DailyTransaction = () => {
               {
                 title: "Unpaid Deals",
                 transactionData:
-                  transactionDetails?.totalUnpaidDealsPrice || [],
+                  transactionDetails?.unpaidDeals || [],
               },
             ]}
           />
