@@ -76,9 +76,9 @@ const Farmer = () => {
 
   const handleAddUser = async () => {
     if (!validateInputs()) return;
-
+  
     setShowOverlay(true); // Show overlay during registration
-
+  
     try {
       const response = await fetch(
         `${import.meta.env.VITE_APP_BACKEND_URL}/create-farmer`,
@@ -90,15 +90,29 @@ const Farmer = () => {
           body: JSON.stringify(newUserInfo),
         }
       );
-
+  
       if (!response.ok) {
         const errorMessage = await response.json();
         throw new Error(errorMessage.error || "Network response was not ok");
       }
-
+  
+      // Get the newly created farmer data from the response
+      const newFarmer = await response.json();
+      
+      // Add the new farmer to the existing users list
+      setUsers([...users, newFarmer]);
+      
+      // Reset the form
+      setNewUserInfo({
+        name: "",
+        phoneNumber: "",
+        village: "",
+        imageUrl: "",
+      });
+      setImagePreview(null);
+  
       setModalTitle("Success");
       setModalMessage("নতুন কৃষক সংযুক্ত হয়েছে!");
-      setRedirectTo("/farmers");
       setModalShow(true);
     } catch (error) {
       setModalTitle("Error");
