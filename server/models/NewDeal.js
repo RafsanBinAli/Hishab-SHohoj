@@ -58,10 +58,15 @@ const newDealSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    totalPurchasesAmount: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true, // This option adds createdAt and updatedAt fields automatically
   }
 );
+
 
 module.exports = mongoose.model("NewDeal", newDealSchema);

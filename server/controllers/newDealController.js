@@ -86,25 +86,43 @@ exports.getCardDetailsById = async (req, res) => {
 
 exports.updateDealPurchases = async (req, res) => {
   try {
-    
     const { id } = req.params;
     const { purchases } = req.body;
-
+    
     if (!Array.isArray(purchases)) {
       logger.warn(`PUT /updateDealPurchases/${id} - Invalid request data: purchases is not an array`);
       return res.status(400).json({ message: "Invalid request data" });
     }
-
+    
+    // First, get the current document to access existing purchases
+    const currentDeal = await NewDeal.findById(id);
+    
+    if (!currentDeal) {
+      logger.warn(`PUT /updateDealPurchases/${id} - NewDeal not found`);
+      return res.status(204).json({ message: "NewDeal not found" });
+    }
+    
+    // Add new purchases
     const updatedDeal = await NewDeal.findByIdAndUpdate(
       id,
       { $push: { purchases: { $each: purchases } } },
       { new: true }
     );
-
-    if (!updatedDeal) {
-      logger.warn(`PUT /updateDealPurchases/${id} - NewDeal not found`);
-      return res.status(204).json({ message: "NewDeal not found" });
+    
+    // Calculate new totals
+    let purchasesTotal = 0;
+    if (updatedDeal.purchases && updatedDeal.purchases.length > 0) {
+      purchasesTotal = updatedDeal.purchases.reduce((sum, purchase) => {
+        return sum + (purchase.price * purchase.quantity);
+      }, 0);
     }
+    
+    // Update the totals fields
+    updatedDeal.totalPurchasesAmount = purchasesTotal;
+    updatedDeal.totalAmountToBeGiven = purchasesTotal - (updatedDeal.khajna || 0) - (updatedDeal.commission || 0);
+    
+    // Save to persist the calculated values
+    await updatedDeal.save();
     
     logger.info(`PUT /updateDealPurchases/${id} - Success - Deal ID: ${updatedDeal._id}`);
     res.status(200).json(updatedDeal);
